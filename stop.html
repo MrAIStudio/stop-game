@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MrAI Studio - STOP GAME</title>
+
+<style>
+body{
+  margin:0;
+  background:#111;
+  color:white;
+  font-family:sans-serif;
+  text-align:center;
+}
+
+.logo{
+  font-size:28px;
+  font-weight:bold;
+  padding:20px;
+  color:#00ffff;
+}
+
+.game{
+  margin:20px auto;
+  width:90%;
+  height:350px;
+  background:#222;
+  border:3px solid white;
+  position:relative;
+  overflow:hidden;
+}
+
+.line{
+  position:absolute;
+  top:170px;
+  left:0;
+  width:100%;
+  height:10px;
+  background:#555;
+}
+
+.player{
+  width:25px;
+  height:25px;
+  background:red;
+  border-radius:50%;
+  position:absolute;
+  top:162px;
+  left:0;
+}
+
+.goal{
+  position:absolute;
+  right:20px;
+  top:130px;
+  width:70px;
+  height:80px;
+  border:3px solid lime;
+}
+
+button{
+  font-size:30px;
+  padding:15px 50px;
+  border-radius:20px;
+  background:#00ffff;
+  border:none;
+}
+
+#message{
+  font-size:24px;
+  min-height:40px;
+  margin:15px;
+}
+
+.score{
+  font-size:20px;
+}
+</style>
+</head>
+
+
+<body>
+
+<div class="logo">
+🤖 MrAI Studio
+</div>
+
+<h1>STOP！イライラ棒</h1>
+
+<div class="game">
+<div class="line"></div>
+<div class="player" id="player"></div>
+<div class="goal"></div>
+</div>
+
+<button onclick="stopGame()">STOP</button>
+
+<div id="message">
+ボタン押すタイミングで人生が決まる。
+</div>
+
+<div class="score">
+成功回数：<span id="score">0</span>
+</div>
+
+
+<script>
+
+let player=document.getElementById("player");
+let message=document.getElementById("message");
+let score=document.getElementById("score");
+
+let x=0;
+let speed=4;
+let timer;
+
+function start(){
+
+timer=setInterval(()=>{
+
+x+=speed;
+
+if(x>window.innerWidth*0.85){
+ x=0;
+}
+
+player.style.left=x+"px";
+
+},20);
+
+}
+
+function stopGame(){
+
+clearInterval(timer);
+
+let pos=x;
+
+if(pos>window.innerWidth*0.65 && pos<window.innerWidth*0.78){
+
+message.innerHTML=
+"🎉成功！奇跡起きた。明日事故るかも。";
+
+score.innerHTML=
+Number(score.innerHTML)+1;
+
+}else{
+
+let jokes=[
+"🤣残念！才能が迷子です。",
+"😇惜しい！でも惜しいだけ。",
+"💀そのタイミング選ぶセンス逆にすごい。",
+"🤖AIでも予測不能な下手さ。"
+];
+
+message.innerHTML=
+jokes[Math.floor(Math.random()*jokes.length)];
+
+}
+
+setTimeout(start,1000);
+
+}
+
+start();
+
+</script>
+
+</body>
+</html>
