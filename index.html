@@ -554,6 +554,7 @@ ufo.style.filter="drop-shadow(0 0 6px #7f5af0)";
 }
 
 if(Math.random()<0.015) phantom();
+if(Math.random()<0.004) chooseUFO();
 
 ufo.style.left=x+"px";
 bubble.style.left=(x-20)+"px";
@@ -632,7 +633,6 @@ firing = true;
 // パワーアップ取得判定（撃つ瞬間の位置で判定）
 tryGrabPowerup();
 
-clearInterval(timer);
 banSound();
 
 let fx = document.createElement("div");
@@ -778,6 +778,7 @@ document.getElementById("message").innerHTML = "💀ストレス限界突破…G
 
 navigator.vibrate?.([200,100,200]);
 
+clearInterval(timer);
 clearInterval(powerupTimer);
 setTimeout(()=>{ showRetry(); },1200);
 
@@ -794,7 +795,7 @@ firing = false;
 
 setTimeout(()=>{
 document.getElementById("message").innerHTML="";
-move();
+chooseUFO();
 },900);
 }
 
