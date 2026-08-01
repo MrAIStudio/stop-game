@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>イライラすとっぷ</title>
+<title>イライラすとっぷ - BAN Edition</title>
 
 <style>
 
@@ -54,7 +54,14 @@ font-size:28px;
 padding:15px 50px;
 border-radius:20px;
 border:none;
-background:#00ffff;
+cursor:pointer;
+}
+
+#banBtn{
+background:#ff4444;
+color:white;
+font-weight:bold;
+box-shadow:0 0 10px #ff0000;
 }
 
 #game{
@@ -125,6 +132,25 @@ min-height:50px;
 margin-top:20px;
 }
 
+/* BAN! エフェクト */
+.banFlash{
+position:fixed;
+top:40%;
+left:50%;
+transform:translate(-50%,-50%);
+font-size:80px;
+color:#ff2222;
+font-weight:bold;
+text-shadow:0 0 20px #ff0000;
+animation:banAnim 0.4s forwards;
+pointer-events:none;
+}
+
+@keyframes banAnim{
+0%{opacity:1; transform:translate(-50%,-50%) scale(1);}
+100%{opacity:0; transform:translate(-50%,-50%) scale(2);}
+}
+
 /* 爆発エフェクト */
 .explode{
 position:absolute;
@@ -164,7 +190,7 @@ animation:starFly 0.8s forwards;
 <div class="sub">
 🛸 煽るUFOを予測して撃て！<br>
 「こっちだよ〜」に騙されるな<br><br>
-今まで本気だったと思った？
+BAN! で未来を読め！
 </div>
 
 <button onclick="startGame()">START</button>
@@ -196,7 +222,7 @@ animation:starFly 0.8s forwards;
 
 <div class="bar"><div id="stress"></div></div>
 
-<button onclick="stopGame()">STOP</button>
+<button id="banBtn" onclick="stopGame()">BAN！</button>
 
 </div>
 
@@ -247,9 +273,9 @@ move();
 
 function chooseUFO(){
 let r=Math.random();
-if(r<0.05){ ufoType="rare"; }       // レアUFO
-else if(r<0.25){ ufoType="fast"; }  // 高速
-else if(r<0.45){ ufoType="zigzag"; }// ジグザグ
+if(r<0.05){ ufoType="rare"; }
+else if(r<0.25){ ufoType="fast"; }
+else if(r<0.45){ ufoType="zigzag"; }
 else{ ufoType="normal"; }
 }
 
@@ -257,7 +283,6 @@ function move(){
 chooseUFO();
 timer=setInterval(()=>{
 
-// UFO種類ごとの挙動
 if(ufoType==="fast") speed=10;
 if(ufoType==="normal") speed=4+Math.random()*3;
 if(ufoType==="zigzag"){
@@ -266,13 +291,11 @@ zigzagOffset = Math.sin(Date.now()/80)*30;
 ufo.style.top = (130 + zigzagOffset)+"px";
 }
 
-// 移動
 x += speed * dir;
 
 if(x > window.innerWidth*0.75){ dir=-1; }
 if(x < 0){ dir=1; }
 
-// レアUFO演出
 if(ufoType==="rare"){
 ufo.style.filter="drop-shadow(0 0 20px gold)";
 bubble.innerHTML="レアUFOだよ😎";
@@ -280,14 +303,11 @@ bubble.innerHTML="レアUFOだよ😎";
 ufo.style.filter="none";
 }
 
-// フェイント
 if(Math.random()<0.015) phantom();
 
-// 位置反映
 ufo.style.left=x+"px";
 bubble.style.left=(x-20)+"px";
 
-// 煽り
 if(Math.random()<0.02){
 bubble.innerHTML=comments[Math.floor(Math.random()*comments.length)];
 }
@@ -312,14 +332,46 @@ speed=4+Math.random()*3;
 }
 
 function stopGame(){
+
 clearInterval(timer);
 sound(250,0.15);
-bullet.style.display="block";
-bullet.style.left="50%";
-setTimeout(()=>{
-bullet.style.display="none";
+
+// BAN! 演出
+let fx = document.createElement("div");
+fx.className = "banFlash";
+fx.innerHTML = "BAN!!";
+document.body.appendChild(fx);
+setTimeout(()=>fx.remove(),400);
+
+navigator.vibrate?.([80,50,80]);
+
+bullet.style.display = "block";
+bullet.style.left = "50%";
+bullet.style.bottom = "20px";
+
+slowBullet();
+}
+
+function slowBullet(){
+
+let pos = 20;
+let target = 160;
+let speedB = 2;
+
+let bulletTimer = setInterval(()=>{
+
+pos += speedB;
+bullet.style.bottom = pos + "px";
+
+if(pos >= target){
+
+clearInterval(bulletTimer);
+bullet.style.display = "none";
+
 judge();
-},300);
+}
+
+}, 16);
 }
 
 function explodeEffect(){
@@ -343,13 +395,15 @@ setTimeout(()=>star.remove(),800);
 }
 
 function judge(){
+
 let center=window.innerWidth/2;
 let distance=Math.abs((x+25)-center);
 
-if(distance<60){
+if(distance < 30){
+
 combo++;
 let add = combo*100;
-if(ufoType==="rare") add*=3; // レアUFOは3倍
+if(ufoType==="rare") add*=3;
 score+=add;
 stress-=10;
 sound(900,0.3);
@@ -366,6 +420,7 @@ document.getElementById("message").innerHTML=
 hit[Math.floor(Math.random()*hit.length)];
 
 }else{
+
 combo=0;
 stress+=20;
 sound(120,0.4);
