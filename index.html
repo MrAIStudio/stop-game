@@ -18,18 +18,18 @@ overflow:hidden;
 }
 
 h1{
-font-size:42px;
+font-size:40px;
 }
 
 .sub{
 font-size:20px;
-color:#ccc;
 line-height:1.8;
+color:#ccc;
 }
 
 button{
 font-size:28px;
-padding:15px 45px;
+padding:15px 50px;
 border-radius:20px;
 border:none;
 background:#00ffff;
@@ -42,7 +42,7 @@ display:none;
 .field{
 
 width:90%;
-height:300px;
+height:320px;
 margin:20px auto;
 background:#222;
 border:3px solid white;
@@ -52,12 +52,10 @@ overflow:hidden;
 }
 
 
-/* UFO */
-
 .ufo{
 
 position:absolute;
-top:110px;
+top:130px;
 font-size:50px;
 left:0;
 
@@ -67,32 +65,32 @@ left:0;
 .bubble{
 
 position:absolute;
-top:40px;
-left:0;
-
+top:50px;
 background:white;
 color:black;
-
 padding:8px 12px;
-
 border-radius:15px;
-
 font-size:16px;
-
 white-space:nowrap;
 
 }
 
 
-/* 弾 */
+.afterimage{
+
+position:absolute;
+top:130px;
+font-size:50px;
+opacity:0.3;
+
+}
+
 
 .bullet{
 
 position:absolute;
 bottom:20px;
-
 font-size:35px;
-
 display:none;
 
 }
@@ -101,7 +99,6 @@ display:none;
 .status{
 
 font-size:20px;
-
 }
 
 
@@ -109,13 +106,9 @@ font-size:20px;
 
 width:80%;
 height:25px;
-
 background:#333;
-
 margin:10px auto;
-
 border-radius:20px;
-
 overflow:hidden;
 
 }
@@ -124,9 +117,7 @@ overflow:hidden;
 #stress{
 
 height:100%;
-
 width:50%;
-
 background:red;
 
 }
@@ -135,7 +126,6 @@ background:red;
 #message{
 
 font-size:22px;
-
 min-height:50px;
 
 }
@@ -151,12 +141,10 @@ margin-top:20px;
 
 </head>
 
-
 <body>
 
 
 <div id="title">
-
 
 <h1>
 😡 イライラすとっぷ
@@ -165,15 +153,15 @@ margin-top:20px;
 
 <div class="sub">
 
-🛸 煽ってくるUFOを撃ち落とせ
+🛸 煽るUFOを予測して撃て！
 
 <br>
 
-動きを読んでSTOP！
+「こっちだよ〜」に騙されるな
 
 <br><br>
 
-「こっちだよ〜」に騙されるな🤣
+今まで本気だったと思った？
 
 </div>
 
@@ -194,31 +182,24 @@ START
 
 
 
-
 <div id="game">
 
 
 <div class="field">
 
 
-<div class="bubble" id="bubble">
-
+<div id="bubble" class="bubble">
 こっちだよ〜😏
-
 </div>
 
 
-<div class="ufo" id="ufo">
-
+<div id="ufo" class="ufo">
 🛸
-
 </div>
 
 
-<div class="bullet" id="bullet">
-
+<div id="bullet" class="bullet">
 💥
-
 </div>
 
 
@@ -266,94 +247,77 @@ STOP
 <script>
 
 
-let ufo=document.getElementById("ufo");
-
-let bubble=document.getElementById("bubble");
-
-let bullet=document.getElementById("bullet");
-
+let ufo;
+let bubble;
+let bullet;
 
 let x=0;
-
-let direction=1;
-
+let dir=1;
 let speed=4;
 
 let timer;
 
-
 let combo=0;
-
 let score=0;
-
 let stress=50;
 
+let audio;
 
 
-let taunts=[
+
+let comments=[
 
 "こっちだよ〜😏",
-
 "今押すと思った？🤣",
-
 "残念、逆でした〜",
-
 "読めるかな？笑",
-
 "未来予測してみな？",
-
 "あと0.2秒だったね"
 
 ];
 
 
-let audio;
-
-
-function sound(freq,time){
+function sound(f,t){
 
 if(!audio){
 audio=new AudioContext();
 }
 
 let o=audio.createOscillator();
-
 let g=audio.createGain();
 
-
 o.connect(g);
-
 g.connect(audio.destination);
 
-
-o.frequency.value=freq;
-
+o.frequency.value=f;
 
 g.gain.setValueAtTime(
 0.2,
 audio.currentTime
 );
 
-
 g.gain.exponentialRampToValueAtTime(
 0.001,
-audio.currentTime+time
+audio.currentTime+t
 );
 
-
 o.start();
-
-o.stop(audio.currentTime+time);
+o.stop(audio.currentTime+t);
 
 }
 
 
-function startGame(){
 
+function startGame(){
 
 document.getElementById("title").style.display="none";
 
 document.getElementById("game").style.display="block";
+
+
+ufo=document.getElementById("ufo");
+bubble=document.getElementById("bubble");
+bullet=document.getElementById("bullet");
 
 
 sound(600,0.1);
@@ -361,53 +325,58 @@ sound(600,0.1);
 
 move();
 
-}function move(){
+}
+function move(){
 
 timer=setInterval(()=>{
 
 
-x += speed * direction;
+x += speed * dir;
 
 
-// 端で反転
+// 通常反転
+
 if(x > window.innerWidth*0.75){
 
-direction=-1;
+dir=-1;
 
-speed+=0.3;
+speed+=0.2;
 
 }
 
 
 if(x < 0){
 
-direction=1;
+dir=1;
 
-speed+=0.3;
+speed+=0.2;
 
 }
 
 
-// フェイント
-if(Math.random()<0.025){
+// 幻影フェイント
 
-direction*= -1;
+if(Math.random()<0.015){
+
+phantom();
 
 }
 
 
 // UFO移動
+
 ufo.style.left=x+"px";
 
 bubble.style.left=(x-20)+"px";
 
 
-// 煽り吹き出しランダム
 
-if(Math.random()<0.015){
+// 煽り表示
+
+if(Math.random()<0.02){
 
 bubble.innerHTML=
-taunts[Math.floor(Math.random()*taunts.length)];
+comments[Math.floor(Math.random()*comments.length)];
 
 }
 
@@ -416,6 +385,52 @@ taunts[Math.floor(Math.random()*taunts.length)];
 
 
 }
+
+
+
+// 幻影モード
+
+function phantom(){
+
+
+bubble.innerHTML=
+"今まで本気だったと思った？😈";
+
+
+speed=18;
+
+
+let count=0;
+
+
+let fast=setInterval(()=>{
+
+
+x += speed * dir;
+
+
+ufo.style.left=x+"px";
+
+bubble.style.left=(x-20)+"px";
+
+
+count++;
+
+
+if(count>20){
+
+clearInterval(fast);
+
+speed=4+Math.random()*3;
+
+}
+
+
+},20);
+
+
+}
+
 
 
 
@@ -435,6 +450,7 @@ bullet.style.display="block";
 bullet.style.left="50%";
 
 
+
 setTimeout(()=>{
 
 
@@ -447,12 +463,14 @@ judge();
 },300);
 
 
-
 }
 
 
 
+
+
 function judge(){
+
 
 
 let center=
@@ -466,14 +484,12 @@ Math.abs(
 
 
 
-if(distance < 60){
+if(distance<60){
 
 
 combo++;
 
-
-score += combo*100;
-
+score+=combo*100;
 
 stress-=10;
 
@@ -482,20 +498,20 @@ sound(900,0.3);
 
 
 
-let win=[
+let hit=[
 
-"💥 HIT！やったね",
+"💥 HIT！読んだ！",
 
-"🎯完璧！読んだ！",
+"🎯完璧な予測！",
 
-"🛸UFO撃墜成功！"
+"🛸撃墜成功！"
 
 ];
 
 
 document.getElementById("message").innerHTML=
 
-win[Math.floor(Math.random()*win.length)];
+hit[Math.floor(Math.random()*hit.length)];
 
 
 
@@ -504,31 +520,29 @@ win[Math.floor(Math.random()*win.length)];
 
 combo=0;
 
-
 stress+=20;
 
 
-sound(100,0.4);
+sound(120,0.4);
 
 
 
-let lose=[
+let miss=[
 
 "🛸え？今撃ったの？🤣",
 
-"残念〜！タイミング迷子",
-
 "こっちだよ〜って言ったのに😏",
 
-"未来予測失敗しました"
+"残念！未来予測失敗",
+
+"タイミング迷子発見😂"
 
 ];
 
 
 document.getElementById("message").innerHTML=
 
-lose[Math.floor(Math.random()*lose.length)];
-
+miss[Math.floor(Math.random()*miss.length)];
 
 
 }
@@ -546,6 +560,11 @@ if(stress>100){
 
 stress=100;
 
+document.getElementById("message").innerHTML=
+
+"💀ストレス限界突破";
+
+
 }
 
 
@@ -556,7 +575,6 @@ combo;
 
 document.getElementById("score").innerHTML=
 score;
-
 
 
 document.getElementById("stress").style.width=
@@ -584,29 +602,21 @@ move();
 }
 
 
-
-
-function saveScore(){
-
+  function saveScore(){
 
 let data=
-
 JSON.parse(
-localStorage.getItem("rank")||"[]"
+localStorage.getItem("rank") || "[]"
 );
-
 
 
 data.push(score);
 
 
-
 data.sort((a,b)=>b-a);
 
 
-
 data=data.slice(0,5);
-
 
 
 localStorage.setItem(
@@ -615,9 +625,7 @@ JSON.stringify(data)
 );
 
 
-
 showRank();
-
 
 }
 
@@ -625,37 +633,39 @@ showRank();
 
 function showRank(){
 
-
 let data=
-
 JSON.parse(
-localStorage.getItem("rank")||"[]"
+localStorage.getItem("rank") || "[]"
 );
-
 
 
 let html="";
 
 
-
 data.forEach((v,i)=>{
 
-
 html+=
-
 (i+1)+"位 "+v+"点<br>";
 
-
 });
-
 
 
 document.getElementById("ranking").innerHTML=
 
 html || "まだ記録なし";
 
-
 }
 
 
+
 showRank();
+
+
+
+</script>
+
+
+</body>
+
+</html>
+  
