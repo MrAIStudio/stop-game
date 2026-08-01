@@ -3,123 +3,194 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MrAI Studio - STOP GAME</title>
+
+<title>STOP！ストレス社会人</title>
 
 <style>
 body{
-  margin:0;
-  background:#111;
-  color:white;
-  font-family:sans-serif;
-  text-align:center;
+ margin:0;
+ background:#111;
+ color:white;
+ font-family:sans-serif;
+ text-align:center;
 }
 
-.logo{
-  font-size:28px;
-  font-weight:bold;
-  padding:20px;
-  color:#00ffff;
+.screen{
+ padding-top:50px;
 }
 
-.game{
-  margin:20px auto;
-  width:90%;
-  height:350px;
-  background:#222;
-  border:3px solid white;
-  position:relative;
-  overflow:hidden;
+h1{
+ font-size:40px;
 }
 
-.line{
-  position:absolute;
-  top:170px;
-  left:0;
-  width:100%;
-  height:10px;
-  background:#555;
-}
-
-.player{
-  width:25px;
-  height:25px;
-  background:red;
-  border-radius:50%;
-  position:absolute;
-  top:162px;
-  left:0;
-}
-
-.goal{
-  position:absolute;
-  right:20px;
-  top:130px;
-  width:70px;
-  height:80px;
-  border:3px solid lime;
+.sub{
+ font-size:20px;
+ color:#aaa;
+ margin:20px;
 }
 
 button{
-  font-size:30px;
-  padding:15px 50px;
-  border-radius:20px;
-  background:#00ffff;
-  border:none;
+ font-size:28px;
+ padding:15px 50px;
+ border-radius:20px;
+ border:none;
+ background:#00ffff;
+}
+
+.game{
+ display:none;
+ margin:20px auto;
+ width:90%;
+ height:300px;
+ background:#222;
+ border:3px solid white;
+ position:relative;
+ overflow:hidden;
+}
+
+.line{
+ position:absolute;
+ top:145px;
+ width:100%;
+ height:10px;
+ background:#555;
+}
+
+.player{
+ width:25px;
+ height:25px;
+ background:red;
+ border-radius:50%;
+ position:absolute;
+ top:137px;
+ left:0;
+}
+
+.goal{
+ position:absolute;
+ right:20px;
+ top:100px;
+ width:70px;
+ height:90px;
+ border:3px solid lime;
 }
 
 #message{
-  font-size:24px;
-  min-height:40px;
-  margin:15px;
+ font-size:22px;
+ min-height:50px;
+ margin:20px;
 }
 
 .score{
-  font-size:20px;
+ font-size:20px;
 }
+
+.rank{
+ margin-top:30px;
+}
+
+.hidden{
+ display:none;
+}
+
 </style>
 </head>
 
 
 <body>
 
-<div class="logo">
-🤖 MrAI Studio
+
+<div id="title" class="screen">
+
+<h1>
+STOP！
+</h1>
+
+<h2>
+ストレス社会人チャレンジ
+</h2>
+
+<div class="sub">
+
+仕事のストレス<br>
+この一瞬に全部ぶつけろ
+
+<br><br>
+
+※失敗すると現実でも怒られます
+
 </div>
 
-<h1>STOP！イライラ棒</h1>
 
-<div class="game">
+<button onclick="startGame()">
+START
+</button>
+
+
+<div class="rank">
+<h2>🏆 TOP5</h2>
+<div id="ranking"></div>
+</div>
+
+</div>
+
+
+
+<div id="game" class="game">
+
 <div class="line"></div>
+
 <div class="player" id="player"></div>
+
 <div class="goal"></div>
+
 </div>
 
-<button onclick="stopGame()">STOP</button>
 
-<div id="message">
-ボタン押すタイミングで人生が決まる。
-</div>
+<button id="stopBtn" class="hidden" onclick="stopGame()">
+STOP
+</button>
+
+
+<div id="message"></div>
 
 <div class="score">
-成功回数：<span id="score">0</span>
+ストレス耐性スコア：
+<span id="score">0</span>
 </div>
+
 
 
 <script>
 
 let player=document.getElementById("player");
 let message=document.getElementById("message");
-let score=document.getElementById("score");
+let scoreText=document.getElementById("score");
 
 let x=0;
-let speed=4;
+let speed=3;
+let score=0;
 let timer;
 
-function start(){
+
+
+function startGame(){
+
+document.getElementById("title").style.display="none";
+document.getElementById("game").style.display="block";
+document.getElementById("stopBtn").classList.remove("hidden");
+
+x=0;
+
+speed=3 + Math.random()*3;
 
 timer=setInterval(()=>{
 
 x+=speed;
+
+if(Math.random()<0.01){
+ speed+=2;
+}
 
 if(x>window.innerWidth*0.85){
  x=0;
@@ -131,41 +202,120 @@ player.style.left=x+"px";
 
 }
 
+
+
 function stopGame(){
 
 clearInterval(timer);
 
+
 let pos=x;
 
-if(pos>window.innerWidth*0.65 && pos<window.innerWidth*0.78){
+
+if(pos>window.innerWidth*0.65 &&
+pos<window.innerWidth*0.78){
+
+
+score+=Math.floor(speed*100);
+
 
 message.innerHTML=
-"🎉成功！奇跡起きた。明日事故るかも。";
+"🎉成功！<br>今日は定時退社できる気がする";
 
-score.innerHTML=
-Number(score.innerHTML)+1;
 
 }else{
 
+
+score=0;
+
+
 let jokes=[
-"🤣残念！才能が迷子です。",
-"😇惜しい！でも惜しいだけ。",
-"💀そのタイミング選ぶセンス逆にすごい。",
-"🤖AIでも予測不能な下手さ。"
+
+"💀残念！上司の無茶振り発生",
+
+"😇惜しい！会議延長決定",
+
+"🤖AI判定：集中力が有給中",
+
+"😭ストレス解消失敗しました"
+
 ];
+
 
 message.innerHTML=
 jokes[Math.floor(Math.random()*jokes.length)];
 
 }
 
-setTimeout(start,1000);
+
+scoreText.innerHTML=score;
+
+
+saveScore();
+
+
+setTimeout(()=>{
+
+location.reload();
+
+},2500);
+
 
 }
 
-start();
+
+
+function saveScore(){
+
+let scores=
+JSON.parse(localStorage.getItem("scores")||"[]");
+
+
+scores.push(score);
+
+scores.sort((a,b)=>b-a);
+
+scores=scores.slice(0,5);
+
+
+localStorage.setItem(
+"scores",
+JSON.stringify(scores)
+);
+
+
+}
+
+
+
+function showRank(){
+
+let scores=
+JSON.parse(localStorage.getItem("scores")||"[]");
+
+
+let html="";
+
+
+scores.forEach((s,i)=>{
+
+html+=
+(i+1)+"位 "+s+"点<br>";
+
+});
+
+
+document.getElementById("ranking").innerHTML=
+html||"まだ記録なし";
+
+}
+
+
+showRank();
+
 
 </script>
+
 
 </body>
 </html>
