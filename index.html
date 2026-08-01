@@ -148,9 +148,9 @@ text-shadow:0 0 10px #ffd16690;
 
 .field{
 width:100%;
-height:300px;
+height:340px;
 margin:8px auto;
-background:linear-gradient(180deg,#140b26,#0a0616);
+background:linear-gradient(180deg,#0a0616 0%,#140b26 55%,#1c1030 78%,#241238 100%);
 border:2px solid #7f5af0;
 border-radius:16px;
 position:relative;
@@ -158,13 +158,32 @@ overflow:hidden;
 box-shadow:0 0 26px #7f5af040, inset 0 0 40px #00000060;
 }
 
+.horizon{
+position:absolute;
+left:0;
+right:0;
+top:78%;
+height:1px;
+background:linear-gradient(90deg,transparent,#a855f780,transparent);
+pointer-events:none;
+}
+.horizon-glow{
+position:absolute;
+left:0;
+right:0;
+top:78%;
+height:60px;
+background:linear-gradient(180deg,#a855f722,transparent);
+pointer-events:none;
+}
+
 .crosshair{
 position:absolute;
 left:50%;
 top:0;
-bottom:0;
-width:2px;
-background:repeating-linear-gradient(180deg,#ffffff30 0 6px,transparent 6px 12px);
+height:78%;
+width:1px;
+background:repeating-linear-gradient(180deg,#ffffff25 0 6px,transparent 6px 12px);
 transform:translateX(-50%);
 pointer-events:none;
 }
@@ -172,22 +191,76 @@ pointer-events:none;
 position:absolute;
 left:50%;
 top:0;
-bottom:0;
-width:60px;
+height:78%;
+width:38px;
 transform:translateX(-50%);
-background:#ffd16612;
-border-left:1px dashed #ffd16650;
-border-right:1px dashed #ffd16650;
+background:#ffd16610;
+border-left:1px dashed #ffd16640;
+border-right:1px dashed #ffd16640;
 pointer-events:none;
 }
 
 .ufo{
 position:absolute;
-top:130px;
-font-size:46px;
+top:38px;
+font-size:34px;
 left:0;
 transition:0.05s;
 filter:drop-shadow(0 0 6px #7f5af0);
+z-index:3;
+}
+
+/* 発射口（銃口）*/
+.turret-mount{
+position:absolute;
+bottom:0;
+left:50%;
+transform:translateX(-50%);
+width:64px;
+height:46px;
+pointer-events:none;
+z-index:4;
+}
+.turret-base{
+position:absolute;
+bottom:0;
+left:50%;
+transform:translateX(-50%);
+width:54px;
+height:16px;
+background:linear-gradient(180deg,#3a2a5c,#1c1030);
+border-radius:8px 8px 4px 4px;
+border:1px solid #7f5af060;
+}
+.turret-barrel{
+position:absolute;
+bottom:12px;
+left:50%;
+transform:translateX(-50%);
+width:14px;
+height:34px;
+background:linear-gradient(180deg,#a855f7,#4c2e8f);
+border-radius:6px 6px 2px 2px;
+border:1px solid #ffffff30;
+box-shadow:0 0 10px #7f5af090;
+}
+.turret-muzzle{
+position:absolute;
+bottom:44px;
+left:50%;
+transform:translateX(-50%);
+width:20px;
+height:8px;
+background:#c9a8ff;
+border-radius:4px;
+box-shadow:0 0 8px #c9a8ff;
+}
+.muzzleFlash{
+animation:muzzleFlash 0.15s ease-out;
+}
+@keyframes muzzleFlash{
+0%{box-shadow:0 0 26px 10px #ffe08890; background:#fff3cc;}
+100%{box-shadow:0 0 8px #c9a8ff; background:#c9a8ff;}
 }
 
 .bubble{
@@ -204,10 +277,11 @@ font-weight:bold;
 
 .bullet{
 position:absolute;
-bottom:16px;
-font-size:32px;
+bottom:50px;
+font-size:20px;
 display:none;
 filter:drop-shadow(0 0 10px #ffd166);
+z-index:3;
 }
 
 .bar-label{
@@ -327,8 +401,8 @@ margin-top:4px;
 
 .powerup{
 position:absolute;
-top:130px;
-font-size:30px;
+top:44px;
+font-size:26px;
 display:none;
 filter:drop-shadow(0 0 8px #2cff9d);
 }
@@ -378,6 +452,8 @@ BAN！で未来を読め！
 <div class="combo" id="comboMsg"></div>
 
 <div class="field">
+<div class="horizon-glow"></div>
+<div class="horizon"></div>
 <div class="target-zone"></div>
 <div class="crosshair"></div>
 
@@ -385,6 +461,12 @@ BAN！で未来を読め！
 <div id="ufo" class="ufo">🛸</div>
 <div id="powerup" class="powerup">⭐</div>
 <div id="bullet" class="bullet">💥</div>
+
+<div class="turret-mount">
+<div class="turret-barrel" id="turretBarrel"></div>
+<div class="turret-muzzle" id="turretMuzzle"></div>
+<div class="turret-base"></div>
+</div>
 
 </div>
 
@@ -545,6 +627,40 @@ function chimeSound(){
     osc.stop(audio.currentTime + 0.2);
 }
 
+/* ---------- 軽快なBGMループ ---------- */
+let bgmTimer = null;
+let bgmStep = 0;
+const bgmPattern = [523.25,0,659.25,0,783.99,659.25,0,880.00, 783.99,0,659.25,0,523.25,0,0,0];
+
+function playBgmNote(freq){
+    if(muted || !freq) return;
+    if(!audio) audio = new AudioContext();
+    let osc = audio.createOscillator();
+    let gain = audio.createGain();
+    osc.type = "triangle";
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0.001, audio.currentTime);
+    gain.gain.linearRampToValueAtTime(0.09, audio.currentTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + 0.22);
+    osc.connect(gain);
+    gain.connect(audio.destination);
+    osc.start();
+    osc.stop(audio.currentTime + 0.22);
+}
+
+function startBGM(){
+    stopBGM();
+    bgmStep = 0;
+    bgmTimer = setInterval(()=>{
+        playBgmNote(bgmPattern[bgmStep % bgmPattern.length]);
+        bgmStep++;
+    }, 180);
+}
+
+function stopBGM(){
+    if(bgmTimer){ clearInterval(bgmTimer); bgmTimer=null; }
+}
+
 function startGame(){
 document.getElementById("title").style.display="none";
 document.getElementById("game").style.display="block";
@@ -555,6 +671,7 @@ powerupEl=document.getElementById("powerup");
 field=document.querySelector(".field");
 banSound();
 spawnPowerupCycle();
+startBGM();
 move();
 }
 
@@ -583,8 +700,8 @@ if(ufoType==="normal") speed=(4+Math.random()*3)*mult;
 if(ufoType==="boss") speed=2.5*mult;
 if(ufoType==="zigzag"){
 speed=5*mult;
-zigzagOffset = Math.sin(Date.now()/80)*30;
-ufo.style.top = (130 + zigzagOffset)+"px";
+zigzagOffset = Math.sin(Date.now()/80)*22;
+ufo.style.top = (38 + zigzagOffset)+"px";
 }
 
 x += speed * dir;
@@ -661,7 +778,7 @@ powerupEl.style.display = "none";
 
 function tryGrabPowerup(){
 if(!powerupActive) return false;
-let dist = Math.abs((x+23) - (powerupX+15));
+let dist = Math.abs((x+17) - (powerupX+15));
 if(dist < 55){
 powerupActive = false;
 powerupEl.style.display = "none";
@@ -694,20 +811,22 @@ fx.innerHTML = "BAN!!";
 document.body.appendChild(fx);
 setTimeout(()=>fx.remove(),250);
 
-navigator.vibrate?.([80,50,80]);
+let muzzle = document.getElementById("turretMuzzle");
+muzzle.classList.add("muzzleFlash");
+setTimeout(()=>muzzle.classList.remove("muzzleFlash"),150);
 
 bullet.style.display = "block";
 bullet.style.left = "50%";
-bullet.style.bottom = "16px";
+bullet.style.bottom = "50px";
 
 slowBullet();
 }
 
 function slowBullet(){
 
-let pos = 16;
-let target = 160;
-let speedB = 3;
+let pos = 50;
+let target = 250;
+let speedB = 4;
 
 let bulletTimer = setInterval(()=>{
 
@@ -728,7 +847,7 @@ let boom=document.createElement("div");
 boom.className="explode";
 boom.innerHTML="💥";
 boom.style.left=(x)+"px";
-boom.style.top="130px";
+boom.style.top="38px";
 field.appendChild(boom);
 setTimeout(()=>boom.remove(),600);
 
@@ -737,7 +856,7 @@ let star=document.createElement("div");
 star.className="star";
 star.innerHTML="⭐";
 star.style.left=(x)+"px";
-star.style.top="130px";
+star.style.top="38px";
 field.appendChild(star);
 setTimeout(()=>star.remove(),800);
 }
@@ -748,7 +867,7 @@ let p = document.createElement("div");
 p.className = "popScore";
 p.innerHTML = text;
 p.style.left = x+"px";
-p.style.top = "110px";
+p.style.top = "18px";
 field.appendChild(p);
 setTimeout(()=>p.remove(),700);
 }
@@ -773,9 +892,9 @@ return t;
 function judge(){
 
 let center=field.clientWidth/2;
-let distance=Math.abs((x+23)-center);
+let distance=Math.abs((x+17)-center);
 
-if(distance < 32){
+if(distance < 20){
 
 let base = 1;
 if(ufoType==="rare") base = 3;
@@ -818,7 +937,6 @@ document.getElementById("comboMsg").innerHTML = "";
 stress += 1;
 
 missSound();
-navigator.vibrate?.([50,50,100]);
 
 document.body.classList.add("flash");
 setTimeout(()=>document.body.classList.remove("flash"),300);
@@ -836,6 +954,7 @@ navigator.vibrate?.([200,100,200]);
 
 clearInterval(timer);
 clearInterval(powerupTimer);
+stopBGM();
 setTimeout(()=>{ showRetry(); },1200);
 
 return;
