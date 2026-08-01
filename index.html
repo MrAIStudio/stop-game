@@ -119,8 +119,9 @@ overflow:hidden;
 
 #stress{
 height:100%;
-width:50%;
+width:0%;
 background:red;
+transition:0.2s;
 }
 
 #message{
@@ -185,7 +186,7 @@ animation:starFly 0.8s forwards;
 
 <div class="sub">
 🛸 煽るUFOを予測して撃て！<br>
-「こっちだよ〜」に騙されるな<br><br>
+ストレス10で即ゲームオーバー<br><br>
 BAN! で未来を読め！
 </div>
 
@@ -211,9 +212,8 @@ BAN! で未来を読め！
 </div>
 
 <div class="status">
-連続成功：<span id="combo">0</span><br>
 スコア：<span id="score">0</span><br>
-ストレス
+ストレス（10段階）
 </div>
 
 <div class="bar"><div id="stress"></div></div>
@@ -229,10 +229,13 @@ BAN! で未来を読め！
 let ufo, bubble, bullet;
 let x=0, dir=1, speed=4;
 let timer;
-let combo=0, score=0, stress=50;
+let score=0;
+let stress=0;
 let audio;
 
-let ufoType = "normal"; // normal / fast / zigzag / rare
+let firing = false; // ★ 連射防止
+
+let ufoType = "normal";
 let zigzagOffset = 0;
 
 let comments=[
@@ -240,20 +243,38 @@ let comments=[
 "未来予測してみな？","あと0.2秒だったね","焦ってる？😏","読みが浅いね〜",
 "もっと集中しなよ？","今のは惜しい！","揺さぶられてるね〜","反応遅いよ？笑",
 "まだまだだね😈","予測できてる？","迷ってるの見えてるよ？","今のは罠だよ〜",
-"ふふふ😏","読めないでしょ？","揺らしていくよ〜","そのタイミングじゃない揺れるよ〜？",
+"ふふふ😏","読めないでしょ？","揺らしていくよ〜","そのタイミングじゃないよ",
+"逆だって言ったよね？","もっと早く！","もっと遅く！","揺れるよ〜？",
 "惑わされてるね〜","今のはフェイント！","見抜けるかな？","まだ本気じゃないよ？",
 "そろそろ本気出す？😈"
 ];
 
-function sound(f,t){
-if(!audio) audio=new AudioContext();
-let o=audio.createOscillator();
-let g=audio.createGain();
-o.connect(g); g.connect(audio.destination);
-o.frequency.value=f;
-g.gain.setValueAtTime(0.2,audio.currentTime);
-g.gain.exponentialRampToValueAtTime(0.001,audio.currentTime+t);
-o.start(); o.stop(audio.currentTime+t);
+function banSound(){
+    if(!audio) audio = new AudioContext();
+
+    // 低音爆発
+    let osc1 = audio.createOscillator();
+    let gain1 = audio.createGain();
+    osc1.frequency.value = 80;
+    gain1.gain.setValueAtTime(0.6, audio.currentTime);
+    gain1.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + 0.25);
+
+    // 高音破裂
+    let osc2 = audio.createOscillator();
+    let gain2 = audio.createGain();
+    osc2.frequency.value = 900;
+    gain2.gain.setValueAtTime(0.3, audio.currentTime);
+    gain2.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + 0.15);
+
+    osc1.connect(gain1);
+    osc2.connect(gain2);
+    gain1.connect(audio.destination);
+    gain2.connect(audio.destination);
+
+    osc1.start();
+    osc2.start();
+    osc1.stop(audio.currentTime + 0.25);
+    osc2.stop(audio.currentTime + 0.15);
 }
 
 function startGame(){
@@ -262,7 +283,7 @@ document.getElementById("game").style.display="block";
 ufo=document.getElementById("ufo");
 bubble=document.getElementById("bubble");
 bullet=document.getElementById("bullet");
-sound(600,0.1);
+banSound();
 move();
 }
 
@@ -328,8 +349,11 @@ speed=4+Math.random()*3;
 
 function stopGame(){
 
+if(firing) return;
+firing = true;
+
 clearInterval(timer);
-sound(250,0.15);
+banSound();
 
 // BAN! 演出
 let fx = document.createElement("div");
@@ -396,56 +420,35 @@ let distance=Math.abs((x+25)-center);
 
 if(distance < 30){
 
-combo++;
-let add = combo*100;
-if(ufoType==="rare") add*=3;
-score+=add;
-
-stress -= 10;
+score++;
+stress -= 1;
 if(stress < 0) stress = 0;
 
-sound(900,0.3);
 explodeEffect();
 navigator.vibrate?.(100);
 
 document.body.classList.add("shake");
 setTimeout(()=>document.body.classList.remove("shake"),300);
 
-let hit=[
-"💥 HIT！読んだ！","🎯完璧な予測！","🛸撃墜成功！"
-];
-document.getElementById("message").innerHTML=
-hit[Math.floor(Math.random()*hit.length)];
+document.getElementById("message").innerHTML="🎯 HIT！";
 
 }else{
 
-combo=0;
-stress += 20;
+stress += 1;
 
-sound(120,0.4);
 navigator.vibrate?.([50,50,100]);
 
 document.body.classList.add("flash");
 setTimeout(()=>document.body.classList.remove("flash"),300);
 
-let miss=[
-"🛸え？今撃ったの？🤣","こっちだよ〜って言ったのに😏",
-"残念！未来予測失敗","タイミング迷子発見😂"
-];
-document.getElementById("message").innerHTML=
-miss[Math.floor(Math.random()*miss.length)];
+document.getElementById("message").innerHTML="😈 MISS！";
 }
 
 // ゲームオーバー判定
-if(stress >= 100){
-stress = 100;
+if(stress >= 10){
+stress = 10;
 document.getElementById("stress").style.width = "100%";
 document.getElementById("message").innerHTML = "💀ストレス限界突破…GAME OVER";
-
-clearInterval(timer);
-
-document.body.classList.add("flash");
-setTimeout(()=>document.body.classList.remove("flash"),500);
 
 navigator.vibrate?.([200,100,200]);
 
@@ -454,11 +457,12 @@ setTimeout(()=>{ showRetry(); },1200);
 return;
 }
 
-document.getElementById("combo").innerHTML=combo;
 document.getElementById("score").innerHTML=score;
-document.getElementById("stress").style.width=stress+"%";
+document.getElementById("stress").style.width=(stress*10)+"%";
 
 saveScore();
+
+firing = false;
 
 setTimeout(()=>{
 document.getElementById("message").innerHTML="";
