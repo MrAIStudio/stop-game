@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>イライラすとっぷ - BAN Edition</title>
+<title>イライラすとっぷ - 完全版</title>
 
 <style>
 
@@ -128,10 +128,6 @@ font-size:22px;
 min-height:50px;
 }
 
-.rank{
-margin-top:20px;
-}
-
 /* BAN! エフェクト */
 .banFlash{
 position:fixed;
@@ -244,8 +240,7 @@ let comments=[
 "未来予測してみな？","あと0.2秒だったね","焦ってる？😏","読みが浅いね〜",
 "もっと集中しなよ？","今のは惜しい！","揺さぶられてるね〜","反応遅いよ？笑",
 "まだまだだね😈","予測できてる？","迷ってるの見えてるよ？","今のは罠だよ〜",
-"ふふふ😏","読めないでしょ？","揺らしていくよ〜","そのタイミングじゃないよ",
-"逆だって言ったよね？","もっと早く！","もっと遅く！","揺れるよ〜？",
+"ふふふ😏","読めないでしょ？","揺らしていくよ〜","そのタイミングじゃない揺れるよ〜？",
 "惑わされてるね〜","今のはフェイント！","見抜けるかな？","まだ本気じゃないよ？",
 "そろそろ本気出す？😈"
 ];
@@ -405,7 +400,10 @@ combo++;
 let add = combo*100;
 if(ufoType==="rare") add*=3;
 score+=add;
-stress-=10;
+
+stress -= 10;
+if(stress < 0) stress = 0;
+
 sound(900,0.3);
 explodeEffect();
 navigator.vibrate?.(100);
@@ -422,7 +420,8 @@ hit[Math.floor(Math.random()*hit.length)];
 }else{
 
 combo=0;
-stress+=20;
+stress += 20;
+
 sound(120,0.4);
 navigator.vibrate?.([50,50,100]);
 
@@ -437,10 +436,22 @@ document.getElementById("message").innerHTML=
 miss[Math.floor(Math.random()*miss.length)];
 }
 
-if(stress<0) stress=0;
-if(stress>100){
-stress=100;
-document.getElementById("message").innerHTML="💀ストレス限界突破";
+// ゲームオーバー判定
+if(stress >= 100){
+stress = 100;
+document.getElementById("stress").style.width = "100%";
+document.getElementById("message").innerHTML = "💀ストレス限界突破…GAME OVER";
+
+clearInterval(timer);
+
+document.body.classList.add("flash");
+setTimeout(()=>document.body.classList.remove("flash"),500);
+
+navigator.vibrate?.([200,100,200]);
+
+setTimeout(()=>{ showRetry(); },1200);
+
+return;
 }
 
 document.getElementById("combo").innerHTML=combo;
@@ -453,6 +464,19 @@ setTimeout(()=>{
 document.getElementById("message").innerHTML="";
 move();
 },1200);
+}
+
+function showRetry(){
+let btn = document.createElement("button");
+btn.innerHTML = "RETRY";
+btn.style.fontSize = "30px";
+btn.style.padding = "15px 40px";
+btn.style.marginTop = "20px";
+btn.style.borderRadius = "20px";
+btn.style.background = "#00ff99";
+btn.style.color = "black";
+btn.onclick = ()=>location.reload();
+document.getElementById("message").appendChild(btn);
 }
 
 function saveScore(){
