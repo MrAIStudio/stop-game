@@ -2,26 +2,53 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>イライラすとっぷ - 完全版</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>イライラすとっぷ - 完全版 PLUS</title>
 
 <style>
 
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;}
+
 body{
 margin:0;
-background:#111;
+min-height:100vh;
+background:radial-gradient(ellipse at 50% 0%, #1a1030 0%, #0a0714 55%, #050409 100%);
 color:white;
-font-family:sans-serif;
+font-family:"Hiragino Sans","Yu Gothic",sans-serif;
 text-align:center;
+overflow-x:hidden;
+position:relative;
+}
+
+/* 背景の星 */
+#stars{
+position:fixed;
+inset:0;
+z-index:0;
+pointer-events:none;
 overflow:hidden;
-transition:0.1s;
+}
+.starDot{
+position:absolute;
+background:white;
+border-radius:50%;
+opacity:0.6;
+animation:twinkle 3s infinite ease-in-out;
+}
+@keyframes twinkle{
+0%,100%{opacity:0.15;}
+50%{opacity:0.9;}
 }
 
-.shake{
-animation:shake 0.3s;
+.wrap{
+position:relative;
+z-index:1;
+max-width:480px;
+margin:0 auto;
+padding:20px 14px 40px;
 }
 
+.shake{ animation:shake 0.3s; }
 @keyframes shake{
 0%{transform:translate(0,0);}
 25%{transform:translate(10px,0);}
@@ -30,147 +57,280 @@ animation:shake 0.3s;
 100%{transform:translate(0,0);}
 }
 
-.flash{
-animation:flash 0.3s;
+.flash{ animation:flash 0.3s; }
+@keyframes flash{
+0%{box-shadow:inset 0 0 120px 40px #ff2a2a80;}
+100%{box-shadow:inset 0 0 0 0 transparent;}
 }
 
-@keyframes flash{
-0%{background:#300;}
-100%{background:#111;}
+.hitflash{ animation:hitflash 0.3s; }
+@keyframes hitflash{
+0%{box-shadow:inset 0 0 120px 40px #2cff9d80;}
+100%{box-shadow:inset 0 0 0 0 transparent;}
 }
 
 h1{
-font-size:40px;
+font-size:34px;
+margin:10px 0 4px;
+letter-spacing:1px;
+text-shadow:0 0 20px #a855f7;
 }
 
 .sub{
-font-size:20px;
+font-size:15px;
 line-height:1.8;
-color:#ccc;
+color:#c9c3e0;
+}
+
+.badge{
+display:inline-block;
+background:linear-gradient(135deg,#7f5af0,#a855f7);
+padding:3px 12px;
+border-radius:20px;
+font-size:12px;
+font-weight:bold;
+margin-bottom:10px;
+box-shadow:0 0 14px #7f5af080;
 }
 
 button{
-font-size:28px;
-padding:15px 50px;
-border-radius:20px;
+font-family:inherit;
+font-size:24px;
+padding:14px 46px;
+border-radius:50px;
 border:none;
 cursor:pointer;
+font-weight:bold;
+}
+
+#startBtn{
+margin-top:18px;
+background:linear-gradient(135deg,#7f5af0,#2cb67d);
+color:white;
+box-shadow:0 0 22px #7f5af090;
 }
 
 #banBtn{
-background:#ff4444;
+background:linear-gradient(135deg,#ff4444,#ff8844);
 color:white;
 font-weight:bold;
-box-shadow:0 0 10px #ff0000;
+box-shadow:0 0 18px #ff444490;
+width:80%;
+max-width:320px;
+transition:transform 0.08s;
+}
+#banBtn:active{ transform:scale(0.94); }
+
+#game{ display:none; }
+
+.hud{
+display:flex;
+justify-content:space-between;
+align-items:center;
+font-size:14px;
+color:#c9c3e0;
+margin-bottom:8px;
+padding:0 4px;
+}
+.hud .val{
+font-size:20px;
+color:white;
+font-weight:bold;
 }
 
-#game{
-display:none;
+.combo{
+font-size:13px;
+color:#ffd166;
+min-height:18px;
+font-weight:bold;
+text-shadow:0 0 10px #ffd16690;
 }
 
 .field{
-width:90%;
-height:320px;
-margin:20px auto;
-background:#222;
-border:3px solid white;
+width:100%;
+height:300px;
+margin:8px auto;
+background:linear-gradient(180deg,#140b26,#0a0616);
+border:2px solid #7f5af0;
+border-radius:16px;
 position:relative;
 overflow:hidden;
+box-shadow:0 0 26px #7f5af040, inset 0 0 40px #00000060;
+}
+
+.crosshair{
+position:absolute;
+left:50%;
+top:0;
+bottom:0;
+width:2px;
+background:repeating-linear-gradient(180deg,#ffffff30 0 6px,transparent 6px 12px);
+transform:translateX(-50%);
+pointer-events:none;
+}
+.target-zone{
+position:absolute;
+left:50%;
+top:0;
+bottom:0;
+width:60px;
+transform:translateX(-50%);
+background:#ffd16612;
+border-left:1px dashed #ffd16650;
+border-right:1px dashed #ffd16650;
+pointer-events:none;
 }
 
 .ufo{
 position:absolute;
 top:130px;
-font-size:50px;
+font-size:46px;
 left:0;
 transition:0.05s;
+filter:drop-shadow(0 0 6px #7f5af0);
 }
 
 .bubble{
 position:absolute;
-top:50px;
+top:44px;
 background:white;
-color:black;
-padding:8px 12px;
-border-radius:15px;
-font-size:16px;
+color:#111;
+padding:7px 11px;
+border-radius:14px;
+font-size:14px;
 white-space:nowrap;
+font-weight:bold;
 }
 
 .bullet{
 position:absolute;
-bottom:20px;
-font-size:35px;
+bottom:16px;
+font-size:32px;
 display:none;
+filter:drop-shadow(0 0 10px #ffd166);
 }
 
-.status{
-font-size:20px;
+.bar-label{
+display:flex;
+justify-content:space-between;
+font-size:12px;
+color:#c9c3e0;
+margin:14px 0 4px;
 }
 
 .bar{
-width:80%;
-height:25px;
-background:#333;
-margin:10px auto;
+width:100%;
+height:22px;
+background:#1c1430;
 border-radius:20px;
 overflow:hidden;
+border:1px solid #ffffff20;
 }
 
 #stress{
 height:100%;
 width:0%;
-background:red;
-transition:0.2s;
+background:linear-gradient(90deg,#ffd166,#ff4444);
+transition:0.25s;
 }
 
 #message{
-font-size:22px;
-min-height:50px;
+font-size:19px;
+min-height:30px;
+margin:10px 0;
+font-weight:bold;
 }
 
-/* BAN! エフェクト */
 .banFlash{
 position:fixed;
-top:40%;
+top:38%;
 left:50%;
 transform:translate(-50%,-50%);
-font-size:80px;
-color:#ff2222;
-font-weight:bold;
-text-shadow:0 0 20px #ff0000;
+font-size:70px;
+color:#ff2a2a;
+font-weight:900;
+text-shadow:0 0 24px #ff0000;
 animation:banAnim 0.4s forwards;
 pointer-events:none;
+z-index:10;
 }
-
 @keyframes banAnim{
 0%{opacity:1; transform:translate(-50%,-50%) scale(1);}
-100%{opacity:0; transform:translate(-50%,-50%) scale(2);}
+100%{opacity:0; transform:translate(-50%,-50%) scale(2.2);}
 }
 
-/* 爆発エフェクト */
 .explode{
 position:absolute;
-font-size:40px;
+font-size:38px;
 animation:boom 0.6s forwards;
+pointer-events:none;
 }
-
 @keyframes boom{
 0%{opacity:1; transform:scale(1);}
 100%{opacity:0; transform:scale(3);}
 }
 
-/* 星エフェクト */
 .star{
 position:absolute;
-color:yellow;
-font-size:20px;
+color:#ffd166;
+font-size:18px;
 animation:starFly 0.8s forwards;
+pointer-events:none;
 }
-
 @keyframes starFly{
 0%{opacity:1; transform:translate(0,0);}
 100%{opacity:0; transform:translate(80px,-80px);}
+}
+
+.popScore{
+position:absolute;
+font-weight:bold;
+font-size:18px;
+color:#2cff9d;
+animation:popUp 0.7s forwards;
+pointer-events:none;
+text-shadow:0 0 8px #2cff9d;
+}
+@keyframes popUp{
+0%{opacity:1; transform:translateY(0);}
+100%{opacity:0; transform:translateY(-40px);}
+}
+
+.rankRow{
+display:flex;
+justify-content:space-between;
+padding:6px 16px;
+font-size:15px;
+border-bottom:1px solid #ffffff15;
+}
+.rankBox{
+background:#140b26;
+border:1px solid #7f5af040;
+border-radius:12px;
+padding:6px 0;
+margin-top:8px;
+}
+
+.retryBtn{
+margin-top:14px;
+background:linear-gradient(135deg,#2cb67d,#2cff9d);
+color:#052014;
+box-shadow:0 0 18px #2cff9d80;
+}
+
+.title-tag{
+font-size:16px;
+color:#ffd166;
+font-weight:bold;
+margin-top:4px;
+}
+
+.powerup{
+position:absolute;
+top:130px;
+font-size:30px;
+display:none;
+filter:drop-shadow(0 0 8px #2cff9d);
 }
 
 </style>
@@ -179,21 +339,28 @@ animation:starFly 0.8s forwards;
 
 <body>
 
+<div id="stars"></div>
+
+<div class="wrap">
 
 <div id="title">
 
+<div class="badge">STRESS RELEASE SHOOTER</div>
 <h1>😡 イライラすとっぷ</h1>
 
 <div class="sub">
 🛸 煽るUFOを予測して撃て！<br>
-ストレス10で即ゲームオーバー<br><br>
-BAN! で未来を読め！
+ストレス10で即ゲームオーバー<br>
+連続HITでコンボボーナス発生！<br><br>
+BAN！で未来を読め！
 </div>
 
-<button onclick="startGame()">START</button>
+<button id="startBtn" onclick="startGame()">START</button>
 
-<h2>🏆 TOP5</h2>
+<div class="rankBox">
+<h2 style="margin:10px 0 4px;font-size:18px;">🏆 TOP5</h2>
 <div id="ranking"></div>
+</div>
 
 </div>
 
@@ -201,42 +368,84 @@ BAN! で未来を読め！
 
 <div id="game">
 
+<div class="hud">
+<div>SCORE<br><span class="val" id="score">0</span></div>
+<div>COMBO<br><span class="val" id="comboVal">0</span></div>
+<div>LV<br><span class="val" id="levelVal">1</span></div>
+</div>
+
+<div class="combo" id="comboMsg"></div>
+
 <div class="field">
+<div class="target-zone"></div>
+<div class="crosshair"></div>
 
 <div id="bubble" class="bubble">こっちだよ〜😏</div>
-
 <div id="ufo" class="ufo">🛸</div>
-
+<div id="powerup" class="powerup">⭐</div>
 <div id="bullet" class="bullet">💥</div>
 
 </div>
 
-<div class="status">
-スコア：<span id="score">0</span><br>
-ストレス（10段階）
-</div>
-
+<div class="bar-label"><span>ストレス</span><span id="stressNum">0</span>/10</div>
 <div class="bar"><div id="stress"></div></div>
+
+<div id="message"></div>
 
 <button id="banBtn" onclick="stopGame()">BAN！</button>
 
 </div>
 
-<div id="message"></div>
+</div>
 
 <script>
 
-let ufo, bubble, bullet;
+/* ---------- 背景の星生成 ---------- */
+(function makeStars(){
+let field = document.getElementById("stars");
+for(let i=0;i<60;i++){
+let s = document.createElement("div");
+s.className = "starDot";
+let size = Math.random()*2+1;
+s.style.width = size+"px";
+s.style.height = size+"px";
+s.style.left = Math.random()*100+"%";
+s.style.top = Math.random()*100+"%";
+s.style.animationDelay = (Math.random()*3)+"s";
+field.appendChild(s);
+}
+})();
+
+let ufo, bubble, bullet, powerupEl, field;
 let x=0, dir=1, speed=4;
 let timer;
 let score=0;
 let stress=0;
 let audio;
 
-let firing = false; // ★ 連射防止
+let firing = false;
 
 let ufoType = "normal";
 let zigzagOffset = 0;
+
+let combo = 0;
+let maxCombo = 0;
+let level = 1;
+let elapsedHits = 0;
+
+let powerupActive = false;
+let slowMoActive = false;
+let powerupX = 0;
+let powerupTimer = null;
+
+const titles = [
+  {min:0, text:""},
+  {min:5, text:"見習いハンター"},
+  {min:12, text:"UFO駆除人"},
+  {min:20, text:"未来予知の使い手"},
+  {min:30, text:"銀河のBAN王"},
+  {min:45, text:"伝説のクレーマー撃退者"}
+];
 
 let comments=[
 "こっちだよ〜😏","今押すと思った？🤣","残念、逆でした〜","読めるかな？笑",
@@ -249,20 +458,22 @@ let comments=[
 "そろそろ本気出す？😈"
 ];
 
-function banSound(){
+const comboComments = [
+"止まらない！","絶好調！","ノリノリだね！","その調子！","無双状態！"
+];
+
+function banSound(freqLow=80, freqHigh=900){
     if(!audio) audio = new AudioContext();
 
-    // 低音爆発
     let osc1 = audio.createOscillator();
     let gain1 = audio.createGain();
-    osc1.frequency.value = 80;
+    osc1.frequency.value = freqLow;
     gain1.gain.setValueAtTime(0.6, audio.currentTime);
     gain1.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + 0.25);
 
-    // 高音破裂
     let osc2 = audio.createOscillator();
     let gain2 = audio.createGain();
-    osc2.frequency.value = 900;
+    osc2.frequency.value = freqHigh;
     gain2.gain.setValueAtTime(0.3, audio.currentTime);
     gain2.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + 0.15);
 
@@ -277,13 +488,29 @@ function banSound(){
     osc2.stop(audio.currentTime + 0.15);
 }
 
+function chimeSound(){
+    if(!audio) audio = new AudioContext();
+    let osc = audio.createOscillator();
+    let gain = audio.createGain();
+    osc.frequency.value = 1300;
+    gain.gain.setValueAtTime(0.25, audio.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + 0.2);
+    osc.connect(gain);
+    gain.connect(audio.destination);
+    osc.start();
+    osc.stop(audio.currentTime + 0.2);
+}
+
 function startGame(){
 document.getElementById("title").style.display="none";
 document.getElementById("game").style.display="block";
 ufo=document.getElementById("ufo");
 bubble=document.getElementById("bubble");
 bullet=document.getElementById("bullet");
+powerupEl=document.getElementById("powerup");
+field=document.querySelector(".field");
 banSound();
+spawnPowerupCycle();
 move();
 }
 
@@ -295,28 +522,35 @@ else if(r<0.45){ ufoType="zigzag"; }
 else{ ufoType="normal"; }
 }
 
+function currentLevelMultiplier(){
+return 1 + (level-1)*0.35;
+}
+
 function move(){
 chooseUFO();
 timer=setInterval(()=>{
 
-if(ufoType==="fast") speed=10;
-if(ufoType==="normal") speed=4+Math.random()*3;
+let mult = currentLevelMultiplier() * (slowMoActive ? 0.45 : 1);
+
+if(ufoType==="fast") speed=10*mult;
+if(ufoType==="normal") speed=(4+Math.random()*3)*mult;
 if(ufoType==="zigzag"){
-speed=5;
+speed=5*mult;
 zigzagOffset = Math.sin(Date.now()/80)*30;
 ufo.style.top = (130 + zigzagOffset)+"px";
 }
 
 x += speed * dir;
 
-if(x > window.innerWidth*0.75){ dir=-1; }
+let maxW = field ? field.clientWidth-50 : window.innerWidth*0.75;
+if(x > maxW){ dir=-1; }
 if(x < 0){ dir=1; }
 
 if(ufoType==="rare"){
 ufo.style.filter="drop-shadow(0 0 20px gold)";
-bubble.innerHTML="レアUFOだよ😎";
+bubble.innerHTML="レアUFOだよ😎 (x3)";
 }else{
-ufo.style.filter="none";
+ufo.style.filter="drop-shadow(0 0 6px #7f5af0)";
 }
 
 if(Math.random()<0.015) phantom();
@@ -347,15 +581,60 @@ speed=4+Math.random()*3;
 },20);
 }
 
+/* ---------- パワーアップ（スター）システム ---------- */
+function spawnPowerupCycle(){
+powerupTimer = setInterval(()=>{
+if(!powerupActive && document.getElementById("game").style.display==="block"){
+showPowerup();
+}
+}, 9000 + Math.random()*4000);
+}
+
+function showPowerup(){
+powerupActive = true;
+let maxW = field.clientWidth-40;
+powerupX = Math.random()*maxW;
+powerupEl.style.left = powerupX+"px";
+powerupEl.style.display = "block";
+
+setTimeout(()=>{
+if(powerupActive){
+powerupActive = false;
+powerupEl.style.display = "none";
+}
+}, 3500);
+}
+
+function tryGrabPowerup(){
+if(!powerupActive) return false;
+let dist = Math.abs((x+23) - (powerupX+15));
+if(dist < 55){
+powerupActive = false;
+powerupEl.style.display = "none";
+activateSlowMo();
+chimeSound();
+return true;
+}
+return false;
+}
+
+function activateSlowMo(){
+slowMoActive = true;
+document.getElementById("message").innerHTML = "⭐ スローモーション発動！";
+setTimeout(()=>{ slowMoActive = false; }, 4000);
+}
+
 function stopGame(){
 
 if(firing) return;
 firing = true;
 
+// パワーアップ取得判定（撃つ瞬間の位置で判定）
+tryGrabPowerup();
+
 clearInterval(timer);
 banSound();
 
-// BAN! 演出
 let fx = document.createElement("div");
 fx.className = "banFlash";
 fx.innerHTML = "BAN!!";
@@ -366,16 +645,16 @@ navigator.vibrate?.([80,50,80]);
 
 bullet.style.display = "block";
 bullet.style.left = "50%";
-bullet.style.bottom = "20px";
+bullet.style.bottom = "16px";
 
 slowBullet();
 }
 
 function slowBullet(){
 
-let pos = 20;
+let pos = 16;
 let target = 160;
-let speedB = 2;
+let speedB = 3;
 
 let bulletTimer = setInterval(()=>{
 
@@ -383,10 +662,8 @@ pos += speedB;
 bullet.style.bottom = pos + "px";
 
 if(pos >= target){
-
 clearInterval(bulletTimer);
 bullet.style.display = "none";
-
 judge();
 }
 
@@ -399,7 +676,7 @@ boom.className="explode";
 boom.innerHTML="💥";
 boom.style.left=(x)+"px";
 boom.style.top="130px";
-document.body.appendChild(boom);
+field.appendChild(boom);
 setTimeout(()=>boom.remove(),600);
 
 for(let i=0;i<5;i++){
@@ -408,31 +685,80 @@ star.className="star";
 star.innerHTML="⭐";
 star.style.left=(x)+"px";
 star.style.top="130px";
-document.body.appendChild(star);
+field.appendChild(star);
 setTimeout(()=>star.remove(),800);
 }
 }
 
+function popScoreText(text){
+let p = document.createElement("div");
+p.className = "popScore";
+p.innerHTML = text;
+p.style.left = x+"px";
+p.style.top = "110px";
+field.appendChild(p);
+setTimeout(()=>p.remove(),700);
+}
+
+function updateLevel(){
+let newLevel = 1 + Math.floor(elapsedHits/6);
+if(newLevel !== level){
+level = newLevel;
+document.getElementById("levelVal").innerHTML = level;
+document.getElementById("message").innerHTML = "🔺 LEVEL UP！ Lv."+level;
+}
+}
+
+function currentTitle(){
+let t = "";
+for(const item of titles){
+if(maxCombo >= item.min) t = item.text;
+}
+return t;
+}
+
 function judge(){
 
-let center=window.innerWidth/2;
-let distance=Math.abs((x+25)-center);
+let center=field.clientWidth/2;
+let distance=Math.abs((x+23)-center);
 
-if(distance < 30){
+if(distance < 32){
 
-score++;
+let base = 1;
+if(ufoType==="rare") base = 3;
+
+combo++;
+if(combo > maxCombo) maxCombo = combo;
+elapsedHits++;
+
+let comboBonus = combo>=10 ? 3 : combo>=5 ? 2 : 1;
+let gained = base * comboBonus;
+score += gained;
+
 stress -= 1;
 if(stress < 0) stress = 0;
 
 explodeEffect();
+popScoreText("+"+gained + (comboBonus>1 ? " COMBO×"+comboBonus : ""));
 navigator.vibrate?.(100);
 
-document.body.classList.add("shake");
-setTimeout(()=>document.body.classList.remove("shake"),300);
+document.querySelector(".field").classList.add("hitflash");
+setTimeout(()=>document.querySelector(".field").classList.remove("hitflash"),300);
 
 document.getElementById("message").innerHTML="🎯 HIT！";
 
+document.getElementById("comboVal").innerHTML = combo;
+if(combo>0 && combo%5===0){
+document.getElementById("comboMsg").innerHTML = combo+"連続！ "+comboComments[Math.floor(Math.random()*comboComments.length)];
+}
+
+updateLevel();
+
 }else{
+
+combo = 0;
+document.getElementById("comboVal").innerHTML = combo;
+document.getElementById("comboMsg").innerHTML = "";
 
 stress += 1;
 
@@ -444,14 +770,15 @@ setTimeout(()=>document.body.classList.remove("flash"),300);
 document.getElementById("message").innerHTML="😈 MISS！";
 }
 
-// ゲームオーバー判定
 if(stress >= 10){
 stress = 10;
 document.getElementById("stress").style.width = "100%";
+document.getElementById("stressNum").innerHTML = 10;
 document.getElementById("message").innerHTML = "💀ストレス限界突破…GAME OVER";
 
 navigator.vibrate?.([200,100,200]);
 
+clearInterval(powerupTimer);
 setTimeout(()=>{ showRetry(); },1200);
 
 return;
@@ -459,6 +786,7 @@ return;
 
 document.getElementById("score").innerHTML=score;
 document.getElementById("stress").style.width=(stress*10)+"%";
+document.getElementById("stressNum").innerHTML = stress;
 
 saveScore();
 
@@ -467,36 +795,44 @@ firing = false;
 setTimeout(()=>{
 document.getElementById("message").innerHTML="";
 move();
-},1200);
+},900);
 }
 
 function showRetry(){
-let btn = document.createElement("button");
-btn.innerHTML = "RETRY";
-btn.style.fontSize = "30px";
-btn.style.padding = "15px 40px";
-btn.style.marginTop = "20px";
-btn.style.borderRadius = "20px";
-btn.style.background = "#00ff99";
-btn.style.color = "black";
-btn.onclick = ()=>location.reload();
-document.getElementById("message").appendChild(btn);
+let box = document.getElementById("message");
+
+let title = currentTitle();
+if(title){
+let tEl = document.createElement("div");
+tEl.className = "title-tag";
+tEl.innerHTML = "🏅 称号：「"+title+"」獲得！（最大コンボ "+maxCombo+"）";
+box.appendChild(tEl);
 }
 
+let btn = document.createElement("button");
+btn.className = "retryBtn";
+btn.innerHTML = "RETRY";
+btn.onclick = ()=>location.reload();
+box.appendChild(btn);
+}
+
+let rankData = [];
+
 function saveScore(){
-let data=JSON.parse(localStorage.getItem("rank") || "[]");
-data.push(score);
-data.sort((a,b)=>b-a);
-data=data.slice(0,5);
-localStorage.setItem("rank",JSON.stringify(data));
+rankData.push(score);
+rankData.sort((a,b)=>b-a);
+rankData = rankData.slice(0,5);
 showRank();
 }
 
 function showRank(){
-let data=JSON.parse(localStorage.getItem("rank") || "[]");
+let data = rankData;
 let html="";
-data.forEach((v,i)=>{ html+=(i+1)+"位 "+v+"点<br>"; });
-document.getElementById("ranking").innerHTML=html || "まだ記録なし";
+data.forEach((v,i)=>{
+let medal = i===0 ? "🥇" : i===1 ? "🥈" : i===2 ? "🥉" : (i+1)+"位";
+html += "<div class='rankRow'><span>"+medal+"</span><span>"+v+"点</span></div>";
+});
+document.getElementById("ranking").innerHTML=html || "<div class='rankRow'><span>まだ記録なし</span></div>";
 }
 
 showRank();
