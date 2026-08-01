@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -9,118 +10,145 @@
 <style>
 
 body{
-margin:0;
-background:#111;
-color:white;
-font-family:sans-serif;
-text-align:center;
+ margin:0;
+ background:#111;
+ color:white;
+ font-family:sans-serif;
+ text-align:center;
 }
 
 h1{
-font-size:42px;
-margin-top:40px;
+ font-size:40px;
+ margin-top:40px;
 }
 
 .sub{
-font-size:20px;
-color:#ccc;
-line-height:1.8;
+ color:#ccc;
+ font-size:20px;
+ line-height:1.8;
 }
+
 
 button{
-font-size:28px;
-padding:15px 45px;
-border-radius:20px;
-border:none;
-background:#00ffff;
-margin:15px;
+ font-size:28px;
+ padding:15px 45px;
+ border-radius:20px;
+ border:none;
+ background:#00ffff;
 }
 
-.game{
-display:none;
+
+#game{
+ display:none;
+}
+
+
+.field{
+
 width:90%;
 height:300px;
-margin:20px auto;
 background:#222;
 border:3px solid white;
+margin:20px auto;
 position:relative;
 overflow:hidden;
+
 }
 
-.line{
-position:absolute;
-top:145px;
-width:100%;
-height:10px;
-background:#555;
-}
 
-.player{
-width:25px;
-height:25px;
-background:red;
-border-radius:50%;
-position:absolute;
-top:137px;
-left:0;
-}
+.zone{
 
-.goal{
 position:absolute;
-right:20px;
-top:100px;
-width:70px;
-height:90px;
+left:50%;
+top:80px;
+transform:translateX(-50%);
+
+width:80px;
+height:120px;
+
 border:3px solid lime;
+
 }
 
 
-.status{
-font-size:20px;
-margin:10px;
-}
+.ufo{
 
+position:absolute;
 
-.bar{
-width:80%;
-height:25px;
-background:#333;
-margin:10px auto;
-border-radius:20px;
-overflow:hidden;
-}
+top:110px;
 
+font-size:45px;
 
-#stress{
-height:100%;
-width:50%;
-background:red;
+left:0;
+
 }
 
 
 #message{
+
 font-size:22px;
 min-height:50px;
+
+}
+
+
+.status{
+
+font-size:20px;
+
+}
+
+
+.bar{
+
+width:80%;
+height:25px;
+
+background:#333;
+
+margin:10px auto;
+
+border-radius:20px;
+
+overflow:hidden;
+
+}
+
+
+#stress{
+
+height:100%;
+
+width:50%;
+
+background:red;
+
 }
 
 
 .rank{
+
 margin-top:20px;
+
 }
 
 
 .hidden{
+
 display:none;
+
 }
 
 </style>
 
 </head>
 
+
 <body>
 
 
 <div id="title">
+
 
 <h1>
 😡 イライラすとっぷ
@@ -129,19 +157,21 @@ display:none;
 
 <div class="sub">
 
-仕事のストレス<br>
-この一瞬に全部ぶつけろ
+🛸 UFOを狙い撃ち<br>
 
+真ん中でSTOPできるか？
 
 <br><br>
 
-※失敗すると現実でも怒られます
+外したらストレス爆発💥
 
 </div>
 
 
 <button onclick="startGame()">
+
 START
+
 </button>
 
 
@@ -153,36 +183,37 @@ START
 
 </div>
 
-</div>
-
-
-
-<div id="game" class="game">
-
-<div class="line"></div>
-
-<div class="player" id="player"></div>
-
-<div class="goal"></div>
 
 </div>
 
 
-<div id="info" class="status hidden">
 
-ストレスレベル：
-<span id="level">
-新人社員
-</span>
+<div id="game">
 
-<br>
 
-連続成功：
+<div class="field">
+
+
+<div class="zone"></div>
+
+
+<div class="ufo" id="ufo">
+
+🛸
+
+</div>
+
+
+</div>
+
+
+
+<div class="status">
+
+連続命中：
 <span id="combo">
 0
 </span>
-
-回
 
 <br>
 
@@ -191,38 +222,48 @@ START
 0
 </span>
 
+<br>
+
+ストレス
+
 </div>
 
 
-
-<div class="bar hidden" id="barbox">
+<div class="bar">
 
 <div id="stress"></div>
 
 </div>
 
 
-
-<button id="stop" class="hidden" onclick="stopGame()">
+<button onclick="stopGame()">
 
 STOP
 
 </button>
 
 
+</div>
+
+
+
 <div id="message"></div>
+
 
 
 <script>
 
 
-let player=document.getElementById("player");
+let ufo=document.getElementById("ufo");
 
 let x=0;
 
-let speed=3;
+let direction=1;
+
+let speed=4;
 
 let timer;
+
 
 let combo=0;
 
@@ -231,279 +272,62 @@ let score=0;
 let stress=50;
 
 
-
 let audio=new AudioContext();
 
 
 
 function sound(freq,time){
 
-let osc=audio.createOscillator();
+let o=audio.createOscillator();
 
-let gain=audio.createGain();
+let g=audio.createGain();
 
-osc.connect(gain);
 
-gain.connect(audio.destination);
+o.connect(g);
 
-osc.frequency.value=freq;
+g.connect(audio.destination);
 
-osc.start();
 
-gain.gain.setValueAtTime(0.2,audio.currentTime);
+o.frequency.value=freq;
 
-gain.gain.exponentialRampToValueAtTime(
+
+g.gain.setValueAtTime(
+0.2,
+audio.currentTime
+);
+
+
+g.gain.exponentialRampToValueAtTime(
 0.001,
 audio.currentTime+time
 );
 
-osc.stop(audio.currentTime+time);
+
+o.start();
+
+o.stop(audio.currentTime+time);
 
 }
 
 
 function startGame(){
 
+
 document.getElementById("title").style.display="none";
 
 document.getElementById("game").style.display="block";
-
-document.getElementById("info").classList.remove("hidden");
-
-document.getElementById("barbox").classList.remove("hidden");
-
-document.getElementById("stop").classList.remove("hidden");
 
 
 sound(600,0.1);
 
 
-speed=3+Math.random()*2;
+speed=3+Math.random()*4;
 
 
-timer=setInterval(()=>{
+move();
 
-x+=speed;
 
-
-if(Math.random()<0.015){
-
-speed+=1.5;
-
-}
-
-
-if(x>window.innerWidth*0.85){
-
-x=0;
-
-}
-
-
-player.style.left=x+"px";
-
-
-},20);
-
-}
-
- function stopGame(){
-
-clearInterval(timer);
-
-sound(250,0.15);
-
-
-let pos=x;
-
-
-if(pos>window.innerWidth*0.65 &&
-pos<window.innerWidth*0.78){
-
-
-combo++;
-
-score += combo * 100;
-
-
-stress-=10;
-
-
-sound(900,0.3);
-
-
-message.innerHTML=
-"🎉成功！<br>今日は定時退社できるかもしれない";
-
-
-}else{
-
-
-combo=0;
-
-stress+=25;
-
-
-sound(120,0.4);
-
-
-let jokes=[
-
-"💀残念！上司の無茶振り発生",
-
-"😇惜しい！会議が延長されました",
-
-"🤖AI判定：集中力がログアウト",
-
-"😭ストレス解消失敗しました"
-
-];
-
-
-message.innerHTML=
-jokes[Math.floor(Math.random()*jokes.length)];
-
-}
-
-
-if(stress<0){
-stress=0;
-}
-
-if(stress>100){
-
-stress=100;
-
-message.innerHTML=
-"💀限界突破<br>明日は有給申請してください";
-
-}
-
-
-document.getElementById("combo").innerHTML=combo;
-
-document.getElementById("score").innerHTML=score;
-
-
-updateStress();
-
-
-updateLevel();
-
-
-saveScore();
-
-
-
-setTimeout(()=>{
-
-message.innerHTML="";
-
-startGame();
-
-},1500);
-
-
-}
-
-
-
-function updateStress(){
-
-document.getElementById("stress").style.width=
-stress+"%";
-
-}
-
-
-
-function updateLevel(){
-
-let lv=
-"新人社員";
-
-
-if(combo>=5){
-lv="中堅社員";
-}
-
-if(combo>=10){
-lv="ベテラン社員";
-}
-
-if(combo>=20){
-lv="限界社畜";
-}
-
-
-document.getElementById("level").innerHTML=
-lv;
-
-}
-
-
-
-function saveScore(){
-
-let data=
-JSON.parse(localStorage.getItem("rank")||"[]");
-
-
-data.push(score);
-
-
-data.sort((a,b)=>b-a);
-
-
-data=data.slice(0,5);
-
-
-localStorage.setItem(
-"rank",
-JSON.stringify(data)
-);
-
-
-showRank();
-
-}
-
-
-
-function showRank(){
-
-let data=
-JSON.parse(localStorage.getItem("rank")||"[]");
-
-
-let html="";
-
-
-data.forEach((v,i)=>{
-
-html+=
-(i+1)+"位 "+v+"点<br>";
-
-});
-
-
-document.getElementById("ranking").innerHTML=
-html || "まだ記録なし";
-
-}
-
-
-
-showRank();
-
-
-</script>
-
-
-</body>
-
-</html>
-function move(){
+}function move(){
 
 timer=setInterval(()=>{
 
