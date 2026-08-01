@@ -317,6 +317,50 @@ background:linear-gradient(90deg,#ffd166,#ff4444);
 transition:0.25s;
 }
 
+#hpBarFill{
+height:100%;
+width:100%;
+background:linear-gradient(90deg,#2cff9d,#7f5af0);
+transition:0.25s;
+}
+
+.ufo.enraged{
+animation:enrageZoom 2s ease-in-out;
+filter:drop-shadow(0 0 30px #ff2222) !important;
+z-index:6;
+}
+@keyframes enrageZoom{
+0%{transform:scale(1);}
+12%{transform:scale(2.6) rotate(-4deg);}
+25%{transform:scale(2.35) rotate(4deg);}
+40%{transform:scale(2.55) rotate(-3deg);}
+60%{transform:scale(2.5) rotate(3deg);}
+85%{transform:scale(2.2);}
+100%{transform:scale(1);}
+}
+
+.enrageFlash{
+position:absolute;
+left:50%;
+top:42%;
+transform:translate(-50%,-50%);
+font-size:24px;
+font-weight:900;
+color:#ff3344;
+text-shadow:0 0 16px #ff0000;
+z-index:8;
+animation:enrageTextPulse 2s ease-in-out forwards;
+pointer-events:none;
+white-space:nowrap;
+}
+@keyframes enrageTextPulse{
+0%{opacity:0; transform:translate(-50%,-50%) scale(0.5);}
+12%{opacity:1; transform:translate(-50%,-50%) scale(1.25);}
+25%{transform:translate(-50%,-50%) scale(1);}
+82%{opacity:1;}
+100%{opacity:0; transform:translate(-50%,-50%) scale(1);}
+}
+
 #message{
 font-size:19px;
 min-height:30px;
@@ -460,6 +504,9 @@ BAN！で未来を読め！
 
 <div class="combo" id="comboMsg"></div>
 
+<div class="bar-label"><span>👾 敵の体力</span><span id="hpNum">4/4</span></div>
+<div class="bar"><div id="hpBarFill"></div></div>
+
 <div class="field">
 <div class="horizon-glow"></div>
 <div class="horizon"></div>
@@ -522,8 +569,14 @@ let zigzagOffset = 0;
 
 let combo = 0;
 let maxCombo = 0;
-let level = 1;
+let level = 1; // ステージ
 let elapsedHits = 0;
+
+let enemyHP = 4;
+let enemyMaxHP = 4;
+let totalKills = 0;
+let totalHits = 0;
+let enraged = false;
 
 let powerupActive = false;
 let slowMoActive = false;
@@ -657,6 +710,22 @@ function missSound(){
     osc.stop(audio.currentTime + 0.25);
 }
 
+function angrySound(){
+    if(muted) return;
+    audio = getAudio();
+    let osc = audio.createOscillator();
+    let gain = audio.createGain();
+    osc.type = "sawtooth";
+    osc.frequency.setValueAtTime(160, audio.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(45, audio.currentTime + 0.6);
+    gain.gain.setValueAtTime(0.35, audio.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + 0.6);
+    osc.connect(gain);
+    gain.connect(audio.destination);
+    osc.start();
+    osc.stop(audio.currentTime + 0.6);
+}
+
 function toggleMute(){
     muted = !muted;
     document.getElementById("muteBtn").innerHTML = muted ? "🔇" : "🔊";
@@ -739,8 +808,54 @@ function currentLevelMultiplier(){
 return 1 + (level-1)*0.35;
 }
 
-function move(){
+/* ---------- 敵HP・ステージシステム ---------- */
+function baseHPForStage(lv){
+return 4 + (lv-1)*2; // ステージ1=HP4、以降+2ずつ
+}
+
+function newEnemy(){
 chooseUFO();
+enemyMaxHP = baseHPForStage(level);
+if(ufoType==="boss") enemyMaxHP = Math.round(enemyMaxHP*1.8);
+enemyHP = enemyMaxHP;
+updateHPBar();
+}
+
+function updateHPBar(){
+let pct = Math.max(0,(enemyHP/enemyMaxHP)*100);
+document.getElementById("hpBarFill").style.width = pct+"%";
+document.getElementById("hpNum").innerHTML = Math.max(0,enemyHP)+"/"+enemyMaxHP;
+}
+
+function triggerEnrage(){
+enraged = true;
+ufo.classList.add("enraged");
+angrySound();
+navigator.vibrate?.([100,60,100,60,220]);
+
+let fx=document.createElement("div");
+fx.className="enrageFlash";
+fx.innerHTML="😡 怒ったぞー！！";
+field.appendChild(fx);
+setTimeout(()=>fx.remove(),2000);
+
+setTimeout(()=>{
+ufo.classList.remove("enraged");
+enraged = false;
+},2000);
+}
+
+function stageUp(){
+let newLevel = 1 + Math.floor(totalKills/3);
+if(newLevel !== level){
+level = newLevel;
+document.getElementById("levelVal").innerHTML = level;
+document.getElementById("message").innerHTML = "🔺 ステージアップ！ Stage "+level;
+}
+}
+
+function move(){
+newEnemy();
 timer=setInterval(()=>{
 
 let mult = currentLevelMultiplier() * (slowMoActive ? 0.45 : 1);
@@ -760,6 +875,7 @@ let maxW = field ? field.clientWidth-50 : window.innerWidth*0.75;
 if(x > maxW){ dir=-1; }
 if(x < 0){ dir=1; }
 
+if(!enraged){
 if(ufoType==="rare"){
 ufo.style.filter="drop-shadow(0 0 20px gold)";
 ufo.style.fontSize="40px";
@@ -770,9 +886,9 @@ ufo.style.fontSize="70px";
 ufo.style.filter="drop-shadow(0 0 6px #7f5af0)";
 ufo.style.fontSize="34px";
 }
+}
 
 if(Math.random()<0.0012) phantom();
-if(Math.random()<0.004) chooseUFO();
 
 ufo.style.left=x+"px";
 bubble.style.left=(x-20)+"px";
@@ -916,21 +1032,22 @@ field.appendChild(p);
 setTimeout(()=>p.remove(),700);
 }
 
-function updateLevel(){
-let newLevel = 1 + Math.floor(elapsedHits/6);
-if(newLevel !== level){
-level = newLevel;
-document.getElementById("levelVal").innerHTML = level;
-document.getElementById("message").innerHTML = "🔺 LEVEL UP！ Lv."+level;
-}
-}
-
 function currentTitle(){
 let t = "";
 for(const item of titles){
 if(maxCombo >= item.min) t = item.text;
 }
 return t;
+}
+
+function hitSpark(){
+let star=document.createElement("div");
+star.className="star";
+star.innerHTML="✨";
+star.style.left=(x)+"px";
+star.style.top="38px";
+field.appendChild(star);
+setTimeout(()=>star.remove(),500);
 }
 
 function judge(){
@@ -946,7 +1063,7 @@ if(ufoType==="boss") base = 5;
 
 combo++;
 if(combo > maxCombo) maxCombo = combo;
-elapsedHits++;
+totalHits++;
 
 let comboBonus = combo>=10 ? 3 : combo>=5 ? 2 : 1;
 let gained = base * comboBonus;
@@ -956,21 +1073,36 @@ stress -= (ufoType==="boss" ? 2 : 1);
 if(stress < 0) stress = 0;
 
 hitSound();
-explodeEffect();
 popScoreText("+"+gained + (comboBonus>1 ? " COMBO×"+comboBonus : ""));
 navigator.vibrate?.(100);
 
 document.querySelector(".field").classList.add("hitflash");
 setTimeout(()=>document.querySelector(".field").classList.remove("hitflash"),300);
 
-document.getElementById("message").innerHTML="🎯 HIT！";
-
 document.getElementById("comboVal").innerHTML = combo;
 if(combo>0 && combo%5===0){
 document.getElementById("comboMsg").innerHTML = combo+"連続！ "+comboComments[Math.floor(Math.random()*comboComments.length)];
 }
 
-updateLevel();
+// 敵のHPを削る
+enemyHP -= 1;
+updateHPBar();
+
+if(enemyHP <= 0){
+totalKills++;
+explodeEffect();
+document.getElementById("message").innerHTML="💥 撃破！";
+stageUp();
+newEnemy();
+}else{
+hitSpark();
+document.getElementById("message").innerHTML="🎯 HIT！";
+}
+
+// 5発ごとに敵が怒って巨大化するびっくり演出
+if(totalHits % 5 === 0 && !enraged){
+triggerEnrage();
+}
 
 }else{
 
@@ -1015,7 +1147,6 @@ firing = false;
 
 setTimeout(()=>{
 document.getElementById("message").innerHTML="";
-chooseUFO();
 },900);
 }
 
