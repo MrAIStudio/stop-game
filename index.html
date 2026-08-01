@@ -4,116 +4,134 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>STOP！ストレス社会人</title>
+<title>イライラすとっぷ</title>
 
 <style>
-body{
- margin:0;
- background:#111;
- color:white;
- font-family:sans-serif;
- text-align:center;
-}
 
-.screen{
- padding-top:50px;
+body{
+margin:0;
+background:#111;
+color:white;
+font-family:sans-serif;
+text-align:center;
 }
 
 h1{
- font-size:40px;
+font-size:42px;
+margin-top:40px;
 }
 
 .sub{
- font-size:20px;
- color:#aaa;
- margin:20px;
+font-size:20px;
+color:#ccc;
+line-height:1.8;
 }
 
 button{
- font-size:28px;
- padding:15px 50px;
- border-radius:20px;
- border:none;
- background:#00ffff;
+font-size:28px;
+padding:15px 45px;
+border-radius:20px;
+border:none;
+background:#00ffff;
+margin:15px;
 }
 
 .game{
- display:none;
- margin:20px auto;
- width:90%;
- height:300px;
- background:#222;
- border:3px solid white;
- position:relative;
- overflow:hidden;
+display:none;
+width:90%;
+height:300px;
+margin:20px auto;
+background:#222;
+border:3px solid white;
+position:relative;
+overflow:hidden;
 }
 
 .line{
- position:absolute;
- top:145px;
- width:100%;
- height:10px;
- background:#555;
+position:absolute;
+top:145px;
+width:100%;
+height:10px;
+background:#555;
 }
 
 .player{
- width:25px;
- height:25px;
- background:red;
- border-radius:50%;
- position:absolute;
- top:137px;
- left:0;
+width:25px;
+height:25px;
+background:red;
+border-radius:50%;
+position:absolute;
+top:137px;
+left:0;
 }
 
 .goal{
- position:absolute;
- right:20px;
- top:100px;
- width:70px;
- height:90px;
- border:3px solid lime;
+position:absolute;
+right:20px;
+top:100px;
+width:70px;
+height:90px;
+border:3px solid lime;
 }
+
+
+.status{
+font-size:20px;
+margin:10px;
+}
+
+
+.bar{
+width:80%;
+height:25px;
+background:#333;
+margin:10px auto;
+border-radius:20px;
+overflow:hidden;
+}
+
+
+#stress{
+height:100%;
+width:50%;
+background:red;
+}
+
 
 #message{
- font-size:22px;
- min-height:50px;
- margin:20px;
+font-size:22px;
+min-height:50px;
 }
 
-.score{
- font-size:20px;
-}
 
 .rank{
- margin-top:30px;
+margin-top:20px;
 }
 
+
 .hidden{
- display:none;
+display:none;
 }
 
 </style>
-</head>
 
+</head>
 
 <body>
 
 
-<div id="title" class="screen">
+<div id="title">
 
 <h1>
-STOP！
+😡 イライラすとっぷ
 </h1>
 
-<h2>
-ストレス社会人チャレンジ
-</h2>
 
 <div class="sub">
 
 仕事のストレス<br>
 この一瞬に全部ぶつけろ
+
 
 <br><br>
 
@@ -128,8 +146,11 @@ START
 
 
 <div class="rank">
+
 <h2>🏆 TOP5</h2>
+
 <div id="ranking"></div>
+
 </div>
 
 </div>
@@ -147,66 +168,150 @@ START
 </div>
 
 
-<button id="stopBtn" class="hidden" onclick="stopGame()">
+<div id="info" class="status hidden">
+
+ストレスレベル：
+<span id="level">
+新人社員
+</span>
+
+<br>
+
+連続成功：
+<span id="combo">
+0
+</span>
+
+回
+
+<br>
+
+スコア：
+<span id="score">
+0
+</span>
+
+</div>
+
+
+
+<div class="bar hidden" id="barbox">
+
+<div id="stress"></div>
+
+</div>
+
+
+
+<button id="stop" class="hidden" onclick="stopGame()">
+
 STOP
+
 </button>
 
 
 <div id="message"></div>
 
-<div class="score">
-ストレス耐性スコア：
-<span id="score">0</span>
-</div>
-
-
 
 <script>
 
+
 let player=document.getElementById("player");
-let message=document.getElementById("message");
-let scoreText=document.getElementById("score");
 
 let x=0;
+
 let speed=3;
-let score=0;
+
 let timer;
 
+let combo=0;
+
+let score=0;
+
+let stress=50;
+
+
+
+let audio=new AudioContext();
+
+
+
+function sound(freq,time){
+
+let osc=audio.createOscillator();
+
+let gain=audio.createGain();
+
+osc.connect(gain);
+
+gain.connect(audio.destination);
+
+osc.frequency.value=freq;
+
+osc.start();
+
+gain.gain.setValueAtTime(0.2,audio.currentTime);
+
+gain.gain.exponentialRampToValueAtTime(
+0.001,
+audio.currentTime+time
+);
+
+osc.stop(audio.currentTime+time);
+
+}
 
 
 function startGame(){
 
 document.getElementById("title").style.display="none";
+
 document.getElementById("game").style.display="block";
-document.getElementById("stopBtn").classList.remove("hidden");
 
-x=0;
+document.getElementById("info").classList.remove("hidden");
 
-speed=3 + Math.random()*3;
+document.getElementById("barbox").classList.remove("hidden");
+
+document.getElementById("stop").classList.remove("hidden");
+
+
+sound(600,0.1);
+
+
+speed=3+Math.random()*2;
+
 
 timer=setInterval(()=>{
 
 x+=speed;
 
-if(Math.random()<0.01){
- speed+=2;
+
+if(Math.random()<0.015){
+
+speed+=1.5;
+
 }
+
 
 if(x>window.innerWidth*0.85){
- x=0;
+
+x=0;
+
 }
 
+
 player.style.left=x+"px";
+
 
 },20);
 
 }
 
-
-
-function stopGame(){
+ function stopGame(){
 
 clearInterval(timer);
+
+sound(250,0.15);
 
 
 let pos=x;
@@ -216,26 +321,39 @@ if(pos>window.innerWidth*0.65 &&
 pos<window.innerWidth*0.78){
 
 
-score+=Math.floor(speed*100);
+combo++;
+
+score += combo * 100;
+
+
+stress-=10;
+
+
+sound(900,0.3);
 
 
 message.innerHTML=
-"🎉成功！<br>今日は定時退社できる気がする";
+"🎉成功！<br>今日は定時退社できるかもしれない";
 
 
 }else{
 
 
-score=0;
+combo=0;
+
+stress+=25;
+
+
+sound(120,0.4);
 
 
 let jokes=[
 
 "💀残念！上司の無茶振り発生",
 
-"😇惜しい！会議延長決定",
+"😇惜しい！会議が延長されました",
 
-"🤖AI判定：集中力が有給中",
+"🤖AI判定：集中力がログアウト",
 
 "😭ストレス解消失敗しました"
 
@@ -248,18 +366,78 @@ jokes[Math.floor(Math.random()*jokes.length)];
 }
 
 
-scoreText.innerHTML=score;
+if(stress<0){
+stress=0;
+}
+
+if(stress>100){
+
+stress=100;
+
+message.innerHTML=
+"💀限界突破<br>明日は有給申請してください";
+
+}
+
+
+document.getElementById("combo").innerHTML=combo;
+
+document.getElementById("score").innerHTML=score;
+
+
+updateStress();
+
+
+updateLevel();
 
 
 saveScore();
 
 
+
 setTimeout(()=>{
 
-location.reload();
+message.innerHTML="";
 
-},2500);
+startGame();
 
+},1500);
+
+
+}
+
+
+
+function updateStress(){
+
+document.getElementById("stress").style.width=
+stress+"%";
+
+}
+
+
+
+function updateLevel(){
+
+let lv=
+"新人社員";
+
+
+if(combo>=5){
+lv="中堅社員";
+}
+
+if(combo>=10){
+lv="ベテラン社員";
+}
+
+if(combo>=20){
+lv="限界社畜";
+}
+
+
+document.getElementById("level").innerHTML=
+lv;
 
 }
 
@@ -267,22 +445,26 @@ location.reload();
 
 function saveScore(){
 
-let scores=
-JSON.parse(localStorage.getItem("scores")||"[]");
+let data=
+JSON.parse(localStorage.getItem("rank")||"[]");
 
 
-scores.push(score);
+data.push(score);
 
-scores.sort((a,b)=>b-a);
 
-scores=scores.slice(0,5);
+data.sort((a,b)=>b-a);
+
+
+data=data.slice(0,5);
 
 
 localStorage.setItem(
-"scores",
-JSON.stringify(scores)
+"rank",
+JSON.stringify(data)
 );
 
+
+showRank();
 
 }
 
@@ -290,25 +472,26 @@ JSON.stringify(scores)
 
 function showRank(){
 
-let scores=
-JSON.parse(localStorage.getItem("scores")||"[]");
+let data=
+JSON.parse(localStorage.getItem("rank")||"[]");
 
 
 let html="";
 
 
-scores.forEach((s,i)=>{
+data.forEach((v,i)=>{
 
 html+=
-(i+1)+"位 "+s+"点<br>";
+(i+1)+"位 "+v+"点<br>";
 
 });
 
 
 document.getElementById("ranking").innerHTML=
-html||"まだ記録なし";
+html || "まだ記録なし";
 
 }
+
 
 
 showRank();
@@ -318,4 +501,5 @@ showRank();
 
 
 </body>
+
 </html>
