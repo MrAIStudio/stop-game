@@ -265,14 +265,23 @@ animation:muzzleFlash 0.15s ease-out;
 
 .bubble{
 position:absolute;
-top:44px;
+top:2px;
 background:white;
 color:#111;
-padding:7px 11px;
+padding:5px 10px;
 border-radius:14px;
-font-size:14px;
+font-size:13px;
 white-space:nowrap;
 font-weight:bold;
+opacity:0;
+transform:translateY(4px) scale(0.9);
+transition:opacity 0.25s, transform 0.25s;
+pointer-events:none;
+z-index:5;
+}
+.bubble.show{
+opacity:1;
+transform:translateY(0) scale(1);
 }
 
 .bullet{
@@ -457,7 +466,7 @@ BAN！で未来を読め！
 <div class="target-zone"></div>
 <div class="crosshair"></div>
 
-<div id="bubble" class="bubble">こっちだよ〜😏</div>
+<div id="bubble" class="bubble"></div>
 <div id="ufo" class="ufo">🛸</div>
 <div id="powerup" class="powerup">⭐</div>
 <div id="bullet" class="bullet">💥</div>
@@ -545,11 +554,51 @@ const comboComments = [
 "止まらない！","絶好調！","ノリノリだね！","その調子！","無双状態！"
 ];
 
+/* ---------- 吹き出し：たまに呟く演出 ---------- */
+let bubbleShowTimer = null;
+let bubbleHideTimer = null;
+
+function showTaunt(text){
+if(!bubble) return;
+clearTimeout(bubbleHideTimer);
+bubble.innerHTML = text;
+bubble.classList.add("show");
+bubbleHideTimer = setTimeout(()=>{
+bubble.classList.remove("show");
+}, 1700);
+}
+
+function scheduleTaunt(){
+let delay = 4500 + Math.random()*4500; // 4.5〜9秒に一度だけポロッと呟く
+bubbleShowTimer = setTimeout(()=>{
+if(document.getElementById("game").style.display==="block"){
+showTaunt(comments[Math.floor(Math.random()*comments.length)]);
+}
+scheduleTaunt();
+}, delay);
+}
+
+function stopTaunts(){
+clearTimeout(bubbleShowTimer);
+clearTimeout(bubbleHideTimer);
+if(bubble) bubble.classList.remove("show");
+}
+
 let muted = false;
+
+function getAudio(){
+    if(!audio){
+        audio = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if(audio.state === "suspended"){
+        audio.resume();
+    }
+    return audio;
+}
 
 function banSound(freqLow=80, freqHigh=900){
     if(muted) return;
-    if(!audio) audio = new AudioContext();
+    audio = getAudio();
 
     let osc1 = audio.createOscillator();
     let gain1 = audio.createGain();
@@ -576,7 +625,7 @@ function banSound(freqLow=80, freqHigh=900){
 
 function hitSound(){
     if(muted) return;
-    if(!audio) audio = new AudioContext();
+    audio = getAudio();
     [880, 1320].forEach((f,i)=>{
         let osc = audio.createOscillator();
         let gain = audio.createGain();
@@ -594,7 +643,7 @@ function hitSound(){
 
 function missSound(){
     if(muted) return;
-    if(!audio) audio = new AudioContext();
+    audio = getAudio();
     let osc = audio.createOscillator();
     let gain = audio.createGain();
     osc.type = "sawtooth";
@@ -615,7 +664,7 @@ function toggleMute(){
 
 function chimeSound(){
     if(muted) return;
-    if(!audio) audio = new AudioContext();
+    audio = getAudio();
     let osc = audio.createOscillator();
     let gain = audio.createGain();
     osc.frequency.value = 1300;
@@ -634,7 +683,7 @@ const bgmPattern = [523.25,0,659.25,0,783.99,659.25,0,880.00, 783.99,0,659.25,0,
 
 function playBgmNote(freq){
     if(muted || !freq) return;
-    if(!audio) audio = new AudioContext();
+    audio = getAudio();
     let osc = audio.createOscillator();
     let gain = audio.createGain();
     osc.type = "triangle";
@@ -672,14 +721,15 @@ field=document.querySelector(".field");
 banSound();
 spawnPowerupCycle();
 startBGM();
+scheduleTaunt();
 move();
 }
 
 function chooseUFO(){
 let r=Math.random();
 let bossChance = level>=3 ? 0.06 : 0;
-if(r<bossChance){ ufoType="boss"; }
-else if(r<bossChance+0.05){ ufoType="rare"; }
+if(r<bossChance){ ufoType="boss"; showTaunt("ボスUFO出現！！(x5)👹"); }
+else if(r<bossChance+0.05){ ufoType="rare"; showTaunt("レアUFOだよ😎 (x3)"); }
 else if(r<bossChance+0.25){ ufoType="fast"; }
 else if(r<bossChance+0.45){ ufoType="zigzag"; }
 else{ ufoType="normal"; }
@@ -712,32 +762,26 @@ if(x < 0){ dir=1; }
 
 if(ufoType==="rare"){
 ufo.style.filter="drop-shadow(0 0 20px gold)";
-ufo.style.fontSize="46px";
-bubble.innerHTML="レアUFOだよ😎 (x3)";
+ufo.style.fontSize="40px";
 }else if(ufoType==="boss"){
 ufo.style.filter="drop-shadow(0 0 22px #ff3366)";
-ufo.style.fontSize="72px";
-bubble.innerHTML="ボスUFO出現！！(x5)👹";
+ufo.style.fontSize="70px";
 }else{
 ufo.style.filter="drop-shadow(0 0 6px #7f5af0)";
-ufo.style.fontSize="46px";
+ufo.style.fontSize="34px";
 }
 
-if(Math.random()<0.015) phantom();
+if(Math.random()<0.0012) phantom();
 if(Math.random()<0.004) chooseUFO();
 
 ufo.style.left=x+"px";
 bubble.style.left=(x-20)+"px";
 
-if(Math.random()<0.02){
-bubble.innerHTML=comments[Math.floor(Math.random()*comments.length)];
-}
-
 },20);
 }
 
 function phantom(){
-bubble.innerHTML="今まで本気だったと思った？😈";
+showTaunt("今まで本気だったと思った？😈");
 speed=18;
 let count=0;
 let fast=setInterval(()=>{
@@ -955,6 +999,7 @@ navigator.vibrate?.([200,100,200]);
 clearInterval(timer);
 clearInterval(powerupTimer);
 stopBGM();
+stopTaunts();
 setTimeout(()=>{ showRetry(); },1200);
 
 return;
