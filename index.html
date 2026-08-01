@@ -250,13 +250,13 @@ font-size:70px;
 color:#ff2a2a;
 font-weight:900;
 text-shadow:0 0 24px #ff0000;
-animation:banAnim 0.4s forwards;
+animation:banAnim 0.25s forwards;
 pointer-events:none;
 z-index:10;
 }
 @keyframes banAnim{
 0%{opacity:1; transform:translate(-50%,-50%) scale(1);}
-100%{opacity:0; transform:translate(-50%,-50%) scale(2.2);}
+100%{opacity:0; transform:translate(-50%,-50%) scale(1.8);}
 }
 
 .explode{
@@ -372,6 +372,7 @@ BAN！で未来を読め！
 <div>SCORE<br><span class="val" id="score">0</span></div>
 <div>COMBO<br><span class="val" id="comboVal">0</span></div>
 <div>LV<br><span class="val" id="levelVal">1</span></div>
+<div><button id="muteBtn" onclick="toggleMute()" style="font-size:18px;padding:4px 10px;background:#1c1430;color:white;box-shadow:none;">🔊</button></div>
 </div>
 
 <div class="combo" id="comboMsg"></div>
@@ -462,7 +463,10 @@ const comboComments = [
 "止まらない！","絶好調！","ノリノリだね！","その調子！","無双状態！"
 ];
 
+let muted = false;
+
 function banSound(freqLow=80, freqHigh=900){
+    if(muted) return;
     if(!audio) audio = new AudioContext();
 
     let osc1 = audio.createOscillator();
@@ -488,7 +492,47 @@ function banSound(freqLow=80, freqHigh=900){
     osc2.stop(audio.currentTime + 0.15);
 }
 
+function hitSound(){
+    if(muted) return;
+    if(!audio) audio = new AudioContext();
+    [880, 1320].forEach((f,i)=>{
+        let osc = audio.createOscillator();
+        let gain = audio.createGain();
+        osc.frequency.value = f;
+        osc.type = "sine";
+        gain.gain.setValueAtTime(0.001, audio.currentTime + i*0.06);
+        gain.gain.linearRampToValueAtTime(0.25, audio.currentTime + i*0.06 + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + i*0.06 + 0.18);
+        osc.connect(gain);
+        gain.connect(audio.destination);
+        osc.start(audio.currentTime + i*0.06);
+        osc.stop(audio.currentTime + i*0.06 + 0.2);
+    });
+}
+
+function missSound(){
+    if(muted) return;
+    if(!audio) audio = new AudioContext();
+    let osc = audio.createOscillator();
+    let gain = audio.createGain();
+    osc.type = "sawtooth";
+    osc.frequency.setValueAtTime(180, audio.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(60, audio.currentTime + 0.25);
+    gain.gain.setValueAtTime(0.25, audio.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + 0.25);
+    osc.connect(gain);
+    gain.connect(audio.destination);
+    osc.start();
+    osc.stop(audio.currentTime + 0.25);
+}
+
+function toggleMute(){
+    muted = !muted;
+    document.getElementById("muteBtn").innerHTML = muted ? "🔇" : "🔊";
+}
+
 function chimeSound(){
+    if(muted) return;
     if(!audio) audio = new AudioContext();
     let osc = audio.createOscillator();
     let gain = audio.createGain();
@@ -516,9 +560,11 @@ move();
 
 function chooseUFO(){
 let r=Math.random();
-if(r<0.05){ ufoType="rare"; }
-else if(r<0.25){ ufoType="fast"; }
-else if(r<0.45){ ufoType="zigzag"; }
+let bossChance = level>=3 ? 0.06 : 0;
+if(r<bossChance){ ufoType="boss"; }
+else if(r<bossChance+0.05){ ufoType="rare"; }
+else if(r<bossChance+0.25){ ufoType="fast"; }
+else if(r<bossChance+0.45){ ufoType="zigzag"; }
 else{ ufoType="normal"; }
 }
 
@@ -534,6 +580,7 @@ let mult = currentLevelMultiplier() * (slowMoActive ? 0.45 : 1);
 
 if(ufoType==="fast") speed=10*mult;
 if(ufoType==="normal") speed=(4+Math.random()*3)*mult;
+if(ufoType==="boss") speed=2.5*mult;
 if(ufoType==="zigzag"){
 speed=5*mult;
 zigzagOffset = Math.sin(Date.now()/80)*30;
@@ -548,9 +595,15 @@ if(x < 0){ dir=1; }
 
 if(ufoType==="rare"){
 ufo.style.filter="drop-shadow(0 0 20px gold)";
+ufo.style.fontSize="46px";
 bubble.innerHTML="レアUFOだよ😎 (x3)";
+}else if(ufoType==="boss"){
+ufo.style.filter="drop-shadow(0 0 22px #ff3366)";
+ufo.style.fontSize="72px";
+bubble.innerHTML="ボスUFO出現！！(x5)👹";
 }else{
 ufo.style.filter="drop-shadow(0 0 6px #7f5af0)";
+ufo.style.fontSize="46px";
 }
 
 if(Math.random()<0.015) phantom();
@@ -639,7 +692,7 @@ let fx = document.createElement("div");
 fx.className = "banFlash";
 fx.innerHTML = "BAN!!";
 document.body.appendChild(fx);
-setTimeout(()=>fx.remove(),400);
+setTimeout(()=>fx.remove(),250);
 
 navigator.vibrate?.([80,50,80]);
 
@@ -726,6 +779,7 @@ if(distance < 32){
 
 let base = 1;
 if(ufoType==="rare") base = 3;
+if(ufoType==="boss") base = 5;
 
 combo++;
 if(combo > maxCombo) maxCombo = combo;
@@ -735,9 +789,10 @@ let comboBonus = combo>=10 ? 3 : combo>=5 ? 2 : 1;
 let gained = base * comboBonus;
 score += gained;
 
-stress -= 1;
+stress -= (ufoType==="boss" ? 2 : 1);
 if(stress < 0) stress = 0;
 
+hitSound();
 explodeEffect();
 popScoreText("+"+gained + (comboBonus>1 ? " COMBO×"+comboBonus : ""));
 navigator.vibrate?.(100);
@@ -762,6 +817,7 @@ document.getElementById("comboMsg").innerHTML = "";
 
 stress += 1;
 
+missSound();
 navigator.vibrate?.([50,50,100]);
 
 document.body.classList.add("flash");
