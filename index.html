@@ -12,15 +12,15 @@
 body{
 margin:0;
 min-height:100vh;
-background:radial-gradient(ellipse at 50% 0%, #1a1030 0%, #0a0714 55%, #050409 100%);
-color:white;
-font-family:"Hiragino Sans","Yu Gothic",sans-serif;
+background:linear-gradient(160deg, #ffe6f0 0%, #ffeef7 22%, #ece6ff 55%, #e3f8ef 100%);
+color:#6b5b8a;
+font-family:"Hiragino Maru Gothic ProN","Yu Gothic","M PLUS Rounded 1c","Hiragino Sans",sans-serif;
 text-align:center;
 overflow-x:hidden;
 position:relative;
 }
 
-/* 背景の星 */
+/* 背景のふわふわバブル */
 #stars{
 position:fixed;
 inset:0;
@@ -30,14 +30,14 @@ overflow:hidden;
 }
 .starDot{
 position:absolute;
-background:white;
+background:radial-gradient(circle at 35% 30%, #ffffffcc, #ffd6e6aa 60%, transparent 75%);
 border-radius:50%;
-opacity:0.6;
-animation:twinkle 3s infinite ease-in-out;
+opacity:0.7;
+animation:floaty 6s infinite ease-in-out;
 }
-@keyframes twinkle{
-0%,100%{opacity:0.15;}
-50%{opacity:0.9;}
+@keyframes floaty{
+0%,100%{transform:translateY(0px);opacity:0.35;}
+50%{transform:translateY(-18px);opacity:0.85;}
 }
 
 .wrap{
@@ -51,21 +51,21 @@ padding:20px 14px 40px;
 .shake{ animation:shake 0.3s; }
 @keyframes shake{
 0%{transform:translate(0,0);}
-25%{transform:translate(10px,0);}
-50%{transform:translate(-10px,0);}
-75%{transform:translate(10px,0);}
+25%{transform:translate(8px,0);}
+50%{transform:translate(-8px,0);}
+75%{transform:translate(8px,0);}
 100%{transform:translate(0,0);}
 }
 
 .flash{ animation:flash 0.3s; }
 @keyframes flash{
-0%{box-shadow:inset 0 0 120px 40px #ff2a2a80;}
+0%{box-shadow:inset 0 0 120px 40px #ff9e9e80;}
 100%{box-shadow:inset 0 0 0 0 transparent;}
 }
 
 .hitflash{ animation:hitflash 0.3s; }
 @keyframes hitflash{
-0%{box-shadow:inset 0 0 120px 40px #2cff9d80;}
+0%{box-shadow:inset 0 0 120px 40px #b8f2d980;}
 100%{box-shadow:inset 0 0 0 0 transparent;}
 }
 
@@ -73,24 +73,26 @@ h1{
 font-size:34px;
 margin:10px 0 4px;
 letter-spacing:1px;
-text-shadow:0 0 20px #a855f7;
+color:#7a5fa8;
+text-shadow:0 0 16px #ffc4de;
 }
 
 .sub{
 font-size:15px;
 line-height:1.8;
-color:#c9c3e0;
+color:#8a7aa8;
 }
 
 .badge{
 display:inline-block;
-background:linear-gradient(135deg,#7f5af0,#a855f7);
-padding:3px 12px;
+background:linear-gradient(135deg,#ffb6c9,#c9b8ff);
+color:#6b4a72;
+padding:4px 14px;
 border-radius:20px;
 font-size:12px;
 font-weight:bold;
 margin-bottom:10px;
-box-shadow:0 0 14px #7f5af080;
+box-shadow:0 4px 14px #d9c9ff90;
 }
 
 button{
@@ -105,21 +107,20 @@ font-weight:bold;
 
 #startBtn{
 margin-top:18px;
-background:linear-gradient(135deg,#7f5af0,#2cb67d);
-color:white;
-box-shadow:0 0 22px #7f5af090;
+background:linear-gradient(135deg,#ffb6c9,#a8c8ff);
+color:#5b4a72;
+box-shadow:0 8px 20px #c9b8ff70;
 }
 
-#banBtn{
-background:linear-gradient(135deg,#ff4444,#ff8844);
-color:white;
+.tapHint{
+font-size:13px;
+color:#a898c8;
+margin:6px 0 2px;
 font-weight:bold;
-box-shadow:0 0 18px #ff444490;
-width:80%;
-max-width:320px;
-transition:transform 0.08s;
 }
-#banBtn:active{ transform:scale(0.94); }
+
+.field{ cursor:pointer; }
+.field:active{ filter:brightness(0.97); }
 
 #game{ display:none; }
 
@@ -128,34 +129,34 @@ display:flex;
 justify-content:space-between;
 align-items:center;
 font-size:14px;
-color:#c9c3e0;
+color:#9a8ab8;
 margin-bottom:8px;
 padding:0 4px;
 }
 .hud .val{
 font-size:20px;
-color:white;
+color:#6b5b8a;
 font-weight:bold;
 }
 
 .combo{
 font-size:13px;
-color:#ffd166;
+color:#ff9ec4;
 min-height:18px;
 font-weight:bold;
-text-shadow:0 0 10px #ffd16690;
+text-shadow:0 0 8px #ffc4de80;
 }
 
 .field{
 width:100%;
 height:340px;
 margin:8px auto;
-background:linear-gradient(180deg,#0a0616 0%,#140b26 55%,#1c1030 78%,#241238 100%);
-border:2px solid #7f5af0;
-border-radius:16px;
+background:linear-gradient(180deg,#eef4ff 0%, #f3ecff 45%, #ffeef5 78%, #fff6ec 100%);
+border:3px solid #d9c9ff;
+border-radius:24px;
 position:relative;
 overflow:hidden;
-box-shadow:0 0 26px #7f5af040, inset 0 0 40px #00000060;
+box-shadow:0 0 24px #d9c9ff60, inset 0 0 40px #ffffffa0;
 }
 
 .horizon{
@@ -163,8 +164,8 @@ position:absolute;
 left:0;
 right:0;
 top:78%;
-height:1px;
-background:linear-gradient(90deg,transparent,#a855f780,transparent);
+height:2px;
+background:linear-gradient(90deg,transparent,#ffb6c9a0,transparent);
 pointer-events:none;
 }
 .horizon-glow{
@@ -173,7 +174,7 @@ left:0;
 right:0;
 top:78%;
 height:60px;
-background:linear-gradient(180deg,#a855f722,transparent);
+background:linear-gradient(180deg,#ffe0ec55,transparent);
 pointer-events:none;
 }
 
@@ -183,7 +184,7 @@ left:50%;
 top:0;
 height:78%;
 width:1px;
-background:repeating-linear-gradient(180deg,#ffffff25 0 6px,transparent 6px 12px);
+background:repeating-linear-gradient(180deg,#c9b8ff40 0 6px,transparent 6px 12px);
 transform:translateX(-50%);
 pointer-events:none;
 }
@@ -192,11 +193,11 @@ position:absolute;
 left:50%;
 top:0;
 height:78%;
-width:20px;
+width:36px;
 transform:translateX(-50%);
-background:#ffd16610;
-border-left:1px dashed #ffd16640;
-border-right:1px dashed #ffd16640;
+background:#ffd9ec30;
+border-left:1px dashed #ffb6c980;
+border-right:1px dashed #ffb6c980;
 pointer-events:none;
 }
 
@@ -206,7 +207,7 @@ top:38px;
 font-size:34px;
 left:0;
 transition:0.05s;
-filter:drop-shadow(0 0 6px #7f5af0);
+filter:drop-shadow(0 0 8px #c9b8ff);
 z-index:3;
 }
 
@@ -228,9 +229,9 @@ left:50%;
 transform:translateX(-50%);
 width:54px;
 height:16px;
-background:linear-gradient(180deg,#3a2a5c,#1c1030);
-border-radius:8px 8px 4px 4px;
-border:1px solid #7f5af060;
+background:linear-gradient(180deg,#ffd9ec,#ffb6c9);
+border-radius:10px 10px 6px 6px;
+border:1px solid #ff9eb670;
 }
 .turret-barrel{
 position:absolute;
@@ -239,10 +240,10 @@ left:50%;
 transform:translateX(-50%);
 width:14px;
 height:34px;
-background:linear-gradient(180deg,#a855f7,#4c2e8f);
-border-radius:6px 6px 2px 2px;
-border:1px solid #ffffff30;
-box-shadow:0 0 10px #7f5af090;
+background:linear-gradient(180deg,#c9b8ff,#a8c8ff);
+border-radius:8px 8px 4px 4px;
+border:1px solid #ffffff80;
+box-shadow:0 0 10px #c9b8ff90;
 }
 .turret-muzzle{
 position:absolute;
@@ -251,25 +252,25 @@ left:50%;
 transform:translateX(-50%);
 width:20px;
 height:8px;
-background:#c9a8ff;
+background:#ffe0a3;
 border-radius:4px;
-box-shadow:0 0 8px #c9a8ff;
+box-shadow:0 0 10px #ffe0a3;
 }
 .muzzleFlash{
 animation:muzzleFlash 0.15s ease-out;
 }
 @keyframes muzzleFlash{
-0%{box-shadow:0 0 26px 10px #ffe08890; background:#fff3cc;}
-100%{box-shadow:0 0 8px #c9a8ff; background:#c9a8ff;}
+0%{box-shadow:0 0 26px 10px #fff3c490; background:#fffbe6;}
+100%{box-shadow:0 0 8px #ffe0a3; background:#ffe0a3;}
 }
 
 .bubble{
 position:absolute;
 top:2px;
-background:white;
-color:#111;
+background:#fffdfb;
+color:#6b5b8a;
 padding:5px 10px;
-border-radius:14px;
+border-radius:16px;
 font-size:13px;
 white-space:nowrap;
 font-weight:bold;
@@ -278,6 +279,8 @@ transform:translateY(4px) scale(0.9);
 transition:opacity 0.25s, transform 0.25s;
 pointer-events:none;
 z-index:5;
+box-shadow:0 4px 12px #d9c9ff60;
+border:1.5px solid #ffd9ec;
 }
 .bubble.show{
 opacity:1;
@@ -289,7 +292,7 @@ position:absolute;
 bottom:50px;
 font-size:20px;
 display:none;
-filter:drop-shadow(0 0 10px #ffd166);
+filter:drop-shadow(0 0 10px #ffe0a3);
 z-index:3;
 }
 
@@ -309,36 +312,36 @@ animation:ufoJiggle 0.35s ease;
 display:flex;
 justify-content:space-between;
 font-size:12px;
-color:#c9c3e0;
+color:#9a8ab8;
 margin:14px 0 4px;
 }
 
 .bar{
 width:100%;
 height:22px;
-background:#1c1430;
+background:#f3ecff;
 border-radius:20px;
 overflow:hidden;
-border:1px solid #ffffff20;
+border:1px solid #d9c9ff80;
 }
 
 #stress{
 height:100%;
 width:0%;
-background:linear-gradient(90deg,#ffd166,#ff4444);
+background:linear-gradient(90deg,#ffe0a3,#ff9eb5);
 transition:0.25s;
 }
 
 #hpBarFill{
 height:100%;
 width:100%;
-background:linear-gradient(90deg,#2cff9d,#7f5af0);
+background:linear-gradient(90deg,#b8f2d9,#a8c8ff);
 transition:0.25s;
 }
 
 .ufo.enraged{
 animation:enrageZoom 2s ease-in-out;
-filter:drop-shadow(0 0 30px #ff2222) !important;
+filter:drop-shadow(0 0 26px #ff8a80) !important;
 z-index:6;
 }
 @keyframes enrageZoom{
@@ -358,8 +361,8 @@ top:42%;
 transform:translate(-50%,-50%);
 font-size:24px;
 font-weight:900;
-color:#ff3344;
-text-shadow:0 0 16px #ff0000;
+color:#ff6f8a;
+text-shadow:0 0 14px #ffc4de;
 z-index:8;
 animation:enrageTextPulse 2s ease-in-out forwards;
 pointer-events:none;
@@ -378,6 +381,7 @@ font-size:19px;
 min-height:30px;
 margin:10px 0;
 font-weight:bold;
+color:#7a5fa8;
 }
 
 .banFlash{
@@ -385,10 +389,10 @@ position:fixed;
 top:38%;
 left:50%;
 transform:translate(-50%,-50%);
-font-size:70px;
-color:#ff2a2a;
+font-size:64px;
+color:#ff8fab;
 font-weight:900;
-text-shadow:0 0 24px #ff0000;
+text-shadow:0 0 20px #ffd6e6;
 animation:banAnim 0.25s forwards;
 pointer-events:none;
 z-index:10;
@@ -411,7 +415,7 @@ pointer-events:none;
 
 .star{
 position:absolute;
-color:#ffd166;
+color:#ffcf8a;
 font-size:18px;
 animation:starFly 0.8s forwards;
 pointer-events:none;
@@ -425,10 +429,10 @@ pointer-events:none;
 position:absolute;
 font-weight:bold;
 font-size:18px;
-color:#2cff9d;
+color:#7fd9b6;
 animation:popUp 0.7s forwards;
 pointer-events:none;
-text-shadow:0 0 8px #2cff9d;
+text-shadow:0 0 8px #b8f2d9;
 }
 @keyframes popUp{
 0%{opacity:1; transform:translateY(0);}
@@ -440,26 +444,28 @@ display:flex;
 justify-content:space-between;
 padding:6px 16px;
 font-size:15px;
-border-bottom:1px solid #ffffff15;
+color:#6b5b8a;
+border-bottom:1px solid #d9c9ff50;
 }
 .rankBox{
-background:#140b26;
-border:1px solid #7f5af040;
-border-radius:12px;
+background:#fffdfb;
+border:1px solid #d9c9ff80;
+border-radius:16px;
 padding:6px 0;
 margin-top:8px;
+box-shadow:0 4px 14px #d9c9ff40;
 }
 
 .retryBtn{
 margin-top:14px;
-background:linear-gradient(135deg,#2cb67d,#2cff9d);
-color:#052014;
-box-shadow:0 0 18px #2cff9d80;
+background:linear-gradient(135deg,#b8f2d9,#a8e6cf);
+color:#2f6b52;
+box-shadow:0 8px 20px #b8f2d980;
 }
 
 .title-tag{
 font-size:16px;
-color:#ffd166;
+color:#e0a35c;
 font-weight:bold;
 margin-top:4px;
 }
@@ -469,7 +475,7 @@ position:absolute;
 top:44px;
 font-size:26px;
 display:none;
-filter:drop-shadow(0 0 8px #2cff9d);
+filter:drop-shadow(0 0 10px #b8f2d9);
 }
 
 </style>
@@ -488,10 +494,10 @@ filter:drop-shadow(0 0 8px #2cff9d);
 <h1>😡 イライラすとっぷ</h1>
 
 <div class="sub">
-🛸 煽るUFOを予測して撃て！<br>
+🛸 煽るUFOを予測してタップで撃て！<br>
 ストレス10で即ゲームオーバー<br>
 連続HITでコンボボーナス発生！<br><br>
-BAN！で未来を読め！
+狙った場所をタップして未来を読め！
 </div>
 
 <button id="startBtn" onclick="startGame()">START</button>
@@ -511,7 +517,7 @@ BAN！で未来を読め！
 <div>SCORE<br><span class="val" id="score">0</span></div>
 <div>COMBO<br><span class="val" id="comboVal">0</span></div>
 <div>LV<br><span class="val" id="levelVal">1</span></div>
-<div><button id="muteBtn" onclick="toggleMute()" style="font-size:18px;padding:4px 10px;background:#1c1430;color:white;box-shadow:none;">🔊</button></div>
+<div><button id="muteBtn" onclick="toggleMute()" style="font-size:18px;padding:4px 10px;background:#f3ecff;color:#7a5fa8;box-shadow:none;">🔊</button></div>
 </div>
 
 <div class="combo" id="comboMsg"></div>
@@ -519,7 +525,7 @@ BAN！で未来を読め！
 <div class="bar-label"><span>👾 敵の体力</span><span id="hpNum">4/4</span></div>
 <div class="bar"><div id="hpBarFill"></div></div>
 
-<div class="field">
+<div class="field" id="fieldEl" onclick="fireAt(event.clientX)">
 <div class="horizon-glow"></div>
 <div class="horizon"></div>
 <div class="target-zone"></div>
@@ -528,7 +534,7 @@ BAN！で未来を読め！
 <div id="bubble" class="bubble"></div>
 <div id="ufo" class="ufo">🛸</div>
 <div id="powerup" class="powerup">⭐</div>
-<div id="bullet" class="bullet">💥</div>
+<div id="bullet" class="bullet">🥚</div>
 
 <div class="turret-mount">
 <div class="turret-barrel" id="turretBarrel"></div>
@@ -538,12 +544,12 @@ BAN！で未来を読め！
 
 </div>
 
+<div class="tapHint">画面をタップして発射！</div>
+
 <div class="bar-label"><span>ストレス</span><span id="stressNum">0</span>/10</div>
 <div class="bar"><div id="stress"></div></div>
 
 <div id="message"></div>
-
-<button id="banBtn" onclick="stopGame()">BAN！</button>
 
 </div>
 
@@ -578,6 +584,9 @@ let firing = false;
 
 let ufoType = "normal";
 let zigzagOffset = 0;
+let lastTeleport = 0;
+let baitWasFleeing = false;
+let shotX = 0;
 
 let combo = 0;
 let maxCombo = 0;
@@ -811,11 +820,21 @@ move();
 function chooseUFO(){
 let r=Math.random();
 let bossChance = level>=3 ? 0.06 : 0;
-if(r<bossChance){ ufoType="boss"; showTaunt("ボス出現！！(x5)👹"); }
-else if(r<bossChance+0.05){ ufoType="rare"; showTaunt("レア個体だよ😎 (x3)"); }
-else if(r<bossChance+0.25){ ufoType="fast"; }
-else if(r<bossChance+0.45){ ufoType="zigzag"; }
-else{ ufoType="normal"; }
+let c = bossChance;
+if(r<c){ ufoType="boss"; showTaunt("ボス出現！！(x5)👹"); return; }
+c += 0.05;
+if(r<c){ ufoType="rare"; showTaunt("レア個体だよ😎 (x3)"); return; }
+c += 0.14;
+if(r<c){ ufoType="fast"; return; }
+c += 0.14;
+if(r<c){ ufoType="zigzag"; return; }
+c += 0.14;
+if(r<c){ ufoType="teleport"; showTaunt("つかまえてみ？📍"); return; }
+c += 0.14;
+if(r<c){ ufoType="bait"; showTaunt("いつでも逃げれるし😏"); return; }
+c += 0.14;
+if(r<c){ ufoType="jitter"; return; }
+ufoType="normal";
 }
 
 function currentLevelMultiplier(){
@@ -886,10 +905,37 @@ let mult = currentLevelMultiplier() * (slowMoActive ? 0.45 : 1);
 if(ufoType==="fast") speed=10*mult;
 if(ufoType==="normal") speed=(4+Math.random()*3)*mult;
 if(ufoType==="boss") speed=2.5*mult;
+if(ufoType==="rare") speed=6*mult;
 if(ufoType==="zigzag"){
 speed=5*mult;
 zigzagOffset = Math.sin(Date.now()/80)*22;
 ufo.style.top = (38 + zigzagOffset)+"px";
+}
+if(ufoType==="jitter"){
+speed=7*mult;
+if(Math.random()<0.06){ dir = -dir; }
+}
+if(ufoType==="bait"){
+let fleeing = (bullet.style.display==="block");
+if(fleeing && !baitWasFleeing){
+let center = field.clientWidth/2;
+dir = ((x+17) < center) ? -1 : 1;
+}
+baitWasFleeing = fleeing;
+speed = (fleeing ? 15 : 3)*mult;
+}
+if(ufoType==="teleport"){
+speed = 2*mult;
+let now = Date.now();
+if(now - lastTeleport > 700 + Math.random()*500){
+lastTeleport = now;
+let maxWT = field ? field.clientWidth-50 : window.innerWidth*0.75;
+x = Math.random()*maxWT;
+ufo.style.left = x+"px";
+bubble.style.left=(x-20)+"px";
+navigator.vibrate?.(25);
+if(Math.random()<0.35) showTaunt("ここだよ〜😝");
+}
 }
 
 x += speed * dir;
@@ -900,13 +946,13 @@ if(x < 0){ dir=1; }
 
 if(!enraged){
 if(ufoType==="rare"){
-ufo.style.filter="drop-shadow(0 0 20px gold)";
+ufo.style.filter="drop-shadow(0 0 20px #ffe0a3)";
 ufo.style.fontSize="40px";
 }else if(ufoType==="boss"){
-ufo.style.filter="drop-shadow(0 0 22px #ff3366)";
+ufo.style.filter="drop-shadow(0 0 22px #ff8fab)";
 ufo.style.fontSize="70px";
 }else{
-ufo.style.filter="drop-shadow(0 0 6px #7f5af0)";
+ufo.style.filter="drop-shadow(0 0 8px #c9b8ff)";
 ufo.style.fontSize="34px";
 }
 }
@@ -1024,10 +1070,17 @@ document.getElementById("message").innerHTML = "⭐ スローモーション発�
 setTimeout(()=>{ slowMoActive = false; }, 4000);
 }
 
-function stopGame(){
+function fireAt(clientX){
 
-if(firing) return;
+if(firing || respawnPending) return;
 firing = true;
+
+let rect = field.getBoundingClientRect();
+let tapX = clientX - rect.left;
+tapX = Math.max(15, Math.min(field.clientWidth-15, tapX));
+shotX = tapX;
+
+document.querySelector(".turret-mount").style.left = tapX+"px";
 
 // パワーアップ取得判定（撃つ瞬間の位置で判定）
 tryGrabPowerup();
@@ -1045,7 +1098,7 @@ muzzle.classList.add("muzzleFlash");
 setTimeout(()=>muzzle.classList.remove("muzzleFlash"),150);
 
 bullet.style.display = "block";
-bullet.style.left = "50%";
+bullet.style.left = tapX+"px";
 bullet.style.bottom = "50px";
 
 slowBullet();
@@ -1066,10 +1119,9 @@ pos += speedB;
 bullet.style.bottom = pos + "px";
 
 if(pos >= impactY){
-let center = field.clientWidth/2;
-let distance = Math.abs((x+17)-center);
+let distance = Math.abs((x+17)-shotX);
 
-if(distance < 10){
+if(distance < 18){
 // 命中：その場で止まってUFOがぶるるん！
 clearInterval(bulletTimer);
 bullet.style.display = "none";
@@ -1110,7 +1162,7 @@ setTimeout(()=>ufo.classList.remove("jiggle"),350);
 function explodeEffect(){
 let boom=document.createElement("div");
 boom.className="explode";
-boom.innerHTML="💥";
+boom.innerHTML="💫";
 boom.style.left=(x)+"px";
 boom.style.top="38px";
 field.appendChild(boom);
@@ -1119,7 +1171,7 @@ setTimeout(()=>boom.remove(),600);
 for(let i=0;i<5;i++){
 let star=document.createElement("div");
 star.className="star";
-star.innerHTML="⭐";
+star.innerHTML="🌸";
 star.style.left=(x)+"px";
 star.style.top="38px";
 field.appendChild(star);
@@ -1157,10 +1209,9 @@ setTimeout(()=>star.remove(),500);
 
 function judge(){
 
-let center=field.clientWidth/2;
-let distance=Math.abs((x+17)-center);
+let distance=Math.abs((x+17)-shotX);
 
-if(distance < 10){
+if(distance < 18){
 
 let base = 1;
 if(ufoType==="rare") base = 3;
