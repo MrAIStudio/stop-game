@@ -193,7 +193,7 @@ position:absolute;
 left:50%;
 top:0;
 height:78%;
-width:36px;
+width:48px;
 transform:translateX(-50%);
 background:#ffd9ec30;
 border-left:1px dashed #ffb6c980;
@@ -294,6 +294,15 @@ font-size:20px;
 display:none;
 filter:drop-shadow(0 0 10px #ffe0a3);
 z-index:3;
+}
+
+.ufo.cloneShimmer{
+animation:cloneShimmerPulse 0.6s infinite ease-in-out;
+z-index:3;
+}
+@keyframes cloneShimmerPulse{
+0%,100%{opacity:1;}
+50%{opacity:0.55;}
 }
 
 .ufo.jiggle{
@@ -616,18 +625,20 @@ const titles = [
 ];
 
 let comments=[
-"こっちだよ〜😏","今押すと思った？🤣","残念、逆でした〜","読めるかな？笑",
-"未来予測してみな？","あと0.2秒だったね","焦ってる？😏","読みが浅いね〜",
-"もっと集中しなよ？","今のは惜しい！","揺さぶられてるね〜","反応遅いよ？笑",
-"まだまだだね😈","予測できてる？","迷ってるの見えてるよ？","今のは罠だよ〜",
-"ふふふ😏","読めないでしょ？","揺らしていくよ〜","そのタイミングじゃないよ",
-"逆だって言ったよね？","もっと早く！","もっと遅く！","揺れるよ〜？",
-"惑わされてるね〜","今のはフェイント！","見抜けるかな？","まだ本気じゃないよ？",
-"そろそろ本気出す？😈"
+"まあ焦らずいこ〜？","大丈夫、大丈夫〜","気にしなくていいよ","うんうん、そんな感じ",
+"次はいけるといいね","ゆっくりでいいからね","誰でも最初はこんなもんだよ","練習あるのみ、だね",
+"惜しかった、たぶん","そのうち慣れるよ","無理しなくていいのに","一生懸命なのは伝わるよ",
+"ふ〜ん、そっか","うん、頑張って","別にバカにしてないよ？","そんなムキにならなくても",
+"かわいいね、その必死さ","ゆっくりでいいって言ったじゃん","気を悪くしないでね","応援はしてるよ、一応",
+"まあいいんじゃない？","そういうのもアリだと思うよ","次こそ、ね？","気長にいこ〜"
 ];
 
 const comboComments = [
 "止まらない！","絶好調！","ノリノリだね！","その調子！","無双状態！"
+];
+
+const cloneComments = [
+"あれれ？どうした〜？","焦らないで〜","緊張してる？","あと1回当てるだけだよ？"
 ];
 
 /* ---------- 吹き出し：たまに呟く演出 ---------- */
@@ -855,6 +866,7 @@ return "🦍";
 function newEnemy(){
 clearInterval(gagTimer);
 specialMoveActive = false;
+clearClones();
 chooseUFO();
 enemyMaxHP = baseHPForStage(level);
 if(ufoType==="boss") enemyMaxHP = Math.round(enemyMaxHP*1.8);
@@ -899,6 +911,8 @@ document.getElementById("message").innerHTML = "🔺 ステージアップ！ St
 function move(){
 newEnemy();
 timer=setInterval(()=>{
+
+if(cloningActive){ return; }
 
 let mult = currentLevelMultiplier() * (slowMoActive ? 0.45 : 1);
 
@@ -1027,6 +1041,58 @@ specialMoveActive = false;
 },18);
 }
 
+/* ---------- HP1で分身するびっくり演出 ---------- */
+let cloningActive = false;
+let cloneEls = [];
+let cloneCleanupTimer = null;
+
+function clearClones(){
+cloneEls.forEach(c=>c.remove());
+cloneEls = [];
+clearTimeout(cloneCleanupTimer);
+cloningActive = false;
+if(ufo) ufo.classList.remove("cloneShimmer");
+}
+
+function spawnClones(){
+clearClones();
+cloningActive = true;
+
+showTaunt(cloneComments[Math.floor(Math.random()*cloneComments.length)]);
+navigator.vibrate?.([40,30,40,30,40]);
+
+let maxWC = field.clientWidth - 50;
+let slotCount = 10;
+let slots = [];
+for(let i=0;i<slotCount;i++){
+slots.push(15 + i*(maxWC-15)/(slotCount-1));
+}
+
+let realIndex = Math.floor(Math.random()*slotCount);
+x = slots[realIndex];
+ufo.style.left = x+"px";
+ufo.style.top = "38px";
+ufo.classList.add("cloneShimmer");
+bubble.style.left = (x-20)+"px";
+
+for(let i=0;i<slotCount;i++){
+if(i===realIndex) continue;
+let clone = document.createElement("div");
+clone.className = "ufo cloneShimmer";
+clone.innerHTML = ufo.innerHTML;
+clone.style.left = slots[i]+"px";
+clone.style.top = "38px";
+clone.style.fontSize = ufo.style.fontSize || "34px";
+clone.style.filter = ufo.style.filter;
+field.appendChild(clone);
+cloneEls.push(clone);
+}
+
+cloneCleanupTimer = setTimeout(()=>{
+clearClones();
+},3000);
+}
+
 /* ---------- パワーアップ（スター）システム ---------- */
 function spawnPowerupCycle(){
 powerupTimer = setInterval(()=>{
@@ -1121,7 +1187,7 @@ bullet.style.bottom = pos + "px";
 if(pos >= impactY){
 let distance = Math.abs((x+17)-shotX);
 
-if(distance < 18){
+if(distance < 24){
 // 命中：その場で止まってUFOがぶるるん！
 clearInterval(bulletTimer);
 bullet.style.display = "none";
@@ -1211,7 +1277,7 @@ function judge(){
 
 let distance=Math.abs((x+17)-shotX);
 
-if(distance < 18){
+if(distance < 24){
 
 let base = 1;
 if(ufoType==="rare") base = 3;
@@ -1261,7 +1327,7 @@ firing = false;
 hitSpark();
 document.getElementById("message").innerHTML="🎯 HIT！";
 if(enemyHP === 1){
-desperateDodge();
+spawnClones();
 }
 }
 
