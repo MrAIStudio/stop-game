@@ -1385,8 +1385,24 @@ function baseHPForKills(k){
 return Math.min(4 + Math.floor(k/2), 16); // 2体倒すごとにHP+1、最大16
 }
 
+/* ---------- 当たり判定：撃破数カーブ × 見た目サイズを両方反映 ---------- */
+const ENEMY_VISUAL_SIZE = {
+tinyfast: 20,
+rare: 40,
+giant: 56,
+boss: 70
+};
+
+function enemyVisualHalfWidth(){
+let size = ENEMY_VISUAL_SIZE[ufoType] || 34; // 34px = ノーマルサイズ基準
+if(enraged) size *= 2.4; // 巨大化演出中はその分だけ大きい当たり判定に
+return size/2;
+}
+
 function currentHitThreshold(){
-return Math.max(14, 30 - totalKills*0.4); // 最初は緩め、倒すほど少しずつシビアに（下限あり）
+let base = Math.max(14, 30 - totalKills*0.4); // 最初は緩め、倒すほど少しずつシビアに（下限あり）
+let sizeAdjust = (enemyVisualHalfWidth() - 17) * 0.6; // 基準サイズ(34px)からのズレを反映
+return Math.max(10, base + sizeAdjust);
 }
 
 /* ---------- 敵の見た目（撃破数に応じてどんどん増える） ---------- */
@@ -1759,7 +1775,7 @@ powerupEl.style.display = "none";
 
 function tryGrabPowerup(){
 if(!powerupActive) return false;
-let dist = Math.abs((x+17) - (powerupX+15));
+let dist = Math.abs((x+enemyVisualHalfWidth()) - (powerupX+15));
 if(dist < 55){
 powerupActive = false;
 powerupEl.style.display = "none";
@@ -1828,7 +1844,7 @@ pos += speedB;
 bullet.style.bottom = pos + "px";
 
 if(pos >= impactY){
-let distance = Math.abs((x+17)-shotX);
+let distance = Math.abs((x+enemyVisualHalfWidth())-shotX);
 
 if(distance < currentHitThreshold()){
 // 命中：その場で止まってUFOがぶるるん！
@@ -1979,7 +1995,7 @@ setTimeout(()=>{ showRetry(); },1200);
 
 function judge(){
 
-let distance=Math.abs((x+17)-shotX);
+let distance=Math.abs((x+enemyVisualHalfWidth())-shotX);
 
 if(distance < currentHitThreshold()){
 
