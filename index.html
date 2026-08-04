@@ -57,6 +57,36 @@ padding:20px 14px 40px;
 100%{transform:translate(0,0);}
 }
 
+.killShake{ animation:killShake 0.4s; }
+@keyframes killShake{
+0%{transform:translate(0,0) rotate(0deg);}
+15%{transform:translate(10px,-6px) rotate(-1deg);}
+30%{transform:translate(-10px,6px) rotate(1deg);}
+45%{transform:translate(8px,-4px) rotate(-1deg);}
+60%{transform:translate(-8px,4px) rotate(1deg);}
+75%{transform:translate(4px,-2px) rotate(0deg);}
+100%{transform:translate(0,0) rotate(0deg);}
+}
+
+.whiteFlash{ animation:whiteFlash 0.25s; }
+@keyframes whiteFlash{
+0%{box-shadow:inset 0 0 140px 50px #ffffffb0;}
+100%{box-shadow:inset 0 0 0 0 transparent;}
+}
+
+.firework{
+position:absolute;
+font-size:22px;
+animation:fireworkFly 0.9s ease-out forwards;
+pointer-events:none;
+z-index:9;
+}
+@keyframes fireworkFly{
+0%{opacity:1; transform:translate(0,0) scale(0.6);}
+70%{opacity:1;}
+100%{opacity:0; transform:translate(var(--fx),var(--fy)) scale(1.2);}
+}
+
 .flash{ animation:flash 0.3s; }
 @keyframes flash{
 0%{box-shadow:inset 0 0 120px 40px #ff9e9e80;}
@@ -478,6 +508,7 @@ display:flex;
 gap:10px;
 justify-content:center;
 margin-top:14px;
+flex-wrap:wrap;
 }
 .subBtn{
 font-size:14px;
@@ -486,6 +517,47 @@ background:#f3ecff;
 color:#7a5fa8;
 box-shadow:none;
 border:1px solid #d9c9ff80;
+}
+
+.modeRow{
+display:flex;
+gap:8px;
+justify-content:center;
+margin-top:16px;
+flex-wrap:wrap;
+}
+.modeBtn{
+font-size:12px;
+padding:7px 12px;
+background:#fffdfb;
+color:#9a8ab8;
+box-shadow:none;
+border:1.5px solid #d9c9ff60;
+}
+.modeBtn.active{
+background:linear-gradient(135deg,#ffb6c9,#c9b8ff);
+color:#5b4a72;
+border:1.5px solid transparent;
+}
+
+.shopBtn{
+font-size:13px;
+padding:6px 16px;
+margin-top:6px;
+background:linear-gradient(135deg,#b8f2d9,#a8e6cf);
+color:#2f6b52;
+box-shadow:none;
+}
+.shopBtn:disabled{
+opacity:0.4;
+}
+
+.ufo.rainbowSkin{
+animation:rainbowHue 2s linear infinite;
+}
+@keyframes rainbowHue{
+0%{filter:hue-rotate(0deg) saturate(3);}
+100%{filter:hue-rotate(360deg) saturate(3);}
 }
 
 .statRow{
@@ -635,11 +707,18 @@ filter:drop-shadow(0 0 10px #b8f2d9);
 狙った場所をタップして未来を読め！
 </div>
 
+<div class="modeRow">
+<button class="modeBtn active" id="modeBtn_normal" onclick="selectMode('normal')">ノーマル</button>
+<button class="modeBtn" id="modeBtn_timeattack" onclick="selectMode('timeattack')">タイムアタック60s</button>
+<button class="modeBtn" id="modeBtn_bossrush" onclick="selectMode('bossrush')">ボスラッシュ</button>
+</div>
+
 <button id="startBtn" onclick="startGame()">START</button>
 
 <div class="subBtnRow">
 <button class="subBtn" onclick="openScreen('achievements')">🏆 実績</button>
 <button class="subBtn" onclick="openScreen('dex')">📖 図鑑</button>
+<button class="subBtn" onclick="openScreen('shop')">🛍️ ショップ</button>
 </div>
 
 <div class="rankBox">
@@ -667,6 +746,13 @@ filter:drop-shadow(0 0 10px #b8f2d9);
 <button class="closeBtn" onclick="closeScreen('dex')">とじる</button>
 </div>
 
+<div id="shopScreen" class="overlayScreen">
+<h2>🛍️ ショップ</h2>
+<div id="shopCoins" class="progressLine"></div>
+<div id="shopList" class="listBox"></div>
+<button class="closeBtn" onclick="closeScreen('shop')">とじる</button>
+</div>
+
 <div id="toast" class="toast"></div>
 
 
@@ -677,6 +763,7 @@ filter:drop-shadow(0 0 10px #b8f2d9);
 <div>SCORE<br><span class="val" id="score">0</span></div>
 <div>COMBO<br><span class="val" id="comboVal">0</span></div>
 <div>LV<br><span class="val" id="levelVal">1</span></div>
+<div id="timeAttackHud" style="display:none;">TIME<br><span class="val" id="timeVal">60</span></div>
 <div><button id="muteBtn" onclick="toggleMute()" style="font-size:18px;padding:4px 10px;background:#f3ecff;color:#7a5fa8;box-shadow:none;">🔊</button></div>
 </div>
 
@@ -688,7 +775,7 @@ filter:drop-shadow(0 0 10px #b8f2d9);
 <div class="field" id="fieldEl" onclick="fireAt(event.clientX)">
 <div class="horizon-glow"></div>
 <div class="horizon"></div>
-<div class="target-zone"></div>
+<div class="target-zone" id="targetZone"></div>
 <div class="crosshair"></div>
 
 <div id="bubble" class="bubble"></div>
@@ -767,6 +854,9 @@ let sessionStartTime = 0;
 let enraged = false;
 let specialMoveActive = false;
 let respawnPending = false;
+let gameMode = "normal";
+let timeAttackSeconds = 60;
+let timeAttackTimer = null;
 
 /* ---------- 永続データ（統計・実績・図鑑） ---------- */
 const SAVE_KEY = "irairastop_save_v1";
@@ -785,7 +875,10 @@ cloneKills: 0,
 noMissKills: 0,
 powerupUsed: false,
 maxStageReached: 1,
-unlocked: []
+unlocked: [],
+coins: 0,
+ownedSkins: ["normal"],
+equippedSkin: "normal"
 };
 
 let dex = {
@@ -807,6 +900,57 @@ spin:{name:"回転タイプ", desc:"ずっとくるくる回っている。目�
 rare:{name:"レア個体", desc:"金色に輝く、ちょっと得点が高い個体。", seen:false, kills:0},
 boss:{name:"ボス", desc:"巨大でタフ。ステージ3以降に出現する。怒り型・ワープ型など個体差がある。", seen:false, kills:0}
 };
+
+const SKINS = [
+{id:"normal", name:"ノーマル", cost:0, filter:"none"},
+{id:"gold", name:"ゴールド", cost:20, filter:"sepia(0.6) saturate(4) hue-rotate(320deg) brightness(1.3)"},
+{id:"neon", name:"ネオン", cost:35, filter:"saturate(4) hue-rotate(180deg) brightness(1.25)"},
+{id:"wa", name:"和風", cost:50, filter:"sepia(0.5) hue-rotate(300deg) saturate(2.2)"},
+{id:"space", name:"宇宙", cost:70, filter:"invert(0.15) hue-rotate(220deg) saturate(2.5)"},
+{id:"rainbow", name:"レインボー", cost:100, filter:"saturate(6) hue-rotate(0deg)", animated:true}
+];
+
+function applySkinFilter(){
+if(!ufo) return;
+let skin = SKINS.find(s=>s.id===stats.equippedSkin) || SKINS[0];
+ufo.classList.toggle("rainbowSkin", !!skin.animated);
+ufo.dataset.skinFilter = skin.animated ? "" : skin.filter;
+}
+
+function buySkin(id){
+let skin = SKINS.find(s=>s.id===id);
+if(!skin || stats.ownedSkins.includes(id)) return;
+if(stats.coins < skin.cost) return;
+stats.coins -= skin.cost;
+stats.ownedSkins.push(id);
+writeSave();
+renderShop();
+renderStats();
+}
+
+function equipSkin(id){
+if(!stats.ownedSkins.includes(id)) return;
+stats.equippedSkin = id;
+writeSave();
+renderShop();
+}
+
+function renderShop(){
+let html = "";
+SKINS.forEach(s=>{
+let owned = stats.ownedSkins.includes(s.id);
+let equipped = stats.equippedSkin===s.id;
+html += "<div class='dexItem'>"
++ "<div class='dTitle'>🛸 "+s.name+(equipped?"（装着中）":"")+"</div>"
++ "<div class='dDesc'>"+(owned ? "所持済み" : "コイン "+s.cost)+"</div>"
++ (owned
+? (equipped ? "" : "<button class='shopBtn' onclick=\"equipSkin('"+s.id+"')\">装着する</button>")
+: "<button class='shopBtn' onclick=\"buySkin('"+s.id+"')\" "+(stats.coins<s.cost?"disabled":"")+">購入する</button>")
++ "</div>";
+});
+document.getElementById("shopList").innerHTML = html;
+document.getElementById("shopCoins").innerHTML = "💰 所持コイン："+stats.coins;
+}
 
 const ACHIEVEMENTS = [
 {id:"first_hit", name:"はじめての一撃", desc:"はじめてUFOに命中させた", check:()=>stats.totalHitsEver>=1},
@@ -880,6 +1024,7 @@ function openScreen(name){
 document.getElementById(name+"Screen").classList.add("show");
 if(name==="achievements") renderAchievements();
 if(name==="dex") renderDex();
+if(name==="shop") renderShop();
 }
 function closeScreen(name){
 document.getElementById(name+"Screen").classList.remove("show");
@@ -922,6 +1067,7 @@ document.getElementById("dexList").innerHTML = html;
 function renderStats(){
 document.getElementById("statsList").innerHTML =
 "<div class='statRow'><span>ハイスコア</span><span>"+stats.highScore+"</span></div>"
++"<div class='statRow'><span>💰 コイン</span><span>"+stats.coins+"</span></div>"
 +"<div class='statRow'><span>プレイ回数</span><span>"+stats.playCount+"</span></div>"
 +"<div class='statRow'><span>総撃破数</span><span>"+stats.totalKills+"</span></div>"
 +"<div class='statRow'><span>最大コンボ</span><span>"+stats.maxComboEver+"</span></div>"
@@ -1134,6 +1280,13 @@ function stopBGM(){
     if(bgmTimer){ clearInterval(bgmTimer); bgmTimer=null; }
 }
 
+function selectMode(mode){
+gameMode = mode;
+["normal","timeattack","bossrush"].forEach(m=>{
+document.getElementById("modeBtn_"+m).classList.toggle("active", m===mode);
+});
+}
+
 function startGame(){
 document.getElementById("title").style.display="none";
 document.getElementById("game").style.display="block";
@@ -1146,6 +1299,21 @@ field=document.querySelector(".field");
 stats.playCount++;
 sessionStartTime = Date.now();
 writeSave();
+
+if(gameMode==="timeattack"){
+timeAttackSeconds = 60;
+document.getElementById("timeAttackHud").style.display = "block";
+document.getElementById("timeVal").innerHTML = timeAttackSeconds;
+timeAttackTimer = setInterval(()=>{
+timeAttackSeconds--;
+document.getElementById("timeVal").innerHTML = timeAttackSeconds;
+if(timeAttackSeconds<=0){
+endGame("⏰ タイムアップ！");
+}
+}, 1000);
+}else{
+document.getElementById("timeAttackHud").style.display = "none";
+}
 
 banSound();
 spawnPowerupCycle();
@@ -1162,7 +1330,17 @@ const MOVEMENT_TYPES = [
 let bossVariant = "classic";
 const BOSS_VARIANTS = ["classic","rage","warp"];
 
+let lastUfoType = null;
+
 function chooseUFO(){
+if(gameMode==="bossrush"){
+ufoType="boss";
+bossVariant = BOSS_VARIANTS[Math.floor(Math.random()*BOSS_VARIANTS.length)];
+lastUfoType = "boss";
+showTaunt("ボスラッシュ、まだまだ続くよ👹");
+return;
+}
+
 let r=Math.random();
 let bossChance = level>=3 ? 0.06 : 0;
 let c = bossChance;
@@ -1173,10 +1351,11 @@ let bossTaunt = bossVariant==="rage" ? "怒りのボス出現！！(x5)👹🔥"
 : bossVariant==="warp" ? "ワープボス出現！！(x5)👹📍"
 : "ボス出現！！(x5)👹";
 showTaunt(bossTaunt);
+lastUfoType = "boss";
 return;
 }
 c += 0.05;
-if(r<c){ ufoType="rare"; showTaunt("レア個体だよ😎 (x3)"); return; }
+if(r<c){ ufoType="rare"; showTaunt("レア個体だよ😎 (x3)"); lastUfoType="rare"; return; }
 
 let entranceTaunts = {
 teleport: "つかまえてみ？📍",
@@ -1185,24 +1364,57 @@ freeze: "止まってる？いや、油断だよ😏",
 feint: "本気はこれからだよ？",
 giant: "デカくてごめんね😆"
 };
+
 let type = MOVEMENT_TYPES[Math.floor(Math.random()*MOVEMENT_TYPES.length)];
+let attempts = 0;
+while(type===lastUfoType && attempts<6){
+type = MOVEMENT_TYPES[Math.floor(Math.random()*MOVEMENT_TYPES.length)];
+attempts++;
+}
 ufoType = type;
+lastUfoType = type;
 if(entranceTaunts[type]) showTaunt(entranceTaunts[type]);
 }
 
 function currentLevelMultiplier(){
-return 1 + (level-1)*0.35;
+return Math.min(1 + totalKills*0.045, 2.6);
 }
 
-/* ---------- 敵HP・ステージシステム ---------- */
-function baseHPForStage(lv){
-return 4 + (lv-1)*2; // ステージ1=HP4、以降+2ずつ
+/* ---------- 敵HP・難易度カーブ（撃破数ごとに滑らかに変化） ---------- */
+function baseHPForKills(k){
+return Math.min(4 + Math.floor(k/2), 16); // 2体倒すごとにHP+1、最大16
 }
 
-function enemySpriteForStage(lv){
-if(lv<=1) return "🛸";
-if(lv===2) return "👽";
-return "🦍";
+function currentHitThreshold(){
+return Math.max(14, 30 - totalKills*0.4); // 最初は緩め、倒すほど少しずつシビアに（下限あり）
+}
+
+/* ---------- 敵の見た目（撃破数に応じてどんどん増える） ---------- */
+const CREATURE_TIERS = [
+{minKills:0, emoji:"🛸"},
+{minKills:3, emoji:"👽"},
+{minKills:6, emoji:"🦍"},
+{minKills:9, emoji:"🦖"},
+{minKills:12, emoji:"🐙"},
+{minKills:15, emoji:"👹"},
+{minKills:18, emoji:"🐲"},
+{minKills:21, emoji:"🦑"},
+{minKills:24, emoji:"👑"}
+];
+let lastSpriteEmoji = null;
+
+function pickSprite(){
+let pool = CREATURE_TIERS.filter(t=>totalKills>=t.minKills);
+let choice = pool[pool.length-1];
+if(pool.length>1){
+let attempts=0;
+do{
+choice = pool[Math.floor(Math.random()*pool.length)];
+attempts++;
+}while(choice.emoji===lastSpriteEmoji && attempts<6);
+}
+lastSpriteEmoji = choice.emoji;
+return choice.emoji;
 }
 
 function newEnemy(){
@@ -1214,11 +1426,12 @@ freezeUntil = 0;
 lastWarp = 0;
 lastFeint = 0;
 chooseUFO();
-enemyMaxHP = baseHPForStage(level);
+enemyMaxHP = baseHPForKills(totalKills);
 if(ufoType==="boss") enemyMaxHP = Math.round(enemyMaxHP*1.8);
 enemyHP = enemyMaxHP;
 updateHPBar();
-ufo.innerHTML = enemySpriteForStage(level);
+ufo.innerHTML = pickSprite();
+applySkinFilter();
 missSinceSpawn = 0;
 if(dex[ufoType] && !dex[ufoType].seen){
 dex[ufoType].seen = true;
@@ -1230,6 +1443,8 @@ function updateHPBar(){
 let pct = Math.max(0,(enemyHP/enemyMaxHP)*100);
 document.getElementById("hpBarFill").style.width = pct+"%";
 document.getElementById("hpNum").innerHTML = Math.max(0,enemyHP)+"/"+enemyMaxHP;
+let tz = document.getElementById("targetZone");
+if(tz) tz.style.width = (currentHitThreshold()*2)+"px";
 }
 
 function triggerEnrage(){
@@ -1265,6 +1480,7 @@ newEnemy();
 timer=setInterval(()=>{
 
 if(cloningActive){ return; }
+if(Date.now() < hitStopUntil){ return; }
 
 let mult = currentLevelMultiplier() * (slowMoActive ? 0.45 : 1);
 
@@ -1375,21 +1591,22 @@ if(x > maxW){ dir=-1; }
 if(x < 0){ dir=1; }
 
 if(!enraged){
+let skinF = ufo.dataset.skinFilter ? " "+ufo.dataset.skinFilter : "";
 if(ufoType==="rare"){
-ufo.style.filter="drop-shadow(0 0 20px #ffe0a3)";
+ufo.style.filter="drop-shadow(0 0 20px #ffe0a3)"+skinF;
 ufo.style.fontSize="40px";
 }else if(ufoType==="boss"){
 let bossColor = bossVariant==="rage" ? "#ff5566" : bossVariant==="warp" ? "#a78bfa" : "#ff8fab";
-ufo.style.filter="drop-shadow(0 0 22px "+bossColor+")";
+ufo.style.filter="drop-shadow(0 0 22px "+bossColor+")"+skinF;
 ufo.style.fontSize="70px";
 }else if(ufoType==="giant"){
-ufo.style.filter="drop-shadow(0 0 14px #ffcf8a)";
+ufo.style.filter="drop-shadow(0 0 14px #ffcf8a)"+skinF;
 ufo.style.fontSize="56px";
 }else if(ufoType==="tinyfast"){
-ufo.style.filter="drop-shadow(0 0 6px #a8c8ff)";
+ufo.style.filter="drop-shadow(0 0 6px #a8c8ff)"+skinF;
 ufo.style.fontSize="20px";
 }else{
-ufo.style.filter="drop-shadow(0 0 8px #c9b8ff)";
+ufo.style.filter="drop-shadow(0 0 8px #c9b8ff)"+skinF;
 ufo.style.fontSize="34px";
 }
 }
@@ -1613,7 +1830,7 @@ bullet.style.bottom = pos + "px";
 if(pos >= impactY){
 let distance = Math.abs((x+17)-shotX);
 
-if(distance < 28){
+if(distance < currentHitThreshold()){
 // 命中：その場で止まってUFOがぶるるん！
 clearInterval(bulletTimer);
 bullet.style.display = "none";
@@ -1651,7 +1868,45 @@ ufo.classList.add("jiggle");
 setTimeout(()=>ufo.classList.remove("jiggle"),350);
 }
 
-function explodeEffect(){
+let hitStopUntil = 0;
+function hitStop(ms){
+hitStopUntil = Date.now() + ms;
+}
+
+function killShake(){
+document.body.classList.add("killShake");
+setTimeout(()=>document.body.classList.remove("killShake"),400);
+}
+
+function whiteFlash(){
+document.querySelector(".field").classList.add("whiteFlash");
+setTimeout(()=>document.querySelector(".field").classList.remove("whiteFlash"),250);
+}
+
+function fireworks(count){
+count = count || 14;
+let colors = ["🎉","✨","🌟","💥","🌸","💫"];
+for(let i=0;i<count;i++){
+let fw = document.createElement("div");
+fw.className = "firework";
+fw.innerHTML = colors[Math.floor(Math.random()*colors.length)];
+fw.style.left = (field.clientWidth/2)+"px";
+fw.style.top = "90px";
+let angle = (Math.PI*2*i)/count + Math.random()*0.5;
+let dist = 70 + Math.random()*70;
+fw.style.setProperty("--fx", Math.cos(angle)*dist+"px");
+fw.style.setProperty("--fy", Math.sin(angle)*dist+"px");
+field.appendChild(fw);
+setTimeout(()=>fw.remove(),900);
+}
+}
+
+function explodeEffect(isBoss){
+hitStop(isBoss ? 140 : 80);
+killShake();
+whiteFlash();
+navigator.vibrate?.(isBoss ? [60,40,60,40,120] : [70,30,70]);
+
 let boom=document.createElement("div");
 boom.className="explode";
 boom.innerHTML="💫";
@@ -1660,7 +1915,8 @@ boom.style.top="38px";
 field.appendChild(boom);
 setTimeout(()=>boom.remove(),600);
 
-for(let i=0;i<5;i++){
+let starCount = isBoss ? 16 : 9;
+for(let i=0;i<starCount;i++){
 let star=document.createElement("div");
 star.className="star";
 star.innerHTML="🌸";
@@ -1669,6 +1925,8 @@ star.style.top="38px";
 field.appendChild(star);
 setTimeout(()=>star.remove(),800);
 }
+
+if(isBoss) fireworks(18);
 }
 
 function popScoreText(text){
@@ -1690,6 +1948,7 @@ return t;
 }
 
 function hitSpark(){
+hitStop(45);
 let star=document.createElement("div");
 star.className="star";
 star.innerHTML="✨";
@@ -1699,11 +1958,30 @@ field.appendChild(star);
 setTimeout(()=>star.remove(),500);
 }
 
+function endGame(message){
+document.getElementById("message").innerHTML = message;
+
+navigator.vibrate?.([200,100,200]);
+
+clearInterval(timer);
+clearInterval(powerupTimer);
+clearInterval(timeAttackTimer);
+stopBGM();
+stopTaunts();
+
+if(score > stats.highScore) stats.highScore = score;
+stats.totalPlaySeconds += Math.round((Date.now()-sessionStartTime)/1000);
+checkAchievements();
+writeSave();
+
+setTimeout(()=>{ showRetry(); },1200);
+}
+
 function judge(){
 
 let distance=Math.abs((x+17)-shotX);
 
-if(distance < 28){
+if(distance < currentHitThreshold()){
 
 let base = 1;
 if(ufoType==="rare") base = 3;
@@ -1747,10 +2025,11 @@ if(ufoType==="boss") stats.bossKills++;
 if(ufoType==="rare") stats.rareKills++;
 if(cloningActive) stats.cloneKills++;
 if(missSinceSpawn===0) stats.noMissKills++;
+stats.coins += ufoType==="boss" ? 5 : ufoType==="rare" ? 2 : 1;
 checkAchievements();
 writeSave();
-explodeEffect();
-document.getElementById("message").innerHTML="💥 撃破！";
+explodeEffect(ufoType==="boss");
+document.getElementById("message").innerHTML = ufoType==="boss" ? "🎆 ボス撃破！！" : "💥 撃破！";
 stageUp();
 ufo.style.opacity = "0";
 respawnPending = true;
@@ -1796,22 +2075,7 @@ if(stress >= MAX_STRESS){
 stress = MAX_STRESS;
 document.getElementById("stress").style.width = "100%";
 document.getElementById("stressNum").innerHTML = MAX_STRESS;
-document.getElementById("message").innerHTML = "💀ストレス限界突破…GAME OVER";
-
-navigator.vibrate?.([200,100,200]);
-
-clearInterval(timer);
-clearInterval(powerupTimer);
-stopBGM();
-stopTaunts();
-
-if(score > stats.highScore) stats.highScore = score;
-stats.totalPlaySeconds += Math.round((Date.now()-sessionStartTime)/1000);
-checkAchievements();
-writeSave();
-
-setTimeout(()=>{ showRetry(); },1200);
-
+endGame("💀ストレス限界突破…GAME OVER");
 return;
 }
 
