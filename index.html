@@ -1327,6 +1327,23 @@ const MOVEMENT_TYPES = [
 "ultraslow","circular","random","freeze","warp","giant","tinyfast","feint","spin"
 ];
 
+/* ---------- 難易度に応じた敵タイプの解放（当たり判定が大きい/読みやすいものから） ---------- */
+const DIFFICULTY_TIERS = [
+{minKills:0, types:["giant","ultraslow","normal","spin"]},
+{minKills:4, types:["zigzag","circular","fast"]},
+{minKills:8, types:["warp","freeze","teleport"]},
+{minKills:14, types:["jitter","random","feint"]},
+{minKills:20, types:["bait","tinyfast"]}
+];
+
+function getUnlockedMovementTypes(){
+let pool = [];
+DIFFICULTY_TIERS.forEach(t=>{
+if(totalKills>=t.minKills) pool = pool.concat(t.types);
+});
+return pool.length>0 ? pool : DIFFICULTY_TIERS[0].types;
+}
+
 let bossVariant = "classic";
 const BOSS_VARIANTS = ["classic","rage","warp"];
 
@@ -1365,10 +1382,11 @@ feint: "本気はこれからだよ？",
 giant: "デカくてごめんね😆"
 };
 
-let type = MOVEMENT_TYPES[Math.floor(Math.random()*MOVEMENT_TYPES.length)];
+let pool = getUnlockedMovementTypes();
+let type = pool[Math.floor(Math.random()*pool.length)];
 let attempts = 0;
-while(type===lastUfoType && attempts<6){
-type = MOVEMENT_TYPES[Math.floor(Math.random()*MOVEMENT_TYPES.length)];
+while(type===lastUfoType && attempts<6 && pool.length>1){
+type = pool[Math.floor(Math.random()*pool.length)];
 attempts++;
 }
 ufoType = type;
