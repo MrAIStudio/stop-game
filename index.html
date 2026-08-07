@@ -3,2172 +3,642 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>イライラすとっぷ - 完全版 PLUS</title>
-
+<title>靴飛ばし大飛行！</title>
 <style>
-
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;}
-
 body{
-margin:0;
-min-height:100vh;
-background:linear-gradient(160deg, #ffe6f0 0%, #ffeef7 22%, #ece6ff 55%, #e3f8ef 100%);
-color:#6b5b8a;
+margin:0;min-height:100vh;
+background:linear-gradient(160deg,#bfe4ff 0%,#e8f7ff 40%,#fff8ec 100%);
+color:#33465e;
 font-family:"Hiragino Maru Gothic ProN","Yu Gothic","M PLUS Rounded 1c","Hiragino Sans",sans-serif;
-text-align:center;
-overflow-x:hidden;
-position:relative;
+text-align:center;overflow-x:hidden;
 }
+.wrap{max-width:480px;margin:0 auto;padding:16px 12px 32px;position:relative;}
+h1{font-size:26px;margin:8px 0 2px;color:#2b4a6b;text-shadow:0 2px 0 #fff;}
+.badge{display:inline-block;background:linear-gradient(135deg,#ff9d6c,#ffce54);color:#5b3a1e;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:bold;margin-bottom:8px;box-shadow:0 4px 12px #ffb37050;}
+.sub{font-size:13px;line-height:1.7;color:#4d6786;margin-bottom:10px;}
+button{font-family:inherit;border:none;cursor:pointer;font-weight:bold;border-radius:50px;}
+.bigBtn{font-size:20px;padding:12px 40px;background:linear-gradient(135deg,#ff7a59,#ffb703);color:#fff;box-shadow:0 8px 18px #ff7a5960;margin-top:10px;}
+.smallBtn{font-size:13px;padding:8px 18px;background:#eef6ff;color:#2b4a6b;border:1px solid #bcdcff;box-shadow:none;}
+.shoeGrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:12px 0;}
+.shoeCard{background:#fffdf8;border:2px solid #dfeaf5;border-radius:16px;padding:8px 4px;cursor:pointer;box-shadow:0 3px 10px #33465e12;}
+.shoeCard.active{border-color:#ff7a59;background:linear-gradient(160deg,#fff2ea,#fff8ec);box-shadow:0 4px 14px #ff7a5940;}
+.shoeCard .emo{font-size:28px;}
+.shoeCard .nm{font-size:11px;font-weight:bold;margin-top:2px;}
+.flavorBox{background:#fffdf8;border:1px solid #dfeaf5;border-radius:14px;padding:8px 12px;font-size:12px;color:#5b6f8a;min-height:34px;margin-bottom:6px;}
+.rankBox{background:#fffdf8;border:1px solid #dfeaf5;border-radius:16px;padding:8px 0;margin-top:10px;box-shadow:0 4px 12px #33465e10;}
+.rankBox h2{margin:4px 0 6px;font-size:15px;color:#2b4a6b;}
+.rankRow{display:flex;justify-content:space-between;padding:4px 18px;font-size:14px;border-bottom:1px solid #eef3f8;}
+.statRow{display:flex;justify-content:space-between;padding:3px 18px;font-size:12px;color:#5b6f8a;}
+.statRow span:last-child{font-weight:bold;color:#2b4a6b;}
 
-/* 背景のふわふわバブル */
-#stars{
-position:fixed;
-inset:0;
-z-index:0;
-pointer-events:none;
-overflow:hidden;
-}
-.starDot{
-position:absolute;
-background:radial-gradient(circle at 35% 30%, #ffffffcc, #ffd6e6aa 60%, transparent 75%);
-border-radius:50%;
-opacity:0.7;
-animation:floaty 6s infinite ease-in-out;
-}
-@keyframes floaty{
-0%,100%{transform:translateY(0px);opacity:0.35;}
-50%{transform:translateY(-18px);opacity:0.85;}
-}
+#gameScreen{display:none;}
+.gameWrap{position:relative;width:100%;max-width:480px;margin:0 auto;}
+canvas{width:100%;display:block;border-radius:20px;box-shadow:0 6px 20px #33465e30;background:#bfe4ff;touch-action:manipulation;}
+.hud{position:absolute;top:8px;left:0;right:0;display:flex;justify-content:space-between;padding:0 12px;pointer-events:none;}
+.hudBox{background:#ffffffcc;border-radius:12px;padding:4px 12px;font-size:13px;font-weight:bold;color:#2b4a6b;box-shadow:0 2px 8px #33465e20;}
+.hudBox .big{font-size:18px;color:#ff7a59;}
+#eventMsg{position:absolute;top:44px;left:50%;transform:translateX(-50%);background:#3a2a52dd;color:#ffe0a3;padding:6px 16px;border-radius:14px;font-size:13px;font-weight:bold;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap;}
+#eventMsg.show{opacity:1;}
+.fireBtnWrap{margin-top:10px;}
+#fireBtn{font-size:20px;padding:12px 46px;background:linear-gradient(135deg,#ff7a59,#ffb703);color:#fff;box-shadow:0 8px 18px #ff7a5960;}
+.tapHint{font-size:12px;color:#7a90ac;margin-top:4px;}
 
-.wrap{
-position:relative;
-z-index:1;
-max-width:480px;
-margin:0 auto;
-padding:20px 14px 40px;
-}
-
-.shake{ animation:shake 0.3s; }
-@keyframes shake{
-0%{transform:translate(0,0);}
-25%{transform:translate(8px,0);}
-50%{transform:translate(-8px,0);}
-75%{transform:translate(8px,0);}
-100%{transform:translate(0,0);}
-}
-
-.killShake{ animation:killShake 0.4s; }
-@keyframes killShake{
-0%{transform:translate(0,0) rotate(0deg);}
-15%{transform:translate(10px,-6px) rotate(-1deg);}
-30%{transform:translate(-10px,6px) rotate(1deg);}
-45%{transform:translate(8px,-4px) rotate(-1deg);}
-60%{transform:translate(-8px,4px) rotate(1deg);}
-75%{transform:translate(4px,-2px) rotate(0deg);}
-100%{transform:translate(0,0) rotate(0deg);}
-}
-
-.whiteFlash{ animation:whiteFlash 0.25s; }
-@keyframes whiteFlash{
-0%{box-shadow:inset 0 0 140px 50px #ffffffb0;}
-100%{box-shadow:inset 0 0 0 0 transparent;}
-}
-
-.firework{
-position:absolute;
-font-size:22px;
-animation:fireworkFly 0.9s ease-out forwards;
-pointer-events:none;
-z-index:9;
-}
-@keyframes fireworkFly{
-0%{opacity:1; transform:translate(0,0) scale(0.6);}
-70%{opacity:1;}
-100%{opacity:0; transform:translate(var(--fx),var(--fy)) scale(1.2);}
-}
-
-.flash{ animation:flash 0.3s; }
-@keyframes flash{
-0%{box-shadow:inset 0 0 120px 40px #ff9e9e80;}
-100%{box-shadow:inset 0 0 0 0 transparent;}
-}
-
-.hitflash{ animation:hitflash 0.3s; }
-@keyframes hitflash{
-0%{box-shadow:inset 0 0 120px 40px #b8f2d980;}
-100%{box-shadow:inset 0 0 0 0 transparent;}
-}
-
-h1{
-font-size:34px;
-margin:10px 0 4px;
-letter-spacing:1px;
-color:#7a5fa8;
-text-shadow:0 0 16px #ffc4de;
-}
-
-.sub{
-font-size:15px;
-line-height:1.8;
-color:#8a7aa8;
-}
-
-.badge{
-display:inline-block;
-background:linear-gradient(135deg,#ffb6c9,#c9b8ff);
-color:#6b4a72;
-padding:4px 14px;
-border-radius:20px;
-font-size:12px;
-font-weight:bold;
-margin-bottom:10px;
-box-shadow:0 4px 14px #d9c9ff90;
-}
-
-button{
-font-family:inherit;
-font-size:24px;
-padding:14px 46px;
-border-radius:50px;
-border:none;
-cursor:pointer;
-font-weight:bold;
-}
-
-#startBtn{
-margin-top:18px;
-background:linear-gradient(135deg,#ffb6c9,#a8c8ff);
-color:#5b4a72;
-box-shadow:0 8px 20px #c9b8ff70;
-}
-
-.tapHint{
-font-size:13px;
-color:#a898c8;
-margin:6px 0 2px;
-font-weight:bold;
-}
-
-.field{ cursor:pointer; }
-.field:active{ filter:brightness(0.97); }
-
-#game{ display:none; }
-
-.hud{
-display:flex;
-justify-content:space-between;
-align-items:center;
-font-size:14px;
-color:#9a8ab8;
-margin-bottom:8px;
-padding:0 4px;
-}
-.hud .val{
-font-size:20px;
-color:#6b5b8a;
-font-weight:bold;
-}
-
-.combo{
-font-size:13px;
-color:#ff9ec4;
-min-height:18px;
-font-weight:bold;
-text-shadow:0 0 8px #ffc4de80;
-}
-
-.field{
-width:100%;
-height:340px;
-margin:8px auto;
-background:linear-gradient(180deg,#eef4ff 0%, #f3ecff 45%, #ffeef5 78%, #fff6ec 100%);
-border:3px solid #d9c9ff;
-border-radius:24px;
-position:relative;
-overflow:hidden;
-box-shadow:0 0 24px #d9c9ff60, inset 0 0 40px #ffffffa0;
-}
-
-.horizon{
-position:absolute;
-left:0;
-right:0;
-top:78%;
-height:2px;
-background:linear-gradient(90deg,transparent,#ffb6c9a0,transparent);
-pointer-events:none;
-}
-.horizon-glow{
-position:absolute;
-left:0;
-right:0;
-top:78%;
-height:60px;
-background:linear-gradient(180deg,#ffe0ec55,transparent);
-pointer-events:none;
-}
-
-.crosshair{
-position:absolute;
-left:50%;
-top:0;
-height:78%;
-width:1px;
-background:repeating-linear-gradient(180deg,#c9b8ff40 0 6px,transparent 6px 12px);
-transform:translateX(-50%);
-pointer-events:none;
-}
-.target-zone{
-position:absolute;
-left:50%;
-top:0;
-height:78%;
-width:56px;
-transform:translateX(-50%);
-background:#ffd9ec30;
-border-left:1px dashed #ffb6c980;
-border-right:1px dashed #ffb6c980;
-pointer-events:none;
-}
-
-.ufo{
-position:absolute;
-top:38px;
-font-size:34px;
-left:0;
-transition:0.05s;
-filter:drop-shadow(0 0 8px #c9b8ff);
-z-index:3;
-}
-
-/* 発射口（銃口）*/
-.turret-mount{
-position:absolute;
-bottom:0;
-left:50%;
-transform:translateX(-50%);
-width:64px;
-height:46px;
-pointer-events:none;
-z-index:4;
-}
-.turret-base{
-position:absolute;
-bottom:0;
-left:50%;
-transform:translateX(-50%);
-width:54px;
-height:16px;
-background:linear-gradient(180deg,#ffd9ec,#ffb6c9);
-border-radius:10px 10px 6px 6px;
-border:1px solid #ff9eb670;
-}
-.turret-barrel{
-position:absolute;
-bottom:12px;
-left:50%;
-transform:translateX(-50%);
-width:14px;
-height:34px;
-background:linear-gradient(180deg,#c9b8ff,#a8c8ff);
-border-radius:8px 8px 4px 4px;
-border:1px solid #ffffff80;
-box-shadow:0 0 10px #c9b8ff90;
-}
-.turret-muzzle{
-position:absolute;
-bottom:44px;
-left:50%;
-transform:translateX(-50%);
-width:20px;
-height:8px;
-background:#ffe0a3;
-border-radius:4px;
-box-shadow:0 0 10px #ffe0a3;
-}
-.muzzleFlash{
-animation:muzzleFlash 0.15s ease-out;
-}
-@keyframes muzzleFlash{
-0%{box-shadow:0 0 26px 10px #fff3c490; background:#fffbe6;}
-100%{box-shadow:0 0 8px #ffe0a3; background:#ffe0a3;}
-}
-
-.bubble{
-position:absolute;
-top:2px;
-background:#fffdfb;
-color:#6b5b8a;
-padding:5px 10px;
-border-radius:16px;
-font-size:13px;
-white-space:nowrap;
-font-weight:bold;
-opacity:0;
-transform:translateY(4px) scale(0.9);
-transition:opacity 0.25s, transform 0.25s;
-pointer-events:none;
-z-index:5;
-box-shadow:0 4px 12px #d9c9ff60;
-border:1.5px solid #ffd9ec;
-}
-.bubble.show{
-opacity:1;
-transform:translateY(0) scale(1);
-}
-
-.bullet{
-position:absolute;
-bottom:50px;
-font-size:20px;
-display:none;
-filter:drop-shadow(0 0 10px #ffe0a3);
-z-index:3;
-}
-
-.ufo.cloneShimmer{
-animation:cloneShimmerPulse 0.6s infinite ease-in-out;
-z-index:3;
-}
-@keyframes cloneShimmerPulse{
-0%,100%{opacity:1;}
-50%{opacity:0.55;}
-}
-
-.ufo.spinning{
-animation:spinRotate 1.1s linear infinite;
-}
-@keyframes spinRotate{
-0%{transform:rotate(0deg);}
-100%{transform:rotate(360deg);}
-}
-
-.ufo.jiggle{
-animation:ufoJiggle 0.35s ease;
-}
-@keyframes ufoJiggle{
-0%{transform:scale(1,1) rotate(0deg);}
-20%{transform:scale(1.28,0.72) rotate(-7deg);}
-40%{transform:scale(0.82,1.22) rotate(6deg);}
-60%{transform:scale(1.18,0.85) rotate(-4deg);}
-80%{transform:scale(0.94,1.06) rotate(2deg);}
-100%{transform:scale(1,1) rotate(0deg);}
-}
-
-.bar-label{
-display:flex;
-justify-content:space-between;
-font-size:12px;
-color:#9a8ab8;
-margin:14px 0 4px;
-}
-
-.bar{
-width:100%;
-height:22px;
-background:#f3ecff;
-border-radius:20px;
-overflow:hidden;
-border:1px solid #d9c9ff80;
-}
-
-#stress{
-height:100%;
-width:0%;
-background:linear-gradient(90deg,#ffe0a3,#ff9eb5);
-transition:0.25s;
-}
-
-#hpBarFill{
-height:100%;
-width:100%;
-background:linear-gradient(90deg,#b8f2d9,#a8c8ff);
-transition:0.25s;
-}
-
-.ufo.enraged{
-animation:enrageZoom 2s ease-in-out;
-filter:drop-shadow(0 0 26px #ff8a80) !important;
-z-index:6;
-}
-@keyframes enrageZoom{
-0%{transform:scale(1);}
-12%{transform:scale(2.6) rotate(-4deg);}
-25%{transform:scale(2.35) rotate(4deg);}
-40%{transform:scale(2.55) rotate(-3deg);}
-60%{transform:scale(2.5) rotate(3deg);}
-85%{transform:scale(2.2);}
-100%{transform:scale(1);}
-}
-
-.enrageFlash{
-position:absolute;
-left:50%;
-top:42%;
-transform:translate(-50%,-50%);
-font-size:24px;
-font-weight:900;
-color:#ff6f8a;
-text-shadow:0 0 14px #ffc4de;
-z-index:8;
-animation:enrageTextPulse 2s ease-in-out forwards;
-pointer-events:none;
-white-space:nowrap;
-}
-@keyframes enrageTextPulse{
-0%{opacity:0; transform:translate(-50%,-50%) scale(0.5);}
-12%{opacity:1; transform:translate(-50%,-50%) scale(1.25);}
-25%{transform:translate(-50%,-50%) scale(1);}
-82%{opacity:1;}
-100%{opacity:0; transform:translate(-50%,-50%) scale(1);}
-}
-
-#message{
-font-size:19px;
-min-height:30px;
-margin:10px 0;
-font-weight:bold;
-color:#7a5fa8;
-}
-
-.banFlash{
-position:fixed;
-top:38%;
-left:50%;
-transform:translate(-50%,-50%);
-font-size:64px;
-color:#ff8fab;
-font-weight:900;
-text-shadow:0 0 20px #ffd6e6;
-animation:banAnim 0.25s forwards;
-pointer-events:none;
-z-index:10;
-}
-@keyframes banAnim{
-0%{opacity:1; transform:translate(-50%,-50%) scale(1);}
-100%{opacity:0; transform:translate(-50%,-50%) scale(1.8);}
-}
-
-.explode{
-position:absolute;
-font-size:38px;
-animation:boom 0.6s forwards;
-pointer-events:none;
-}
-@keyframes boom{
-0%{opacity:1; transform:scale(1);}
-100%{opacity:0; transform:scale(3);}
-}
-
-.star{
-position:absolute;
-color:#ffcf8a;
-font-size:18px;
-animation:starFly 0.8s forwards;
-pointer-events:none;
-}
-@keyframes starFly{
-0%{opacity:1; transform:translate(0,0);}
-100%{opacity:0; transform:translate(80px,-80px);}
-}
-
-.popScore{
-position:absolute;
-font-weight:bold;
-font-size:18px;
-color:#7fd9b6;
-animation:popUp 0.7s forwards;
-pointer-events:none;
-text-shadow:0 0 8px #b8f2d9;
-}
-@keyframes popUp{
-0%{opacity:1; transform:translateY(0);}
-100%{opacity:0; transform:translateY(-40px);}
-}
-
-.rankRow{
-display:flex;
-justify-content:space-between;
-padding:6px 16px;
-font-size:15px;
-color:#6b5b8a;
-border-bottom:1px solid #d9c9ff50;
-}
-.rankBox{
-background:#fffdfb;
-border:1px solid #d9c9ff80;
-border-radius:16px;
-padding:6px 0;
-margin-top:8px;
-box-shadow:0 4px 14px #d9c9ff40;
-}
-
-.subBtnRow{
-display:flex;
-gap:10px;
-justify-content:center;
-margin-top:14px;
-flex-wrap:wrap;
-}
-.subBtn{
-font-size:14px;
-padding:8px 18px;
-background:#f3ecff;
-color:#7a5fa8;
-box-shadow:none;
-border:1px solid #d9c9ff80;
-}
-
-.modeRow{
-display:flex;
-gap:8px;
-justify-content:center;
-margin-top:16px;
-flex-wrap:wrap;
-}
-.modeBtn{
-font-size:12px;
-padding:7px 12px;
-background:#fffdfb;
-color:#9a8ab8;
-box-shadow:none;
-border:1.5px solid #d9c9ff60;
-}
-.modeBtn.active{
-background:linear-gradient(135deg,#ffb6c9,#c9b8ff);
-color:#5b4a72;
-border:1.5px solid transparent;
-}
-
-.shopBtn{
-font-size:13px;
-padding:6px 16px;
-margin-top:6px;
-background:linear-gradient(135deg,#b8f2d9,#a8e6cf);
-color:#2f6b52;
-box-shadow:none;
-}
-.shopBtn:disabled{
-opacity:0.4;
-}
-
-.ufo.rainbowSkin{
-animation:rainbowHue 2s linear infinite;
-}
-@keyframes rainbowHue{
-0%{filter:hue-rotate(0deg) saturate(3);}
-100%{filter:hue-rotate(360deg) saturate(3);}
-}
-
-.statRow{
-display:flex;
-justify-content:space-between;
-padding:4px 16px;
-font-size:13px;
-color:#7a6a9a;
-}
-.statRow span:last-child{
-color:#6b5b8a;
-font-weight:bold;
-}
-
-.overlayScreen{
-display:none;
-position:fixed;
-inset:0;
-z-index:50;
-background:linear-gradient(160deg, #ffe6f0 0%, #ffeef7 22%, #ece6ff 55%, #e3f8ef 100%);
-padding:24px 16px;
-overflow-y:auto;
-text-align:center;
-}
-.overlayScreen h2{
-color:#7a5fa8;
-margin-bottom:12px;
-}
-.overlayScreen.show{
-display:block;
-}
-
-.progressLine{
-font-size:14px;
-color:#8a7aa8;
-margin-bottom:14px;
-font-weight:bold;
-}
-
-.listBox{
-max-width:440px;
-margin:0 auto;
-text-align:left;
-}
-
-.achieveItem, .dexItem{
-background:#fffdfb;
-border:1px solid #d9c9ff60;
-border-radius:14px;
-padding:10px 14px;
-margin-bottom:8px;
-box-shadow:0 3px 10px #d9c9ff30;
-}
-.achieveItem.locked{
-opacity:0.45;
-}
-.achieveItem .aTitle, .dexItem .dTitle{
-font-weight:bold;
-font-size:15px;
-color:#6b5b8a;
-}
-.achieveItem .aDesc, .dexItem .dDesc{
-font-size:12px;
-color:#9a8ab8;
-margin-top:2px;
-}
-.dexItem .dCount{
-font-size:12px;
-color:#7fd9b6;
-font-weight:bold;
-margin-top:4px;
-}
-
-.closeBtn{
-margin-top:18px;
-background:linear-gradient(135deg,#ffb6c9,#a8c8ff);
-color:#5b4a72;
-box-shadow:0 8px 20px #c9b8ff70;
-font-size:18px;
-padding:10px 32px;
-}
-
-.toast{
-position:fixed;
-left:50%;
-bottom:30px;
-transform:translateX(-50%) translateY(20px);
-background:#3a2a52;
-color:#ffe0a3;
-padding:12px 22px;
-border-radius:16px;
-font-size:14px;
-font-weight:bold;
-opacity:0;
-pointer-events:none;
-transition:opacity 0.3s, transform 0.3s;
-z-index:100;
-box-shadow:0 8px 24px #00000040;
-white-space:nowrap;
-}
-.toast.show{
-opacity:1;
-transform:translateX(-50%) translateY(0);
-}
-
-.retryBtn{
-margin-top:14px;
-background:linear-gradient(135deg,#b8f2d9,#a8e6cf);
-color:#2f6b52;
-box-shadow:0 8px 20px #b8f2d980;
-}
-
-.title-tag{
-font-size:16px;
-color:#e0a35c;
-font-weight:bold;
-margin-top:4px;
-}
-
-.powerup{
-position:absolute;
-top:44px;
-font-size:26px;
-display:none;
-filter:drop-shadow(0 0 10px #b8f2d9);
-}
-
+.resultOverlay{display:none;position:absolute;inset:0;background:#0d1b2add;border-radius:20px;color:#fff;flex-direction:column;align-items:center;justify-content:center;padding:16px;}
+.resultOverlay.show{display:flex;}
+.resultOverlay .distTitle{font-size:14px;color:#cfe4ff;}
+.resultOverlay .distNum{font-size:52px;font-weight:900;color:#ffce54;text-shadow:0 3px 0 #b5791a;margin:4px 0 2px;}
+.resultOverlay .distMsg{font-size:14px;margin-bottom:12px;}
+.resultOverlay .record{font-size:13px;color:#ffce54;font-weight:bold;margin-bottom:8px;}
+.resultBtnRow{display:flex;gap:10px;}
+.resultBtnRow button{font-size:14px;padding:10px 20px;}
+.retryBtn{background:linear-gradient(135deg,#ff7a59,#ffb703);color:#fff;}
+.backBtn{background:#ffffff22;color:#fff;border:1px solid #ffffff55;}
 </style>
-
 </head>
-
 <body>
-
-<div id="stars"></div>
-
 <div class="wrap">
 
-<div id="title">
-
-<div class="badge">STRESS RELEASE SHOOTER</div>
-<h1>😡 イライラすとっぷ</h1>
-
+<div id="titleScreen">
+<div class="badge">SHOE FLYING DISTANCE GAME</div>
+<h1>👟 靴飛ばし大飛行！</h1>
 <div class="sub">
-🛸 煽るUFOを予測してタップで撃て！<br>
-ストレスMAXで即ゲームオーバー<br>
-連続HITでコンボボーナス発生！<br><br>
-狙った場所をタップして未来を読め！
+ブランコのタイミングを見極めてジャンプ！<br>
+坂で加速、ジャンプ台で大ジャンプ、穴に注意！<br>
+転がって跳ねて、飛距離を伸ばそう！
 </div>
 
-<div class="modeRow">
-<button class="modeBtn active" id="modeBtn_normal" onclick="selectMode('normal')">ノーマル</button>
-<button class="modeBtn" id="modeBtn_timeattack" onclick="selectMode('timeattack')">タイムアタック60s</button>
-<button class="modeBtn" id="modeBtn_bossrush" onclick="selectMode('bossrush')">ボスラッシュ</button>
-</div>
+<div class="flavorBox" id="flavorBox">靴をえらんでね</div>
+<div class="shoeGrid" id="shoeGrid"></div>
 
-<button id="startBtn" onclick="startGame()">START</button>
-
-<div class="subBtnRow">
-<button class="subBtn" onclick="openScreen('achievements')">🏆 実績</button>
-<button class="subBtn" onclick="openScreen('dex')">📖 図鑑</button>
-<button class="subBtn" onclick="openScreen('shop')">🛍️ ショップ</button>
-</div>
+<button class="bigBtn" onclick="beginAttempt()">スタート</button>
 
 <div class="rankBox">
-<h2 style="margin:10px 0 4px;font-size:18px;">🏆 TOP5</h2>
+<h2>🏆 自己ベスト TOP5</h2>
 <div id="ranking"></div>
 </div>
-
 <div class="rankBox" id="statsBox">
-<h2 style="margin:10px 0 4px;font-size:18px;">📊 統計</h2>
+<h2>📊 統計</h2>
 <div id="statsList"></div>
 </div>
-
 </div>
 
-<div id="achievementsScreen" class="overlayScreen">
-<h2>🏆 実績</h2>
-<div id="achievementProgress" class="progressLine"></div>
-<div id="achievementList" class="listBox"></div>
-<button class="closeBtn" onclick="closeScreen('achievements')">とじる</button>
-</div>
-
-<div id="dexScreen" class="overlayScreen">
-<h2>📖 UFO図鑑</h2>
-<div id="dexList" class="listBox"></div>
-<button class="closeBtn" onclick="closeScreen('dex')">とじる</button>
-</div>
-
-<div id="shopScreen" class="overlayScreen">
-<h2>🛍️ ショップ</h2>
-<div id="shopCoins" class="progressLine"></div>
-<div id="shopList" class="listBox"></div>
-<button class="closeBtn" onclick="closeScreen('shop')">とじる</button>
-</div>
-
-<div id="toast" class="toast"></div>
-
-
-
-<div id="game">
-
+<div id="gameScreen">
+<div class="gameWrap">
+<canvas id="cv"></canvas>
 <div class="hud">
-<div>SCORE<br><span class="val" id="score">0</span></div>
-<div>COMBO<br><span class="val" id="comboVal">0</span></div>
-<div>LV<br><span class="val" id="levelVal">1</span></div>
-<div id="timeAttackHud" style="display:none;">TIME<br><span class="val" id="timeVal">60</span></div>
-<div><button id="muteBtn" onclick="toggleMute()" style="font-size:18px;padding:4px 10px;background:#f3ecff;color:#7a5fa8;box-shadow:none;">🔊</button></div>
+<div class="hudBox">きょり<br><span class="big" id="distHud">0 m</span></div>
+<div class="hudBox" id="shoeHud">👟</div>
 </div>
-
-<div class="combo" id="comboMsg"></div>
-
-<div class="bar-label"><span>👾 敵の体力</span><span id="hpNum">4/4</span></div>
-<div class="bar"><div id="hpBarFill"></div></div>
-
-<div class="field" id="fieldEl" onclick="fireAt(event.clientX)">
-<div class="horizon-glow"></div>
-<div class="horizon"></div>
-<div class="target-zone" id="targetZone"></div>
-<div class="crosshair"></div>
-
-<div id="bubble" class="bubble"></div>
-<div id="ufo" class="ufo">🛸</div>
-<div id="powerup" class="powerup">⭐</div>
-<div id="bullet" class="bullet">🥚</div>
-
-<div class="turret-mount">
-<div class="turret-barrel" id="turretBarrel"></div>
-<div class="turret-muzzle" id="turretMuzzle"></div>
-<div class="turret-base"></div>
+<div id="eventMsg"></div>
+<div class="resultOverlay" id="resultOverlay">
+<div class="distTitle">きょり</div>
+<div class="distNum" id="resultDist">0m</div>
+<div class="distMsg" id="resultMsg"></div>
+<div class="record" id="resultRecord"></div>
+<div class="resultBtnRow">
+<button class="retryBtn" onclick="retryAttempt()">もう一度</button>
+<button class="backBtn" onclick="backToTitle()">靴を選び直す</button>
 </div>
-
 </div>
-
-<div class="tapHint">画面をタップして発射！</div>
-
-<div class="bar-label"><span>ストレス</span><span id="stressNum">0</span>/13</div>
-<div class="bar"><div id="stress"></div></div>
-
-<div id="message"></div>
-
+</div>
+<div class="fireBtnWrap"><button id="fireBtn" onclick="release()">とぶ！</button></div>
+<div class="tapHint">画面をタップ、またはボタンでジャンプのタイミングを決めよう</div>
 </div>
 
 </div>
 
 <script>
+/* ================= 定数 ================= */
+const GRAVITY=2000;
+const PPM=18;
+const LAUNCH_MULT=4.2;
+const SWING_ROPE=120;
+const SWING_MAX_ANGLE=0.96; // ~55deg
+const SWING_PERIOD=1.6;
+const SHOE_RADIUS=15;
+const BOUNCE_MIN_SPEED=90;
+const STOP_SPEED=18;
+const FRICTION_SCALE=0.6;
+const LAUNCH_HEIGHT=140;
+const SAVE_KEY="kutsutobashi_save_v1";
 
-/* ---------- 背景の星生成 ---------- */
-(function makeStars(){
-let field = document.getElementById("stars");
-for(let i=0;i<60;i++){
-let s = document.createElement("div");
-s.className = "starDot";
-let size = Math.random()*2+1;
-s.style.width = size+"px";
-s.style.height = size+"px";
-s.style.left = Math.random()*100+"%";
-s.style.top = Math.random()*100+"%";
-s.style.animationDelay = (Math.random()*3)+"s";
-field.appendChild(s);
-}
-})();
-
-let ufo, bubble, bullet, powerupEl, field;
-let x=0, dir=1, speed=4;
-let timer;
-let score=0;
-let stress=0;
-const MAX_STRESS = 13;
-let audio;
-
-let firing = false;
-
-let ufoType = "normal";
-let zigzagOffset = 0;
-let lastTeleport = 0;
-let baitWasFleeing = false;
-let circPhase = 0;
-let freezeUntil = 0;
-let lastWarp = 0;
-let lastFeint = 0;
-let shotX = 0;
-
-let combo = 0;
-let maxCombo = 0;
-let level = 1; // ステージ
-let elapsedHits = 0;
-
-let enemyHP = 4;
-let enemyMaxHP = 4;
-let totalKills = 0;
-let totalHits = 0;
-let missSinceSpawn = 0;
-let sessionStartTime = 0;
-let enraged = false;
-let specialMoveActive = false;
-let respawnPending = false;
-let gameMode = "normal";
-let timeAttackSeconds = 60;
-let timeAttackTimer = null;
-
-/* ---------- 永続データ（統計・実績・図鑑） ---------- */
-const SAVE_KEY = "irairastop_save_v1";
-
-let stats = {
-highScore: 0,
-playCount: 0,
-totalKills: 0,
-maxComboEver: 0,
-totalShots: 0,
-totalHitsEver: 0,
-totalPlaySeconds: 0,
-bossKills: 0,
-rareKills: 0,
-cloneKills: 0,
-noMissKills: 0,
-powerupUsed: false,
-maxStageReached: 1,
-unlocked: [],
-coins: 0,
-ownedSkins: ["normal"],
-equippedSkin: "normal"
-};
-
-let dex = {
-normal:{name:"ノーマル", desc:"ごく普通の個体。特に主張はない。", seen:false, kills:0},
-fast:{name:"高速タイプ", desc:"とにかく速い。落ち着きがない。", seen:false, kills:0},
-zigzag:{name:"ジグザグタイプ", desc:"上下に揺れながら移動する。", seen:false, kills:0},
-teleport:{name:"テレポートタイプ", desc:"気まぐれに瞬間移動して煽ってくる。", seen:false, kills:0},
-bait:{name:"待ち伏せタイプ", desc:"普段は油断してるが、撃った瞬間だけ本気で逃げる。", seen:false, kills:0},
-jitter:{name:"ジッタータイプ", desc:"予測不能なタイミングで急に方向転換する。", seen:false, kills:0},
-ultraslow:{name:"超低速タイプ", desc:"びっくりするほど遅い。舐めてくる。", seen:false, kills:0},
-circular:{name:"円運動タイプ", desc:"弧を描くように旋回しながら移動する。", seen:false, kills:0},
-random:{name:"ランダムタイプ", desc:"速度も向きも脈絡なく変わる、気まぐれな奴。", seen:false, kills:0},
-freeze:{name:"急停止タイプ", desc:"急に止まったと思ったら猛スピードで動き出す。", seen:false, kills:0},
-warp:{name:"ワープタイプ", desc:"短い距離をチカチカ点滅するように移動する。", seen:false, kills:0},
-giant:{name:"巨大タイプ", desc:"図体がデカい。スコアもちょっと多めにくれる。", seen:false, kills:0},
-tinyfast:{name:"小型高速タイプ", desc:"小さくて速くて見失いやすい。", seen:false, kills:0},
-feint:{name:"フェイントタイプ", desc:"油断させておいて、突然反転してくる。", seen:false, kills:0},
-spin:{name:"回転タイプ", desc:"ずっとくるくる回っている。目が回りそう。", seen:false, kills:0},
-rare:{name:"レア個体", desc:"金色に輝く、ちょっと得点が高い個体。", seen:false, kills:0},
-boss:{name:"ボス", desc:"巨大でタフ。ステージ3以降に出現する。怒り型・ワープ型など個体差がある。", seen:false, kills:0}
-};
-
-const SKINS = [
-{id:"normal", name:"ノーマル", cost:0, filter:"none"},
-{id:"gold", name:"ゴールド", cost:20, filter:"sepia(0.6) saturate(4) hue-rotate(320deg) brightness(1.3)"},
-{id:"neon", name:"ネオン", cost:35, filter:"saturate(4) hue-rotate(180deg) brightness(1.25)"},
-{id:"wa", name:"和風", cost:50, filter:"sepia(0.5) hue-rotate(300deg) saturate(2.2)"},
-{id:"space", name:"宇宙", cost:70, filter:"invert(0.15) hue-rotate(220deg) saturate(2.5)"},
-{id:"rainbow", name:"レインボー", cost:100, filter:"saturate(6) hue-rotate(0deg)", animated:true}
+const SHOES=[
+{id:"sneaker",name:"スニーカー",emoji:"👟",restitution:0.5,friction:0.55,drag:0.10,launchScale:1.0,flavor:"クセがなくバランス型。まずはこれで練習しよう。"},
+{id:"sandal",name:"サンダル",emoji:"🩴",restitution:0.75,friction:0.8,drag:0.16,launchScale:0.95,flavor:"よく弾むけど風に弱く、すぐ失速しがち。"},
+{id:"leather",name:"革靴",emoji:"👞",restitution:0.25,friction:0.18,drag:0.05,launchScale:0.9,flavor:"あまり弾まないが、一度転がると止まらない。"},
+{id:"boots",name:"長靴",emoji:"👢",restitution:0.15,friction:0.6,drag:0.20,launchScale:0.85,holeSurvive:0.5,flavor:"重くて飛びにくいが、穴に落ちても半分の確率で踏ん張れる。"},
+{id:"heels",name:"ハイヒール",emoji:"👠",restitution:0.45,friction:0.10,drag:0.09,launchScale:1.0,wild:true,flavor:"よく滑ってどこまでも転がるが、弾み方は運まかせ。"},
+{id:"uwabaki",name:"上履き",emoji:"🥿",restitution:0.55,friction:0.45,drag:0.08,launchScale:1.15,flavor:"靴飛ばしの定番。飛距離ボーナスつき！"}
 ];
 
-function applySkinFilter(){
-if(!ufo) return;
-let skin = SKINS.find(s=>s.id===stats.equippedSkin) || SKINS[0];
-ufo.classList.toggle("rainbowSkin", !!skin.animated);
-ufo.dataset.skinFilter = skin.animated ? "" : skin.filter;
-}
+/* ================= 状態 ================= */
+let canvas,ctx,W=480,H=380;
+let state="title"; // title / aiming / flight / result
+let course;
+let cameraX=0;
+let swingT=0;
+let selectedShoeId="sneaker";
+let shoe={x:0,y:0,vx:0,vy:0,rotation:0,rolling:false,overHole:false,holeEnterY:0,bounceCount:0};
+let particles=[];
+let lastTime=0;
+let currentDistanceM=0;
+let finalDistanceM=0;
+let messageTimer=0;
+let audio=null;
+let stats={best:0,plays:0,top:[]};
 
-function buySkin(id){
-let skin = SKINS.find(s=>s.id===id);
-if(!skin || stats.ownedSkins.includes(id)) return;
-if(stats.coins < skin.cost) return;
-stats.coins -= skin.cost;
-stats.ownedSkins.push(id);
-writeSave();
-renderShop();
-renderStats();
-}
+function currentShoe(){ return SHOES.find(s=>s.id===selectedShoeId); }
+function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
 
-function equipSkin(id){
-if(!stats.ownedSkins.includes(id)) return;
-stats.equippedSkin = id;
-writeSave();
-renderShop();
-}
-
-function renderShop(){
-let html = "";
-SKINS.forEach(s=>{
-let owned = stats.ownedSkins.includes(s.id);
-let equipped = stats.equippedSkin===s.id;
-html += "<div class='dexItem'>"
-+ "<div class='dTitle'>🛸 "+s.name+(equipped?"（装着中）":"")+"</div>"
-+ "<div class='dDesc'>"+(owned ? "所持済み" : "コイン "+s.cost)+"</div>"
-+ (owned
-? (equipped ? "" : "<button class='shopBtn' onclick=\"equipSkin('"+s.id+"')\">装着する</button>")
-: "<button class='shopBtn' onclick=\"buySkin('"+s.id+"')\" "+(stats.coins<s.cost?"disabled":"")+">購入する</button>")
-+ "</div>";
-});
-document.getElementById("shopList").innerHTML = html;
-document.getElementById("shopCoins").innerHTML = "💰 所持コイン："+stats.coins;
-}
-
-const ACHIEVEMENTS = [
-{id:"first_hit", name:"はじめての一撃", desc:"はじめてUFOに命中させた", check:()=>stats.totalHitsEver>=1},
-{id:"first_kill", name:"はじめての撃墜", desc:"はじめて敵を倒した", check:()=>stats.totalKills>=1},
-{id:"kill_10", name:"駆除人見習い", desc:"敵を10体撃破", check:()=>stats.totalKills>=10},
-{id:"kill_50", name:"UFOハンター", desc:"敵を50体撃破", check:()=>stats.totalKills>=50},
-{id:"kill_100", name:"百体討伐", desc:"敵を100体撃破", check:()=>stats.totalKills>=100},
-{id:"kill_500", name:"五百体討伐", desc:"敵を500体撃破", check:()=>stats.totalKills>=500},
-{id:"kill_1000", name:"千体討伐", desc:"敵を1000体撃破", check:()=>stats.totalKills>=1000},
-{id:"combo_10", name:"10コンボ", desc:"10連続HITを達成", check:()=>stats.maxComboEver>=10},
-{id:"combo_20", name:"20コンボ", desc:"20連続HITを達成", check:()=>stats.maxComboEver>=20},
-{id:"combo_50", name:"50コンボ", desc:"50連続HITを達成", check:()=>stats.maxComboEver>=50},
-{id:"boss_kill", name:"ボスキラー", desc:"ボスを撃破した", check:()=>stats.bossKills>=1},
-{id:"rare_kill", name:"レアハンター", desc:"レア個体を撃破した", check:()=>stats.rareKills>=1},
-{id:"clone_kill", name:"影は見抜いた", desc:"分身の中から本物を撃破した", check:()=>stats.cloneKills>=1},
-{id:"no_miss_kill", name:"ノーミス撃破", desc:"ミスなしで敵を1体倒した", check:()=>stats.noMissKills>=1},
-{id:"stage_3", name:"ステージ3到達", desc:"ステージ3まで到達した", check:()=>stats.maxStageReached>=3},
-{id:"stage_5", name:"ステージ5到達", desc:"ステージ5まで到達した", check:()=>stats.maxStageReached>=5},
-{id:"score_100", name:"スコア100", desc:"1プレイでスコア100達成", check:()=>score>=100},
-{id:"score_500", name:"スコア500", desc:"1プレイでスコア500達成", check:()=>score>=500},
-{id:"powerup_used", name:"時が止まって見えた", desc:"スローモーションを発動した", check:()=>stats.powerupUsed},
-{id:"play_10", name:"常連さん", desc:"10回プレイした", check:()=>stats.playCount>=10}
-];
-
+/* ================= セーブ ================= */
 function loadSave(){
 try{
-let raw = localStorage.getItem(SAVE_KEY);
-if(raw){
-let data = JSON.parse(raw);
-if(data.stats) Object.assign(stats, data.stats);
-if(data.dex){
-for(let k in data.dex){
-if(dex[k]) Object.assign(dex[k], data.dex[k]);
+let raw=localStorage.getItem(SAVE_KEY);
+if(raw){ let d=JSON.parse(raw); if(d.stats) Object.assign(stats,d.stats); }
+}catch(e){}
 }
-}
-}
-}catch(e){ /* localStorageが使えない環境では保存なしで続行 */ }
-}
-
 function writeSave(){
-try{
-localStorage.setItem(SAVE_KEY, JSON.stringify({stats, dex}));
-}catch(e){ /* 保存できなくてもゲームは続行 */ }
+try{ localStorage.setItem(SAVE_KEY,JSON.stringify({stats})); }catch(e){}
 }
 
-function showToast(text){
-let t = document.getElementById("toast");
-t.innerHTML = text;
-t.classList.add("show");
-clearTimeout(showToast._timer);
-showToast._timer = setTimeout(()=>{ t.classList.remove("show"); }, 2600);
+/* ================= コース生成 ================= */
+function generateCourse(){
+const TARGET=9000;
+let segments=[];
+let holes=[];
+let current=[{x:0,y:300}];
+let curX=0,curY=300;
+while(curX<TARGET){
+let type;
+if(curX<450){ type="flat"; }
+else if(curY>680){ type=Math.random()<0.75?"up":"flat"; }
+else if(curY<100){ type=Math.random()<0.75?"down":"flat"; }
+else{
+let progress=curX/TARGET;
+let roll=Math.random();
+let holeP=0.16+progress*0.22;
+let rampP=0.10;
+if(roll<holeP) type="hole";
+else if(roll<holeP+rampP) type="ramp";
+else{ let r2=Math.random(); type=r2<0.4?"down":(r2<0.7?"flat":"up"); }
 }
 
-function checkAchievements(){
-let newlyUnlocked = [];
-ACHIEVEMENTS.forEach(a=>{
-if(!stats.unlocked.includes(a.id) && a.check()){
-stats.unlocked.push(a.id);
-newlyUnlocked.push(a);
+if(type==="flat"){
+let len=150+Math.random()*220;
+curX+=len; current.push({x:curX,y:curY});
+}else if(type==="down"){
+let len=250+Math.random()*300;
+curY+=40+Math.random()*110;
+curX+=len; current.push({x:curX,y:curY});
+}else if(type==="up"){
+let len=150+Math.random()*200;
+curY-=20+Math.random()*70;
+curX+=len; current.push({x:curX,y:curY});
+}else if(type==="ramp"){
+let riseLen=55+Math.random()*35;
+curY-=70+Math.random()*70;
+curX+=riseLen; current.push({x:curX,y:curY});
+let topLen=30+Math.random()*20;
+curX+=topLen; current.push({x:curX,y:curY});
+}else if(type==="hole"){
+let progress=curX/TARGET;
+let width=65+Math.random()*(60+progress*130);
+let holeStart=curX;
+let holeEnd=curX+width;
+current.push({x:holeStart,y:curY});
+segments.push(current);
+let yStartHole=curY;
+let landY=clamp(curY+(Math.random()*50-15),90,760);
+holes.push({start:holeStart,end:holeEnd,yStart:yStartHole,yEnd:landY});
+curX=holeEnd; curY=landY;
+current=[{x:curX,y:curY}];
 }
-});
-if(newlyUnlocked.length>0){
-writeSave();
-newlyUnlocked.forEach((a,i)=>{
-setTimeout(()=>showToast("🏆 実績解除："+a.name), i*1600);
-});
+curY=clamp(curY,80,770);
 }
-}
-
-function openScreen(name){
-document.getElementById(name+"Screen").classList.add("show");
-if(name==="achievements") renderAchievements();
-if(name==="dex") renderDex();
-if(name==="shop") renderShop();
-}
-function closeScreen(name){
-document.getElementById(name+"Screen").classList.remove("show");
-}
-
-function renderAchievements(){
-let unlockedCount = stats.unlocked.length;
-document.getElementById("achievementProgress").innerHTML = unlockedCount+" / "+ACHIEVEMENTS.length+" 解除済み";
-let html = "";
-ACHIEVEMENTS.forEach(a=>{
-let got = stats.unlocked.includes(a.id);
-html += "<div class='achieveItem"+(got?"":" locked")+"'>"
-+ "<div class='aTitle'>"+(got?"🏆":"🔒")+" "+a.name+"</div>"
-+ "<div class='aDesc'>"+a.desc+"</div>"
-+ "</div>";
-});
-document.getElementById("achievementList").innerHTML = html;
+curX+=350;
+current.push({x:curX,y:curY});
+segments.push(current);
+return {segments,holes,length:curX};
 }
 
-function renderDex(){
-let html = "";
-for(let k in dex){
-let d = dex[k];
-if(d.seen){
-html += "<div class='dexItem'>"
-+ "<div class='dTitle'>"+d.name+"</div>"
-+ "<div class='dDesc'>"+d.desc+"</div>"
-+ "<div class='dCount'>撃破数："+d.kills+"</div>"
-+ "</div>";
+function groundInfoAt(x){
+for(const seg of course.segments){
+const first=seg[0], last=seg[seg.length-1];
+if(x>=first.x-1 && x<=last.x+1){
+for(let i=0;i<seg.length-1;i++){
+if(x>=seg[i].x && x<=seg[i+1].x){
+let dx=(seg[i+1].x-seg[i].x)||1;
+let t=(x-seg[i].x)/dx;
+let y=seg[i].y+(seg[i+1].y-seg[i].y)*t;
+let slope=(seg[i+1].y-seg[i].y)/dx;
+return {y,slope};
+}
+}
+return {y:last.y,slope:0};
+}
+}
+return null;
+}
+
+/* ================= 物理 ================= */
+function bounceVelocity(vx,vy,slope,restitution){
+let len=Math.sqrt(slope*slope+1);
+let nx=slope/len, ny=-1/len;
+let dot=vx*nx+vy*ny;
+let rx=vx-2*dot*nx;
+let ry=vy-2*dot*ny;
+return {vx:rx*restitution, vy:ry*restitution};
+}
+
+function physicsStep(dt){
+const variant=currentShoe();
+shoe.vy+=GRAVITY*dt;
+shoe.vx*=(1-variant.drag*dt);
+shoe.vy*=(1-variant.drag*0.6*dt);
+shoe.x+=shoe.vx*dt;
+shoe.y+=shoe.vy*dt;
+shoe.rotation+=shoe.vx*dt*0.06;
+
+currentDistanceM=Math.max(0,shoe.x/PPM);
+updateHud();
+
+if(shoe.x>=course.length){ finishRun(true,false); return; }
+
+let g=groundInfoAt(shoe.x);
+
+if(g===null){
+if(!shoe.overHole){ shoe.overHole=true; shoe.holeEnterY=shoe.y; shoe.rolling=false; }
+if(shoe.vy>0 && (shoe.y-shoe.holeEnterY)>260){ handleHoleFall(); return; }
+return;
+}
+
+if(shoe.overHole) shoe.overHole=false;
+let groundY=g.y;
+
+if(shoe.rolling){
+let gAhead=groundInfoAt(shoe.x+12);
+if(gAhead && g.slope<-0.32 && (gAhead.slope-g.slope)>0.25){
+shoe.vy=-Math.abs(shoe.vx)*0.55-70;
+shoe.rolling=false;
+spawnBurst(shoe.x,shoe.y,10);
+playJumpSound();
+return;
+}
+let slopeAngle=Math.atan(g.slope);
+shoe.vx+=GRAVITY*Math.sin(slopeAngle)*dt;
+let decel=variant.friction*GRAVITY*FRICTION_SCALE*Math.cos(slopeAngle)*dt;
+if(shoe.vx>0) shoe.vx=Math.max(0,shoe.vx-decel);
+else if(shoe.vx<0) shoe.vx=Math.min(0,shoe.vx+decel);
+shoe.y=groundY-SHOE_RADIUS;
+shoe.vy=0;
+if(Math.random()<0.35 && Math.abs(shoe.vx)>40) spawnDust(shoe.x,shoe.y+SHOE_RADIUS,1);
+if(Math.abs(shoe.vx)<STOP_SPEED){ finishRun(false,false); return; }
 }else{
-html += "<div class='dexItem'>"
-+ "<div class='dTitle'>？？？</div>"
-+ "<div class='dDesc'>まだ遭遇していない</div>"
-+ "</div>";
+if(shoe.y+SHOE_RADIUS>=groundY){
+let speed=Math.hypot(shoe.vx,shoe.vy);
+shoe.y=groundY-SHOE_RADIUS;
+if(speed>BOUNCE_MIN_SPEED){
+let rest=variant.wild? clamp(variant.restitution+(Math.random()*0.5-0.25),0.08,0.95) : variant.restitution;
+let res=bounceVelocity(shoe.vx,shoe.vy,g.slope,rest);
+shoe.vx=res.vx; shoe.vy=res.vy;
+shoe.bounceCount++;
+spawnBurst(shoe.x,shoe.y,6);
+playBounceSound(speed);
+}else{
+shoe.rolling=true;
+shoe.vy=0;
 }
 }
-document.getElementById("dexList").innerHTML = html;
+}
 }
 
-function renderStats(){
-document.getElementById("statsList").innerHTML =
-"<div class='statRow'><span>ハイスコア</span><span>"+stats.highScore+"</span></div>"
-+"<div class='statRow'><span>💰 コイン</span><span>"+stats.coins+"</span></div>"
-+"<div class='statRow'><span>プレイ回数</span><span>"+stats.playCount+"</span></div>"
-+"<div class='statRow'><span>総撃破数</span><span>"+stats.totalKills+"</span></div>"
-+"<div class='statRow'><span>最大コンボ</span><span>"+stats.maxComboEver+"</span></div>"
-+"<div class='statRow'><span>命中率</span><span>"+(stats.totalShots>0 ? Math.round(stats.totalHitsEver/stats.totalShots*100) : 0)+"%</span></div>"
-+"<div class='statRow'><span>実績解除</span><span>"+stats.unlocked.length+" / "+ACHIEVEMENTS.length+"</span></div>";
+function handleHoleFall(){
+const variant=currentShoe();
+if(variant.holeSurvive && Math.random()<variant.holeSurvive){
+let h=course.holes.find(hh=>shoe.x>=hh.start-5 && shoe.x<=hh.end+90);
+let edgeX=h? h.end+4 : shoe.x+40;
+shoe.x=edgeX;
+shoe.vx*=0.3; shoe.vy=0;
+shoe.overHole=false;
+let g=groundInfoAt(shoe.x);
+shoe.y=(g?g.y:shoe.y)-SHOE_RADIUS;
+shoe.rolling=true;
+flashMessage("ギリギリ踏ん張った！");
+playSurviveSound();
+}else{
+flashMessage("穴に落ちた…");
+playHoleFallSound();
+finishRun(false,true);
+}
 }
 
-loadSave();
-
-let powerupActive = false;
-let slowMoActive = false;
-let powerupX = 0;
-let powerupTimer = null;
-
-const titles = [
-  {min:0, text:""},
-  {min:5, text:"見習いハンター"},
-  {min:12, text:"UFO駆除人"},
-  {min:20, text:"未来予知の使い手"},
-  {min:30, text:"銀河のBAN王"},
-  {min:45, text:"伝説のクレーマー撃退者"}
-];
-
-let comments=[
-"まあ焦らずいこ〜？","大丈夫、大丈夫〜","気にしなくていいよ","うんうん、そんな感じ",
-"次はいけるといいね","ゆっくりでいいからね","誰でも最初はこんなもんだよ","練習あるのみ、だね",
-"惜しかった、たぶん","そのうち慣れるよ","無理しなくていいのに","一生懸命なのは伝わるよ",
-"ふ〜ん、そっか","うん、頑張って","別にバカにしてないよ？","そんなムキにならなくても",
-"かわいいね、その必死さ","ゆっくりでいいって言ったじゃん","気を悪くしないでね","応援はしてるよ、一応",
-"まあいいんじゃない？","そういうのもアリだと思うよ","次こそ、ね？","気長にいこ〜"
-];
-
-const comboComments = [
-"止まらない！","絶好調！","ノリノリだね！","その調子！","無双状態！"
-];
-
-const cloneComments = [
-"あれれ？どうした〜？","焦らないで〜","緊張してる？","あと1回当てるだけだよ？"
-];
-
-/* ---------- 吹き出し：たまに呟く演出 ---------- */
-let bubbleShowTimer = null;
-let bubbleHideTimer = null;
-
-function showTaunt(text){
-if(!bubble) return;
-clearTimeout(bubbleHideTimer);
-bubble.innerHTML = text;
-bubble.classList.add("show");
-bubbleHideTimer = setTimeout(()=>{
-bubble.classList.remove("show");
-}, 1700);
+function finishRun(reachedEnd,holeFall){
+if(state==="result") return;
+state="result";
+let dist = reachedEnd ? currentDistanceM*1.15 : currentDistanceM;
+finalDistanceM=Math.round(dist*10)/10;
+let isRecord = finalDistanceM>stats.best;
+stats.plays++;
+if(isRecord) stats.best=finalDistanceM;
+stats.top.push(finalDistanceM);
+stats.top.sort((a,b)=>b-a);
+stats.top=stats.top.slice(0,5);
+writeSave();
+showResult(reachedEnd,holeFall,isRecord);
+if(!holeFall) playFinishSound(reachedEnd);
 }
 
-function scheduleTaunt(){
-let delay = 4500 + Math.random()*4500; // 4.5〜9秒に一度だけポロッと呟く
-bubbleShowTimer = setTimeout(()=>{
-if(document.getElementById("game").style.display==="block"){
-showTaunt(comments[Math.floor(Math.random()*comments.length)]);
-}
-scheduleTaunt();
-}, delay);
+/* ================= 発射 ================= */
+function release(){
+if(state!=="aiming") return;
+const A=SWING_MAX_ANGLE, w=2*Math.PI/SWING_PERIOD;
+const theta=A*Math.sin(w*swingT);
+const thetaSpeed=A*w*Math.cos(w*swingT);
+const variant=currentShoe();
+const vxBase=thetaSpeed*SWING_ROPE*Math.cos(theta);
+const vyBase=-thetaSpeed*SWING_ROPE*Math.sin(theta);
+const scale=LAUNCH_MULT*variant.launchScale;
+const g0=groundInfoAt(0);
+shoe.x=0;
+shoe.y=(g0?g0.y:300)-LAUNCH_HEIGHT;
+shoe.vx=vxBase*scale;
+shoe.vy=vyBase*scale;
+shoe.rotation=0;
+shoe.rolling=false;
+shoe.overHole=false;
+shoe.bounceCount=0;
+currentDistanceM=0;
+state="flight";
+flashMessage(shoe.vx<40 ? "うわっ、変な方向に飛んだ！？" : "とんだ！");
+playLaunchSound();
 }
 
-function stopTaunts(){
-clearTimeout(bubbleShowTimer);
-clearTimeout(bubbleHideTimer);
-if(bubble) bubble.classList.remove("show");
+/* ================= パーティクル ================= */
+function spawnDust(x,y,n){
+for(let i=0;i<n;i++){
+particles.push({x,y,vx:(Math.random()*60-30),vy:-Math.random()*40,life:0.4,maxLife:0.4,color:"201,160,106",r:2.5+Math.random()*2.5});
+}
+}
+function spawnBurst(x,y,n){
+for(let i=0;i<n;i++){
+let a=Math.random()*Math.PI*2, sp=60+Math.random()*140;
+particles.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-60,life:0.5,maxLife:0.5,color:"255,220,150",r:2+Math.random()*3});
+}
+}
+function updateParticles(dt){
+for(let i=particles.length-1;i>=0;i--){
+let p=particles[i];
+p.x+=p.vx*dt; p.y+=p.vy*dt; p.vy+=500*dt; p.life-=dt;
+if(p.life<=0) particles.splice(i,1);
+}
 }
 
-let muted = false;
-
+/* ================= サウンド ================= */
 function getAudio(){
-    if(!audio){
-        audio = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    if(audio.state === "suspended"){
-        audio.resume();
-    }
-    return audio;
+if(!audio){ audio=new (window.AudioContext||window.webkitAudioContext)(); }
+if(audio.state==="suspended") audio.resume();
+return audio;
+}
+function tone(freqStart,freqEnd,dur,type,vol){
+let a=getAudio();
+let osc=a.createOscillator(); let gain=a.createGain();
+osc.type=type||"sine";
+osc.frequency.setValueAtTime(freqStart,a.currentTime);
+osc.frequency.exponentialRampToValueAtTime(Math.max(30,freqEnd),a.currentTime+dur);
+gain.gain.setValueAtTime((vol||0.25),a.currentTime);
+gain.gain.exponentialRampToValueAtTime(0.001,a.currentTime+dur);
+osc.connect(gain); gain.connect(a.destination);
+osc.start(); osc.stop(a.currentTime+dur);
+}
+function playLaunchSound(){ tone(300,900,0.25,"sawtooth",0.2); }
+function playBounceSound(speed){ let p=clamp(speed/900,0.2,1); tone(200+p*500,120,0.12,"sine",0.2); }
+function playJumpSound(){ tone(500,1100,0.15,"triangle",0.2); }
+function playHoleFallSound(){ tone(400,60,0.5,"sawtooth",0.25); }
+function playSurviveSound(){ tone(700,900,0.2,"square",0.15); }
+function playFinishSound(good){ tone(good?700:500,good?1400:700,0.4,"triangle",0.25); }
+
+/* ================= UI補助 ================= */
+function flashMessage(text){
+let el=document.getElementById("eventMsg");
+el.textContent=text;
+el.classList.add("show");
+clearTimeout(flashMessage._t);
+flashMessage._t=setTimeout(()=>el.classList.remove("show"),1400);
+}
+function updateHud(){
+document.getElementById("distHud").textContent=Math.round(currentDistanceM)+" m";
 }
 
-function banSound(freqLow=80, freqHigh=900){
-    if(muted) return;
-    audio = getAudio();
-
-    let osc1 = audio.createOscillator();
-    let gain1 = audio.createGain();
-    osc1.frequency.value = freqLow;
-    gain1.gain.setValueAtTime(0.6, audio.currentTime);
-    gain1.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + 0.25);
-
-    let osc2 = audio.createOscillator();
-    let gain2 = audio.createGain();
-    osc2.frequency.value = freqHigh;
-    gain2.gain.setValueAtTime(0.3, audio.currentTime);
-    gain2.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + 0.15);
-
-    osc1.connect(gain1);
-    osc2.connect(gain2);
-    gain1.connect(audio.destination);
-    gain2.connect(audio.destination);
-
-    osc1.start();
-    osc2.start();
-    osc1.stop(audio.currentTime + 0.25);
-    osc2.stop(audio.currentTime + 0.15);
-}
-
-function hitSound(){
-    if(muted) return;
-    audio = getAudio();
-    [880, 1320].forEach((f,i)=>{
-        let osc = audio.createOscillator();
-        let gain = audio.createGain();
-        osc.frequency.value = f;
-        osc.type = "sine";
-        gain.gain.setValueAtTime(0.001, audio.currentTime + i*0.06);
-        gain.gain.linearRampToValueAtTime(0.25, audio.currentTime + i*0.06 + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + i*0.06 + 0.18);
-        osc.connect(gain);
-        gain.connect(audio.destination);
-        osc.start(audio.currentTime + i*0.06);
-        osc.stop(audio.currentTime + i*0.06 + 0.2);
-    });
-}
-
-function missSound(){
-    if(muted) return;
-    audio = getAudio();
-    let osc = audio.createOscillator();
-    let gain = audio.createGain();
-    osc.type = "sawtooth";
-    osc.frequency.setValueAtTime(180, audio.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(60, audio.currentTime + 0.25);
-    gain.gain.setValueAtTime(0.25, audio.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + 0.25);
-    osc.connect(gain);
-    gain.connect(audio.destination);
-    osc.start();
-    osc.stop(audio.currentTime + 0.25);
-}
-
-function angrySound(){
-    if(muted) return;
-    audio = getAudio();
-    let osc = audio.createOscillator();
-    let gain = audio.createGain();
-    osc.type = "sawtooth";
-    osc.frequency.setValueAtTime(160, audio.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(45, audio.currentTime + 0.6);
-    gain.gain.setValueAtTime(0.35, audio.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + 0.6);
-    osc.connect(gain);
-    gain.connect(audio.destination);
-    osc.start();
-    osc.stop(audio.currentTime + 0.6);
-}
-
-function toggleMute(){
-    muted = !muted;
-    document.getElementById("muteBtn").innerHTML = muted ? "🔇" : "🔊";
-}
-
-function chimeSound(){
-    if(muted) return;
-    audio = getAudio();
-    let osc = audio.createOscillator();
-    let gain = audio.createGain();
-    osc.frequency.value = 1300;
-    gain.gain.setValueAtTime(0.25, audio.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + 0.2);
-    osc.connect(gain);
-    gain.connect(audio.destination);
-    osc.start();
-    osc.stop(audio.currentTime + 0.2);
-}
-
-/* ---------- 軽快なBGMループ ---------- */
-let bgmTimer = null;
-let bgmStep = 0;
-const bgmPattern = [523.25,0,659.25,0,783.99,659.25,0,880.00, 783.99,0,659.25,0,523.25,0,0,0];
-
-function playBgmNote(freq){
-    if(muted || !freq) return;
-    audio = getAudio();
-    let osc = audio.createOscillator();
-    let gain = audio.createGain();
-    osc.type = "triangle";
-    osc.frequency.value = freq;
-    gain.gain.setValueAtTime(0.001, audio.currentTime);
-    gain.gain.linearRampToValueAtTime(0.09, audio.currentTime + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + 0.22);
-    osc.connect(gain);
-    gain.connect(audio.destination);
-    osc.start();
-    osc.stop(audio.currentTime + 0.22);
-}
-
-function startBGM(){
-    stopBGM();
-    bgmStep = 0;
-    bgmTimer = setInterval(()=>{
-        playBgmNote(bgmPattern[bgmStep % bgmPattern.length]);
-        bgmStep++;
-    }, 180);
-}
-
-function stopBGM(){
-    if(bgmTimer){ clearInterval(bgmTimer); bgmTimer=null; }
-}
-
-function selectMode(mode){
-gameMode = mode;
-["normal","timeattack","bossrush"].forEach(m=>{
-document.getElementById("modeBtn_"+m).classList.toggle("active", m===mode);
+/* ================= 画面遷移 ================= */
+function buildShoeGrid(){
+let grid=document.getElementById("shoeGrid");
+grid.innerHTML="";
+SHOES.forEach(s=>{
+let card=document.createElement("div");
+card.className="shoeCard"+(s.id===selectedShoeId?" active":"");
+card.innerHTML="<div class='emo'>"+s.emoji+"</div><div class='nm'>"+s.name+"</div>";
+card.onclick=()=>{ selectedShoeId=s.id; buildShoeGrid(); document.getElementById("flavorBox").textContent=s.flavor; };
+grid.appendChild(card);
 });
+document.getElementById("flavorBox").textContent=currentShoe().flavor;
 }
 
-function startGame(){
-document.getElementById("title").style.display="none";
-document.getElementById("game").style.display="block";
-ufo=document.getElementById("ufo");
-bubble=document.getElementById("bubble");
-bullet=document.getElementById("bullet");
-powerupEl=document.getElementById("powerup");
-field=document.querySelector(".field");
-
-stats.playCount++;
-sessionStartTime = Date.now();
-writeSave();
-
-if(gameMode==="timeattack"){
-timeAttackSeconds = 60;
-document.getElementById("timeAttackHud").style.display = "block";
-document.getElementById("timeVal").innerHTML = timeAttackSeconds;
-timeAttackTimer = setInterval(()=>{
-timeAttackSeconds--;
-document.getElementById("timeVal").innerHTML = timeAttackSeconds;
-if(timeAttackSeconds<=0){
-endGame("⏰ タイムアップ！");
-}
-}, 1000);
-}else{
-document.getElementById("timeAttackHud").style.display = "none";
-}
-
-banSound();
-spawnPowerupCycle();
-startBGM();
-scheduleTaunt();
-move();
-}
-
-const MOVEMENT_TYPES = [
-"normal","fast","zigzag","teleport","bait","jitter",
-"ultraslow","circular","random","freeze","warp","giant","tinyfast","feint","spin"
-];
-
-/* ---------- 難易度に応じた敵タイプの解放（当たり判定が大きい/読みやすいものから） ---------- */
-const DIFFICULTY_TIERS = [
-{minKills:0, types:["giant","ultraslow","normal","spin"]},
-{minKills:4, types:["zigzag","circular","fast"]},
-{minKills:8, types:["warp","freeze","teleport"]},
-{minKills:14, types:["jitter","random","feint"]},
-{minKills:20, types:["bait","tinyfast"]}
-];
-
-function getUnlockedMovementTypes(){
-let pool = [];
-DIFFICULTY_TIERS.forEach(t=>{
-if(totalKills>=t.minKills) pool = pool.concat(t.types);
-});
-return pool.length>0 ? pool : DIFFICULTY_TIERS[0].types;
-}
-
-let bossVariant = "classic";
-const BOSS_VARIANTS = ["classic","rage","warp"];
-
-let lastUfoType = null;
-
-function chooseUFO(){
-if(gameMode==="bossrush"){
-ufoType="boss";
-bossVariant = BOSS_VARIANTS[Math.floor(Math.random()*BOSS_VARIANTS.length)];
-lastUfoType = "boss";
-showTaunt("ボスラッシュ、まだまだ続くよ👹");
-return;
-}
-
-let r=Math.random();
-let bossChance = level>=3 ? 0.06 : 0;
-let c = bossChance;
-if(r<c){
-ufoType="boss";
-bossVariant = BOSS_VARIANTS[Math.floor(Math.random()*BOSS_VARIANTS.length)];
-let bossTaunt = bossVariant==="rage" ? "怒りのボス出現！！(x5)👹🔥"
-: bossVariant==="warp" ? "ワープボス出現！！(x5)👹📍"
-: "ボス出現！！(x5)👹";
-showTaunt(bossTaunt);
-lastUfoType = "boss";
-return;
-}
-c += 0.05;
-if(r<c){ ufoType="rare"; showTaunt("レア個体だよ😎 (x3)"); lastUfoType="rare"; return; }
-
-let entranceTaunts = {
-teleport: "つかまえてみ？📍",
-bait: "いつでも逃げれるし😏",
-freeze: "止まってる？いや、油断だよ😏",
-feint: "本気はこれからだよ？",
-giant: "デカくてごめんね😆"
-};
-
-let pool = getUnlockedMovementTypes();
-let type = pool[Math.floor(Math.random()*pool.length)];
-let attempts = 0;
-while(type===lastUfoType && attempts<6 && pool.length>1){
-type = pool[Math.floor(Math.random()*pool.length)];
-attempts++;
-}
-ufoType = type;
-lastUfoType = type;
-if(entranceTaunts[type]) showTaunt(entranceTaunts[type]);
-}
-
-function currentLevelMultiplier(){
-return Math.min(1 + totalKills*0.045, 2.6);
-}
-
-/* ---------- 敵HP・難易度カーブ（撃破数ごとに滑らかに変化） ---------- */
-function baseHPForKills(k){
-return Math.min(4 + Math.floor(k/2), 16); // 2体倒すごとにHP+1、最大16
-}
-
-/* ---------- 当たり判定：撃破数カーブ × 見た目サイズを両方反映 ---------- */
-const ENEMY_VISUAL_SIZE = {
-tinyfast: 20,
-rare: 40,
-giant: 56,
-boss: 70
-};
-
-function enemyVisualHalfWidth(){
-let size = ENEMY_VISUAL_SIZE[ufoType] || 34; // 34px = ノーマルサイズ基準
-if(enraged) size *= 2.4; // 巨大化演出中はその分だけ大きい当たり判定に
-return size/2;
-}
-
-function currentHitThreshold(){
-let base = Math.max(14, 30 - totalKills*0.4); // 最初は緩め、倒すほど少しずつシビアに（下限あり）
-let sizeAdjust = (enemyVisualHalfWidth() - 17) * 0.6; // 基準サイズ(34px)からのズレを反映
-return Math.max(10, base + sizeAdjust);
-}
-
-/* ---------- 敵の見た目（撃破数に応じてどんどん増える） ---------- */
-const CREATURE_TIERS = [
-{minKills:0, emoji:"🛸"},
-{minKills:3, emoji:"👽"},
-{minKills:6, emoji:"🦍"},
-{minKills:9, emoji:"🦖"},
-{minKills:12, emoji:"🐙"},
-{minKills:15, emoji:"👹"},
-{minKills:18, emoji:"🐲"},
-{minKills:21, emoji:"🦑"},
-{minKills:24, emoji:"👑"}
-];
-let lastSpriteEmoji = null;
-
-function pickSprite(){
-let pool = CREATURE_TIERS.filter(t=>totalKills>=t.minKills);
-let choice = pool[pool.length-1];
-if(pool.length>1){
-let attempts=0;
-do{
-choice = pool[Math.floor(Math.random()*pool.length)];
-attempts++;
-}while(choice.emoji===lastSpriteEmoji && attempts<6);
-}
-lastSpriteEmoji = choice.emoji;
-return choice.emoji;
-}
-
-function newEnemy(){
-clearInterval(gagTimer);
-specialMoveActive = false;
-clearClones();
-circPhase = 0;
-freezeUntil = 0;
-lastWarp = 0;
-lastFeint = 0;
-chooseUFO();
-enemyMaxHP = baseHPForKills(totalKills);
-if(ufoType==="boss") enemyMaxHP = Math.round(enemyMaxHP*1.8);
-enemyHP = enemyMaxHP;
-updateHPBar();
-ufo.innerHTML = pickSprite();
-applySkinFilter();
-missSinceSpawn = 0;
-if(dex[ufoType] && !dex[ufoType].seen){
-dex[ufoType].seen = true;
-writeSave();
-}
-}
-
-function updateHPBar(){
-let pct = Math.max(0,(enemyHP/enemyMaxHP)*100);
-document.getElementById("hpBarFill").style.width = pct+"%";
-document.getElementById("hpNum").innerHTML = Math.max(0,enemyHP)+"/"+enemyMaxHP;
-let tz = document.getElementById("targetZone");
-if(tz) tz.style.width = (currentHitThreshold()*2)+"px";
-}
-
-function triggerEnrage(){
-enraged = true;
-ufo.classList.add("enraged");
-angrySound();
-navigator.vibrate?.([100,60,100,60,220]);
-
-let fx=document.createElement("div");
-fx.className="enrageFlash";
-fx.innerHTML="😡 怒ったぞー！！";
-field.appendChild(fx);
-setTimeout(()=>fx.remove(),2000);
-
-setTimeout(()=>{
-ufo.classList.remove("enraged");
-enraged = false;
-},2000);
-}
-
-function stageUp(){
-let newLevel = 1 + Math.floor(totalKills/3);
-if(newLevel !== level){
-level = newLevel;
-if(level > stats.maxStageReached) stats.maxStageReached = level;
-document.getElementById("levelVal").innerHTML = level;
-document.getElementById("message").innerHTML = "🔺 ステージアップ！ Stage "+level;
-}
-}
-
-function move(){
-newEnemy();
-timer=setInterval(()=>{
-
-if(cloningActive){ return; }
-if(Date.now() < hitStopUntil){ return; }
-
-let mult = currentLevelMultiplier() * (slowMoActive ? 0.45 : 1);
-
-if(ufoType==="fast") speed=10*mult;
-if(ufoType==="normal") speed=(4+Math.random()*3)*mult;
-if(ufoType==="boss"){
-speed = (bossVariant==="rage" ? 3.5 : 2.5)*mult;
-if(bossVariant==="warp"){
-let now = Date.now();
-if(now - lastTeleport > 1400 + Math.random()*800){
-lastTeleport = now;
-let maxWB = field ? field.clientWidth-50 : window.innerWidth*0.75;
-x = Math.random()*maxWB;
-ufo.style.left = x+"px";
-bubble.style.left=(x-20)+"px";
-}
-}
-}
-if(ufoType==="rare") speed=6*mult;
-if(ufoType==="zigzag"){
-speed=5*mult;
-zigzagOffset = Math.sin(Date.now()/80)*22;
-ufo.style.top = (38 + zigzagOffset)+"px";
-}
-if(ufoType==="jitter"){
-speed=7*mult;
-if(Math.random()<0.06){ dir = -dir; }
-}
-if(ufoType==="bait"){
-let fleeing = (bullet.style.display==="block");
-if(fleeing && !baitWasFleeing){
-let center = field.clientWidth/2;
-dir = ((x+17) < center) ? -1 : 1;
-}
-baitWasFleeing = fleeing;
-speed = (fleeing ? 11 : 3)*mult;
-}
-if(ufoType==="teleport"){
-speed = 2*mult;
-let now = Date.now();
-if(now - lastTeleport > 700 + Math.random()*500){
-lastTeleport = now;
-let maxWT = field ? field.clientWidth-50 : window.innerWidth*0.75;
-x = Math.random()*maxWT;
-ufo.style.left = x+"px";
-bubble.style.left=(x-20)+"px";
-navigator.vibrate?.(25);
-if(Math.random()<0.35) showTaunt("ここだよ〜😝");
-}
-}
-if(ufoType==="ultraslow"){
-speed = 1.2*mult;
-}
-if(ufoType==="circular"){
-speed = 4*mult;
-circPhase += 0.05;
-ufo.style.top = (38 + Math.sin(circPhase)*26)+"px";
-}
-if(ufoType==="random"){
-speed = (2+Math.random()*11)*mult;
-if(Math.random()<0.1){ dir = -dir; }
-}
-if(ufoType==="freeze"){
-let now = Date.now();
-if(now > freezeUntil && Math.random()<0.02){
-freezeUntil = now + 500 + Math.random()*400;
-}
-speed = (now < freezeUntil) ? 0 : 9*mult;
-}
-if(ufoType==="warp"){
-speed = 2*mult;
-let now = Date.now();
-if(now - lastWarp > 350 + Math.random()*300){
-lastWarp = now;
-let maxWW = field ? field.clientWidth-50 : window.innerWidth*0.75;
-let offset = (Math.random()*90-45);
-x = Math.max(0, Math.min(maxWW, x+offset));
-ufo.style.left = x+"px";
-bubble.style.left=(x-20)+"px";
-}
-}
-if(ufoType==="giant"){
-speed = 3*mult;
-}
-if(ufoType==="tinyfast"){
-speed = 12*mult;
-if(Math.random()<0.08){ dir = -dir; }
-}
-if(ufoType==="feint"){
-let now = Date.now();
-if(now - lastFeint > 900 + Math.random()*700){
-lastFeint = now;
-dir = -dir;
-speed = 16*mult;
-}else{
-speed = 3*mult;
-}
-}
-if(ufoType==="spin"){
-speed = 5*mult;
-}
-if(ufoType==="spin"){ ufo.classList.add("spinning"); }else{ ufo.classList.remove("spinning"); }
-
-x += speed * dir;
-
-let maxW = field ? field.clientWidth-50 : window.innerWidth*0.75;
-if(x > maxW){ dir=-1; }
-if(x < 0){ dir=1; }
-
-if(!enraged){
-let skinF = ufo.dataset.skinFilter ? " "+ufo.dataset.skinFilter : "";
-if(ufoType==="rare"){
-ufo.style.filter="drop-shadow(0 0 20px #ffe0a3)"+skinF;
-ufo.style.fontSize="40px";
-}else if(ufoType==="boss"){
-let bossColor = bossVariant==="rage" ? "#ff5566" : bossVariant==="warp" ? "#a78bfa" : "#ff8fab";
-ufo.style.filter="drop-shadow(0 0 22px "+bossColor+")"+skinF;
-ufo.style.fontSize="70px";
-}else if(ufoType==="giant"){
-ufo.style.filter="drop-shadow(0 0 14px #ffcf8a)"+skinF;
-ufo.style.fontSize="56px";
-}else if(ufoType==="tinyfast"){
-ufo.style.filter="drop-shadow(0 0 6px #a8c8ff)"+skinF;
-ufo.style.fontSize="20px";
-}else{
-ufo.style.filter="drop-shadow(0 0 8px #c9b8ff)"+skinF;
-ufo.style.fontSize="34px";
-}
-}
-
-if(Math.random()<0.0012) phantom();
-if(Math.random()<0.0015) wiggle();
-
-ufo.style.left=x+"px";
-bubble.style.left=(x-20)+"px";
-
-},20);
-}
-
-let gagTimer = null;
-
-function phantom(){
-if(specialMoveActive) return;
-specialMoveActive = true;
-showTaunt("今まで本気だったと思った？😈");
-speed=18;
-let count=0;
-gagTimer=setInterval(()=>{
-x += speed * dir;
-ufo.style.left=x+"px";
-bubble.style.left=(x-20)+"px";
-count++;
-if(count>20){
-clearInterval(gagTimer);
-speed=4+Math.random()*3;
-specialMoveActive = false;
-}
-},20);
-}
-
-function wiggle(){
-if(specialMoveActive) return;
-specialMoveActive = true;
-showTaunt("ぷるぷるぷる〜😆");
-let originX = x;
-let count = 0;
-gagTimer=setInterval(()=>{
-x = originX + (count%2===0 ? 16 : -16);
-ufo.style.left = x+"px";
-bubble.style.left=(x-20)+"px";
-count++;
-if(count>18){
-clearInterval(gagTimer);
-x = originX;
-ufo.style.left = x+"px";
-specialMoveActive = false;
-}
-},22);
-}
-
-function desperateDodge(){
-specialMoveActive = true;
-showTaunt("こんなん誰が当てれんねん😆💦");
-navigator.vibrate?.([30,30,30,30,30,30]);
-let originX = x;
-let count = 0;
-gagTimer=setInterval(()=>{
-x = originX + (count%2===0 ? 24 : -24);
-ufo.style.left = x+"px";
-bubble.style.left=(x-20)+"px";
-count++;
-if(count>32){
-clearInterval(gagTimer);
-x = originX;
-ufo.style.left = x+"px";
-specialMoveActive = false;
-}
-},18);
-}
-
-/* ---------- HP1で分身するびっくり演出 ---------- */
-let cloningActive = false;
-let cloneEls = [];
-let cloneCleanupTimer = null;
-
-function clearClones(){
-cloneEls.forEach(c=>c.remove());
-cloneEls = [];
-clearTimeout(cloneCleanupTimer);
-cloningActive = false;
-if(ufo) ufo.classList.remove("cloneShimmer");
-}
-
-function spawnClones(){
-clearClones();
-cloningActive = true;
-
-showTaunt(cloneComments[Math.floor(Math.random()*cloneComments.length)]);
-navigator.vibrate?.([40,30,40,30,40]);
-
-let maxWC = field.clientWidth - 50;
-let slotCount = 10;
-let slots = [];
-for(let i=0;i<slotCount;i++){
-slots.push(15 + i*(maxWC-15)/(slotCount-1));
-}
-
-let realIndex = Math.floor(Math.random()*slotCount);
-x = slots[realIndex];
-ufo.style.left = x+"px";
-ufo.style.top = "38px";
-ufo.classList.add("cloneShimmer");
-bubble.style.left = (x-20)+"px";
-
-for(let i=0;i<slotCount;i++){
-if(i===realIndex) continue;
-let clone = document.createElement("div");
-clone.className = "ufo cloneShimmer";
-clone.innerHTML = ufo.innerHTML;
-clone.style.left = slots[i]+"px";
-clone.style.top = "38px";
-clone.style.fontSize = ufo.style.fontSize || "34px";
-clone.style.filter = ufo.style.filter;
-field.appendChild(clone);
-cloneEls.push(clone);
-}
-
-cloneCleanupTimer = setTimeout(()=>{
-clearClones();
-},3000);
-}
-
-/* ---------- パワーアップ（スター）システム ---------- */
-function spawnPowerupCycle(){
-powerupTimer = setInterval(()=>{
-if(!powerupActive && document.getElementById("game").style.display==="block"){
-showPowerup();
-}
-}, 9000 + Math.random()*4000);
-}
-
-function showPowerup(){
-powerupActive = true;
-let maxW = field.clientWidth-40;
-powerupX = Math.random()*maxW;
-powerupEl.style.left = powerupX+"px";
-powerupEl.style.display = "block";
-
-setTimeout(()=>{
-if(powerupActive){
-powerupActive = false;
-powerupEl.style.display = "none";
-}
-}, 3500);
-}
-
-function tryGrabPowerup(){
-if(!powerupActive) return false;
-let dist = Math.abs((x+enemyVisualHalfWidth()) - (powerupX+15));
-if(dist < 55){
-powerupActive = false;
-powerupEl.style.display = "none";
-activateSlowMo();
-chimeSound();
-return true;
-}
-return false;
-}
-
-function activateSlowMo(){
-slowMoActive = true;
-stats.powerupUsed = true;
-checkAchievements();
-document.getElementById("message").innerHTML = "⭐ スローモーション発動！";
-setTimeout(()=>{ slowMoActive = false; }, 4000);
-}
-
-function fireAt(clientX){
-
-if(firing || respawnPending) return;
-firing = true;
-stats.totalShots++;
-
-let rect = field.getBoundingClientRect();
-let tapX = clientX - rect.left;
-tapX = Math.max(15, Math.min(field.clientWidth-15, tapX));
-shotX = tapX;
-
-document.querySelector(".turret-mount").style.left = tapX+"px";
-
-// パワーアップ取得判定（撃つ瞬間の位置で判定）
-tryGrabPowerup();
-
-banSound();
-
-let fx = document.createElement("div");
-fx.className = "banFlash";
-fx.innerHTML = "BAN!!";
-document.body.appendChild(fx);
-setTimeout(()=>fx.remove(),250);
-
-let muzzle = document.getElementById("turretMuzzle");
-muzzle.classList.add("muzzleFlash");
-setTimeout(()=>muzzle.classList.remove("muzzleFlash"),150);
-
-bullet.style.display = "block";
-bullet.style.left = tapX+"px";
-bullet.style.bottom = "50px";
-
-slowBullet();
-}
-
-function slowBullet(){
-
-let pos = 50;
-let impactY = 282;
-let speedB = 3;
-let phase = "approach";
-
-let bulletTimer = setInterval(()=>{
-
-if(phase === "approach"){
-
-pos += speedB;
-bullet.style.bottom = pos + "px";
-
-if(pos >= impactY){
-let distance = Math.abs((x+enemyVisualHalfWidth())-shotX);
-
-if(distance < currentHitThreshold()){
-// 命中：その場で止まってUFOがぶるるん！
-clearInterval(bulletTimer);
-bullet.style.display = "none";
-bullet.style.opacity = 1;
-jiggleUFO();
-judge();
-}else{
-// 外れ：奥（画面上部）まで貫通していく
-phase = "through";
-}
-}
-
-}else{
-
-pos += speedB * 1.6;
-bullet.style.bottom = pos + "px";
-bullet.style.opacity = Math.max(0, 1 - (pos-impactY)/70);
-
-if(pos >= 335){
-clearInterval(bulletTimer);
-bullet.style.display = "none";
-bullet.style.opacity = 1;
-judge();
-}
-
-}
-
-}, 16);
-}
-
-function jiggleUFO(){
-ufo.classList.remove("jiggle");
-void ufo.offsetWidth;
-ufo.classList.add("jiggle");
-setTimeout(()=>ufo.classList.remove("jiggle"),350);
-}
-
-let hitStopUntil = 0;
-function hitStop(ms){
-hitStopUntil = Date.now() + ms;
-}
-
-function killShake(){
-document.body.classList.add("killShake");
-setTimeout(()=>document.body.classList.remove("killShake"),400);
-}
-
-function whiteFlash(){
-document.querySelector(".field").classList.add("whiteFlash");
-setTimeout(()=>document.querySelector(".field").classList.remove("whiteFlash"),250);
-}
-
-function fireworks(count){
-count = count || 14;
-let colors = ["🎉","✨","🌟","💥","🌸","💫"];
-for(let i=0;i<count;i++){
-let fw = document.createElement("div");
-fw.className = "firework";
-fw.innerHTML = colors[Math.floor(Math.random()*colors.length)];
-fw.style.left = (field.clientWidth/2)+"px";
-fw.style.top = "90px";
-let angle = (Math.PI*2*i)/count + Math.random()*0.5;
-let dist = 70 + Math.random()*70;
-fw.style.setProperty("--fx", Math.cos(angle)*dist+"px");
-fw.style.setProperty("--fy", Math.sin(angle)*dist+"px");
-field.appendChild(fw);
-setTimeout(()=>fw.remove(),900);
-}
-}
-
-function explodeEffect(isBoss){
-hitStop(isBoss ? 140 : 80);
-killShake();
-whiteFlash();
-navigator.vibrate?.(isBoss ? [60,40,60,40,120] : [70,30,70]);
-
-let boom=document.createElement("div");
-boom.className="explode";
-boom.innerHTML="💫";
-boom.style.left=(x)+"px";
-boom.style.top="38px";
-field.appendChild(boom);
-setTimeout(()=>boom.remove(),600);
-
-let starCount = isBoss ? 16 : 9;
-for(let i=0;i<starCount;i++){
-let star=document.createElement("div");
-star.className="star";
-star.innerHTML="🌸";
-star.style.left=(x)+"px";
-star.style.top="38px";
-field.appendChild(star);
-setTimeout(()=>star.remove(),800);
-}
-
-if(isBoss) fireworks(18);
-}
-
-function popScoreText(text){
-let p = document.createElement("div");
-p.className = "popScore";
-p.innerHTML = text;
-p.style.left = x+"px";
-p.style.top = "18px";
-field.appendChild(p);
-setTimeout(()=>p.remove(),700);
-}
-
-function currentTitle(){
-let t = "";
-for(const item of titles){
-if(maxCombo >= item.min) t = item.text;
-}
-return t;
-}
-
-function hitSpark(){
-hitStop(45);
-let star=document.createElement("div");
-star.className="star";
-star.innerHTML="✨";
-star.style.left=(x)+"px";
-star.style.top="38px";
-field.appendChild(star);
-setTimeout(()=>star.remove(),500);
-}
-
-function endGame(message){
-document.getElementById("message").innerHTML = message;
-
-navigator.vibrate?.([200,100,200]);
-
-clearInterval(timer);
-clearInterval(powerupTimer);
-clearInterval(timeAttackTimer);
-stopBGM();
-stopTaunts();
-
-if(score > stats.highScore) stats.highScore = score;
-stats.totalPlaySeconds += Math.round((Date.now()-sessionStartTime)/1000);
-checkAchievements();
-writeSave();
-
-setTimeout(()=>{ showRetry(); },1200);
-}
-
-function judge(){
-
-let distance=Math.abs((x+enemyVisualHalfWidth())-shotX);
-
-if(distance < currentHitThreshold()){
-
-let base = 1;
-if(ufoType==="rare") base = 3;
-if(ufoType==="boss") base = 5;
-if(ufoType==="giant") base = 2;
-
-combo++;
-if(combo > maxCombo) maxCombo = combo;
-totalHits++;
-stats.totalHitsEver++;
-if(combo > stats.maxComboEver) stats.maxComboEver = combo;
-
-let comboBonus = combo>=10 ? 3 : combo>=5 ? 2 : 1;
-let gained = base * comboBonus;
-score += gained;
-
-stress -= (ufoType==="boss" ? 2 : 1);
-if(stress < 0) stress = 0;
-
-hitSound();
-popScoreText("+"+gained + (comboBonus>1 ? " COMBO×"+comboBonus : ""));
-navigator.vibrate?.(100);
-
-document.querySelector(".field").classList.add("hitflash");
-setTimeout(()=>document.querySelector(".field").classList.remove("hitflash"),300);
-
-document.getElementById("comboVal").innerHTML = combo;
-if(combo>0 && combo%5===0){
-document.getElementById("comboMsg").innerHTML = combo+"連続！ "+comboComments[Math.floor(Math.random()*comboComments.length)];
-}
-
-// 敵のHPを削る
-enemyHP -= 1;
-updateHPBar();
-
-if(enemyHP <= 0){
-totalKills++;
-stats.totalKills++;
-if(dex[ufoType]) dex[ufoType].kills++;
-if(ufoType==="boss") stats.bossKills++;
-if(ufoType==="rare") stats.rareKills++;
-if(cloningActive) stats.cloneKills++;
-if(missSinceSpawn===0) stats.noMissKills++;
-stats.coins += ufoType==="boss" ? 5 : ufoType==="rare" ? 2 : 1;
-checkAchievements();
-writeSave();
-explodeEffect(ufoType==="boss");
-document.getElementById("message").innerHTML = ufoType==="boss" ? "🎆 ボス撃破！！" : "💥 撃破！";
-stageUp();
-ufo.style.opacity = "0";
-respawnPending = true;
-setTimeout(()=>{
-newEnemy();
-ufo.style.opacity = "1";
-respawnPending = false;
-firing = false;
-}, 450);
-}else{
-hitSpark();
-document.getElementById("message").innerHTML="🎯 HIT！";
-if(enemyHP === 1){
-spawnClones();
-}
-}
-
-checkAchievements();
-
-// 5発ごとに敵が怒って巨大化するびっくり演出
-if(totalHits % 5 === 0 && !enraged){
-triggerEnrage();
-}
-
-}else{
-
-combo = 0;
-document.getElementById("comboVal").innerHTML = combo;
-document.getElementById("comboMsg").innerHTML = "";
-
-stress += 1;
-missSinceSpawn++;
-
-missSound();
-
-document.body.classList.add("flash");
-setTimeout(()=>document.body.classList.remove("flash"),300);
-
-document.getElementById("message").innerHTML="😈 MISS！";
-}
-
-if(stress >= MAX_STRESS){
-stress = MAX_STRESS;
-document.getElementById("stress").style.width = "100%";
-document.getElementById("stressNum").innerHTML = MAX_STRESS;
-endGame("💀ストレス限界突破…GAME OVER");
-return;
-}
-
-document.getElementById("score").innerHTML=score;
-document.getElementById("stress").style.width=(stress/MAX_STRESS*100)+"%";
-document.getElementById("stressNum").innerHTML = stress;
-
-saveScore();
-
-if(!respawnPending){
-firing = false;
-}
-
-setTimeout(()=>{
-document.getElementById("message").innerHTML="";
-},900);
-}
-
-function showRetry(){
-let box = document.getElementById("message");
-
-let title = currentTitle();
-if(title){
-let tEl = document.createElement("div");
-tEl.className = "title-tag";
-tEl.innerHTML = "🏅 称号：「"+title+"」獲得！（最大コンボ "+maxCombo+"）";
-box.appendChild(tEl);
-}
-
-let btn = document.createElement("button");
-btn.className = "retryBtn";
-btn.innerHTML = "RETRY";
-btn.onclick = ()=>location.reload();
-box.appendChild(btn);
-}
-
-let rankData = [];
-
-function saveScore(){
-rankData.push(score);
-rankData.sort((a,b)=>b-a);
-rankData = rankData.slice(0,5);
-showRank();
-}
-
-function showRank(){
-let data = rankData;
+function renderTitleStats(){
+document.getElementById("statsList").innerHTML=
+"<div class='statRow'><span>ベスト距離</span><span>"+stats.best+" m</span></div>"+
+"<div class='statRow'><span>プレイ回数</span><span>"+stats.plays+"</span></div>";
 let html="";
-data.forEach((v,i)=>{
-let medal = i===0 ? "🥇" : i===1 ? "🥈" : i===2 ? "🥉" : (i+1)+"位";
-html += "<div class='rankRow'><span>"+medal+"</span><span>"+v+"点</span></div>";
+if(stats.top.length===0){ html="<div class='rankRow'><span>まだ記録なし</span></div>"; }
+else{
+stats.top.forEach((v,i)=>{
+let medal=i===0?"🥇":i===1?"🥈":i===2?"🥉":(i+1)+"位";
+html+="<div class='rankRow'><span>"+medal+"</span><span>"+v+" m</span></div>";
 });
-document.getElementById("ranking").innerHTML=html || "<div class='rankRow'><span>まだ記録なし</span></div>";
+}
+document.getElementById("ranking").innerHTML=html;
 }
 
-showRank();
-renderStats();
+function beginAttempt(){
+document.getElementById("titleScreen").style.display="none";
+document.getElementById("gameScreen").style.display="block";
+document.getElementById("shoeHud").textContent=currentShoe().emoji;
+fitCanvas();
+startAttemptCommon();
+}
+function retryAttempt(){
+document.getElementById("resultOverlay").classList.remove("show");
+startAttemptCommon();
+}
+function backToTitle(){
+document.getElementById("resultOverlay").classList.remove("show");
+document.getElementById("gameScreen").style.display="none";
+document.getElementById("titleScreen").style.display="block";
+renderTitleStats();
+buildShoeGrid();
+state="title";
+}
+function startAttemptCommon(){
+course=generateCourse();
+cameraX=0; swingT=0; particles=[];
+shoe={x:0,y:0,vx:0,vy:0,rotation:0,rolling:false,overHole:false,holeEnterY:0,bounceCount:0};
+currentDistanceM=0;
+state="aiming";
+updateHud();
+}
 
+function showResult(reachedEnd,holeFall,isRecord){
+document.getElementById("resultDist").textContent=finalDistanceM+"m";
+let msg = holeFall ? "😵 穴に落ちてしまった…" : reachedEnd ? "🎉 コース制覇ボーナス！" : "🏁 着地！";
+document.getElementById("resultMsg").textContent=msg;
+document.getElementById("resultRecord").textContent = isRecord ? "🏆 自己ベスト更新！" : "";
+document.getElementById("resultOverlay").classList.add("show");
+renderTitleStatsQuietly();
+}
+function renderTitleStatsQuietly(){ /* stats box on title updates next time it's shown */ }
+
+/* ================= 描画 ================= */
+function fitCanvas(){
+canvas=document.getElementById("cv");
+let wrapW=Math.min(document.querySelector(".gameWrap").clientWidth||480,480);
+canvas.width=wrapW; canvas.height=380;
+W=canvas.width; H=canvas.height;
+ctx=canvas.getContext("2d");
+ctx.textAlign="center"; ctx.textBaseline="middle";
+canvas.onclick=()=>{ if(state==="aiming") release(); };
+}
+window.addEventListener("resize",()=>{ if(canvas) fitCanvas(); });
+
+function drawSky(){
+let grad=ctx.createLinearGradient(0,0,0,H);
+grad.addColorStop(0,"#7ec8f0"); grad.addColorStop(0.55,"#cdeeff"); grad.addColorStop(1,"#fff8ec");
+ctx.fillStyle=grad; ctx.fillRect(0,0,W,H);
+ctx.beginPath(); ctx.fillStyle="#ffe27a"; ctx.arc(W-50,50,26,0,7); ctx.fill();
+}
+function drawClouds(camX){
+ctx.fillStyle="#ffffffcc";
+for(let i=0;i<5;i++){
+let baseX=(i*260)-((camX*0.15)%260);
+let cx=((baseX%(W+200))+W+200)%(W+200)-100;
+let cy=40+((i*37)%50);
+ctx.beginPath();
+ctx.ellipse(cx,cy,26,14,0,0,7);
+ctx.ellipse(cx+20,cy+4,20,12,0,0,7);
+ctx.ellipse(cx-20,cy+5,18,11,0,0,7);
+ctx.fill();
+}
+}
+function drawGround(camX){
+for(const seg of course.segments){
+let first=seg[0], last=seg[seg.length-1];
+if(last.x-camX<-60 || first.x-camX>W+60) continue;
+ctx.beginPath();
+ctx.moveTo(seg[0].x-camX,seg[0].y);
+for(let i=1;i<seg.length;i++) ctx.lineTo(seg[i].x-camX,seg[i].y);
+ctx.lineTo(last.x-camX,H);
+ctx.lineTo(first.x-camX,H);
+ctx.closePath();
+let grad=ctx.createLinearGradient(0,first.y,0,H);
+grad.addColorStop(0,"#8fd35f"); grad.addColorStop(0.12,"#5fa73c"); grad.addColorStop(0.12,"#c98a4b"); grad.addColorStop(1,"#8a5a30");
+ctx.fillStyle=grad; ctx.fill();
+ctx.strokeStyle="#4f8f3b"; ctx.lineWidth=3; ctx.beginPath();
+ctx.moveTo(seg[0].x-camX,seg[0].y);
+for(let i=1;i<seg.length;i++) ctx.lineTo(seg[i].x-camX,seg[i].y);
+ctx.stroke();
+}
+for(const h of course.holes){
+if(h.end-camX<-60 || h.start-camX>W+60) continue;
+ctx.beginPath();
+ctx.moveTo(h.start-camX,h.yStart);
+ctx.lineTo(h.start-camX,H);
+ctx.lineTo(h.end-camX,H);
+ctx.lineTo(h.end-camX,h.yEnd);
+ctx.closePath();
+let g=ctx.createLinearGradient(0,Math.min(h.yStart,h.yEnd),0,H);
+g.addColorStop(0,"#3a2a1a"); g.addColorStop(1,"#150d08");
+ctx.fillStyle=g; ctx.fill();
+}
+}
+function drawSwing(){
+const pivotX=90, pivotY=110;
+const A=SWING_MAX_ANGLE, w=2*Math.PI/SWING_PERIOD;
+const theta=A*Math.sin(w*swingT);
+const thetaSpeed=A*w*Math.cos(w*swingT);
+const seatX=pivotX+Math.sin(theta)*SWING_ROPE;
+const seatY=pivotY+Math.cos(theta)*SWING_ROPE;
+
+ctx.strokeStyle="#8a6a4a"; ctx.lineWidth=8; ctx.lineCap="round";
+ctx.beginPath(); ctx.moveTo(pivotX-46,H-2); ctx.lineTo(pivotX,pivotY-8); ctx.lineTo(pivotX+46,H-2); ctx.stroke();
+ctx.beginPath(); ctx.moveTo(pivotX-46,pivotY-4); ctx.lineTo(pivotX+46,pivotY-4); ctx.stroke();
+
+let sweetZone = theta>-0.15 && theta<0.5 && thetaSpeed>0;
+ctx.strokeStyle= sweetZone ? "#ffce54" : "#c9b8a0";
+ctx.lineWidth=3;
+ctx.beginPath(); ctx.moveTo(pivotX,pivotY); ctx.lineTo(seatX,seatY); ctx.stroke();
+
+if(sweetZone){
+ctx.beginPath(); ctx.fillStyle="#ffce5455"; ctx.arc(seatX,seatY,26,0,7); ctx.fill();
+}
+
+ctx.font="30px sans-serif";
+ctx.fillText("🧒",seatX,seatY-6);
+ctx.font="18px sans-serif";
+ctx.fillText(currentShoe().emoji,seatX+10,seatY+16);
+
+ctx.fillStyle="#8a6a4a";
+ctx.fillRect(seatX-14,seatY+2,28,6);
+}
+function drawParticles(camX){
+for(const p of particles){
+ctx.beginPath();
+ctx.fillStyle="rgba("+p.color+","+clamp(p.life/p.maxLife,0,1)+")";
+ctx.arc(p.x-camX,p.y,p.r,0,7); ctx.fill();
+}
+}
+function drawShoe(camX){
+ctx.save();
+ctx.translate(shoe.x-camX,shoe.y);
+ctx.rotate(shoe.rotation);
+ctx.font="30px sans-serif";
+ctx.fillText(currentShoe().emoji,0,0);
+ctx.restore();
+}
+
+function draw(){
+if(!ctx) return;
+ctx.clearRect(0,0,W,H);
+drawSky();
+let camX = state==="aiming" ? 0 : cameraX;
+drawClouds(camX);
+drawGround(camX);
+if(state==="aiming") drawSwing();
+drawParticles(camX);
+if(state==="flight"||state==="result") drawShoe(camX);
+}
+
+/* ================= メインループ ================= */
+function update(dt){
+if(state==="aiming"){ swingT+=dt; }
+else if(state==="flight"){
+physicsStep(dt);
+if(state==="flight") cameraX=Math.max(0,shoe.x-W*0.34);
+}
+updateParticles(dt);
+}
+function frame(ts){
+if(!lastTime) lastTime=ts;
+let dt=Math.min((ts-lastTime)/1000,0.033);
+lastTime=ts;
+update(dt);
+draw();
+requestAnimationFrame(frame);
+}
+
+/* ================= 初期化 ================= */
+loadSave();
+buildShoeGrid();
+renderTitleStats();
+requestAnimationFrame(frame);
 </script>
-
 </body>
 </html>
