@@ -2,323 +2,296 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport"
+content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 
 <title>靴飛ばし大飛行！</title>
 
 <style>
-
 *{
-box-sizing:border-box;
--webkit-tap-highlight-color:transparent;
-user-select:none;
+ box-sizing:border-box;
+ -webkit-tap-highlight-color:transparent;
+ user-select:none;
 }
 
 body{
-margin:0;
-min-height:100vh;
-background:linear-gradient(160deg,#bfe4ff 0%,#e8f7ff 40%,#fff8ec 100%);
-color:#33465e;
-font-family:
-"Hiragino Maru Gothic ProN",
-"Yu Gothic",
-"M PLUS Rounded 1c",
-"Hiragino Sans",
-sans-serif;
-text-align:center;
-overflow-x:hidden;
+ margin:0;
+ min-height:100vh;
+ background:linear-gradient(160deg,#b9e4ff,#effaff 45%,#fff5df);
+ color:#33465e;
+ font-family:"Hiragino Maru Gothic ProN","Yu Gothic","M PLUS Rounded 1c",sans-serif;
+ text-align:center;
+ overflow-x:hidden;
 }
 
 .wrap{
-max-width:480px;
-margin:0 auto;
-padding:16px 12px 32px;
-position:relative;
+ max-width:480px;
+ margin:auto;
+ padding:14px 12px 30px;
 }
 
 h1{
-font-size:26px;
-margin:8px 0 2px;
-color:#2b4a6b;
-text-shadow:0 2px 0 #fff;
+ font-size:27px;
+ margin:8px 0 3px;
+ color:#294a6d;
+ text-shadow:0 2px #fff;
 }
 
 .badge{
-display:inline-block;
-background:linear-gradient(135deg,#ff9d6c,#ffce54);
-color:#5b3a1e;
-padding:4px 14px;
-border-radius:20px;
-font-size:12px;
-font-weight:bold;
-margin-bottom:8px;
-box-shadow:0 4px 12px #ffb37050;
+ display:inline-block;
+ background:linear-gradient(135deg,#ff9368,#ffd05a);
+ color:#633c1d;
+ padding:4px 14px;
+ border-radius:20px;
+ font-size:11px;
+ font-weight:bold;
 }
 
 .sub{
-font-size:13px;
-line-height:1.7;
-color:#4d6786;
-margin-bottom:10px;
+ font-size:13px;
+ line-height:1.7;
+ color:#526b86;
+ margin:7px 0 10px;
 }
 
 button{
-font-family:inherit;
-border:none;
-cursor:pointer;
-font-weight:bold;
-border-radius:50px;
+ font-family:inherit;
+ border:0;
+ cursor:pointer;
+ font-weight:bold;
+ border-radius:50px;
 }
 
 .bigBtn{
-font-size:20px;
-padding:12px 40px;
-background:linear-gradient(135deg,#ff7a59,#ffb703);
-color:#fff;
-box-shadow:0 8px 18px #ff7a5960;
-margin-top:10px;
-}
-
-.smallBtn{
-font-size:13px;
-padding:8px 18px;
-background:#eef6ff;
-color:#2b4a6b;
-border:1px solid #bcdcff;
+ font-size:20px;
+ padding:13px 45px;
+ background:linear-gradient(135deg,#ff7156,#ffb703);
+ color:white;
+ box-shadow:0 8px 18px #ff7a5960;
+ margin-top:10px;
 }
 
 .shoeGrid{
-display:grid;
-grid-template-columns:1fr 1fr 1fr;
-gap:8px;
-margin:12px 0;
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:8px;
+ margin:12px 0;
 }
 
 .shoeCard{
-background:#fffdf8;
-border:2px solid #dfeaf5;
-border-radius:16px;
-padding:8px 4px;
-cursor:pointer;
-box-shadow:0 3px 10px #33465e12;
+ background:#fffdf8;
+ border:2px solid #dfeaf5;
+ border-radius:16px;
+ padding:8px 4px;
+ box-shadow:0 3px 10px #33465e12;
 }
 
 .shoeCard.active{
-border-color:#ff7a59;
-background:linear-gradient(160deg,#fff2ea,#fff8ec);
-box-shadow:0 4px 14px #ff7a5940;
+ border-color:#ff7959;
+ background:#fff1e9;
+ box-shadow:0 4px 14px #ff795940;
 }
 
 .shoeCard .emo{
-font-size:28px;
+ font-size:28px;
 }
 
 .shoeCard .nm{
-font-size:11px;
-font-weight:bold;
-margin-top:2px;
+ font-size:11px;
+ font-weight:bold;
 }
 
 .flavorBox{
-background:#fffdf8;
-border:1px solid #dfeaf5;
-border-radius:14px;
-padding:8px 12px;
-font-size:12px;
-color:#5b6f8a;
-min-height:34px;
-margin-bottom:6px;
+ background:#fffdf8;
+ border:1px solid #dfeaf5;
+ border-radius:14px;
+ padding:8px 12px;
+ font-size:12px;
+ color:#5b6f8a;
+ min-height:36px;
 }
 
 .rankBox{
-background:#fffdf8;
-border:1px solid #dfeaf5;
-border-radius:16px;
-padding:8px 0;
-margin-top:10px;
-box-shadow:0 4px 12px #33465e10;
+ background:#fffdf8;
+ border:1px solid #dfeaf5;
+ border-radius:16px;
+ padding:8px 0;
+ margin-top:10px;
+ box-shadow:0 4px 12px #33465e10;
 }
 
 .rankBox h2{
-margin:4px 0 6px;
-font-size:15px;
-color:#2b4a6b;
+ margin:4px 0 6px;
+ font-size:15px;
 }
 
-.rankRow{
-display:flex;
-justify-content:space-between;
-padding:4px 18px;
-font-size:14px;
-border-bottom:1px solid #eef3f8;
+.rankRow,
+.statRow{
+ display:flex;
+ justify-content:space-between;
+ padding:4px 18px;
+ font-size:13px;
+ border-bottom:1px solid #eef3f8;
 }
 
 .statRow{
-display:flex;
-justify-content:space-between;
-padding:3px 18px;
-font-size:12px;
-color:#5b6f8a;
-}
-
-.statRow span:last-child{
-font-weight:bold;
-color:#2b4a6b;
+ font-size:12px;
+ color:#5b6f8a;
 }
 
 #gameScreen{
-display:none;
+ display:none;
 }
 
 .gameWrap{
-position:relative;
-width:100%;
-max-width:480px;
-margin:0 auto;
+ position:relative;
+ width:100%;
+ max-width:480px;
+ margin:auto;
 }
 
 canvas{
-width:100%;
-display:block;
-border-radius:20px;
-box-shadow:0 6px 20px #33465e30;
-background:#bfe4ff;
-touch-action:manipulation;
+ width:100%;
+ display:block;
+ border-radius:20px;
+ box-shadow:0 6px 20px #33465e30;
+ background:#bfe4ff;
+ touch-action:manipulation;
 }
 
 .hud{
-position:absolute;
-top:8px;
-left:0;
-right:0;
-display:flex;
-justify-content:space-between;
-padding:0 12px;
-pointer-events:none;
+ position:absolute;
+ top:8px;
+ left:0;
+ right:0;
+ display:flex;
+ justify-content:space-between;
+ padding:0 10px;
+ pointer-events:none;
 }
 
 .hudBox{
-background:#ffffffcc;
-border-radius:12px;
-padding:4px 12px;
-font-size:13px;
-font-weight:bold;
-color:#2b4a6b;
-box-shadow:0 2px 8px #33465e20;
+ background:#ffffffdd;
+ border-radius:12px;
+ padding:4px 10px;
+ font-size:12px;
+ font-weight:bold;
+ color:#294a6d;
+ box-shadow:0 2px 8px #33465e20;
 }
 
 .hudBox .big{
-font-size:18px;
-color:#ff7a59;
+ font-size:18px;
+ color:#ff7055;
 }
 
 #eventMsg{
-position:absolute;
-top:44px;
-left:50%;
-transform:translateX(-50%);
-background:#3a2a52dd;
-color:#ffe0a3;
-padding:6px 16px;
-border-radius:14px;
-font-size:13px;
-font-weight:bold;
-opacity:0;
-transition:opacity 0.3s;
-pointer-events:none;
-white-space:nowrap;
+ position:absolute;
+ top:46px;
+ left:50%;
+ transform:translateX(-50%);
+ background:#35264bdd;
+ color:#ffe2a4;
+ padding:7px 16px;
+ border-radius:16px;
+ font-size:13px;
+ font-weight:bold;
+ opacity:0;
+ transition:.25s;
+ pointer-events:none;
+ white-space:nowrap;
 }
 
 #eventMsg.show{
-opacity:1;
+ opacity:1;
 }
 
 .fireBtnWrap{
-margin-top:10px;
+ margin-top:10px;
 }
 
 #fireBtn{
-font-size:20px;
-padding:12px 46px;
-background:linear-gradient(135deg,#ff7a59,#ffb703);
-color:#fff;
-box-shadow:0 8px 18px #ff7a5960;
+ font-size:20px;
+ padding:13px 48px;
+ background:linear-gradient(135deg,#ff7156,#ffb703);
+ color:white;
+ box-shadow:0 8px 18px #ff7a5960;
 }
 
 .tapHint{
-font-size:12px;
-color:#7a90ac;
-margin-top:4px;
+ font-size:12px;
+ color:#7890aa;
+ margin-top:5px;
 }
 
 .resultOverlay{
-display:none;
-position:absolute;
-inset:0;
-background:#0d1b2add;
-border-radius:20px;
-color:#fff;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-padding:16px;
+ display:none;
+ position:absolute;
+ inset:0;
+ background:#0c1a2cdd;
+ border-radius:20px;
+ color:white;
+ flex-direction:column;
+ align-items:center;
+ justify-content:center;
+ padding:16px;
 }
 
 .resultOverlay.show{
-display:flex;
+ display:flex;
 }
 
-.resultOverlay .distTitle{
-font-size:14px;
-color:#cfe4ff;
+.distTitle{
+ font-size:14px;
+ color:#cfe4ff;
 }
 
-.resultOverlay .distNum{
-font-size:52px;
-font-weight:900;
-color:#ffce54;
-text-shadow:0 3px 0 #b5791a;
-margin:4px 0 2px;
+.distNum{
+ font-size:55px;
+ font-weight:900;
+ color:#ffd05a;
+ text-shadow:0 3px #a87517;
 }
 
-.resultOverlay .distMsg{
-font-size:14px;
-margin-bottom:12px;
+.distMsg{
+ font-size:14px;
+ margin-bottom:10px;
 }
 
-.resultOverlay .record{
-font-size:13px;
-color:#ffce54;
-font-weight:bold;
-margin-bottom:8px;
+.record{
+ color:#ffd05a;
+ font-weight:bold;
+ min-height:20px;
 }
 
 .resultBtnRow{
-display:flex;
-gap:8px;
-flex-wrap:wrap;
-justify-content:center;
+ display:flex;
+ gap:9px;
+ margin-top:8px;
 }
 
 .resultBtnRow button{
-font-size:14px;
-padding:10px 16px;
+ font-size:13px;
+ padding:10px 18px;
 }
 
 .retryBtn{
-background:linear-gradient(135deg,#ff7a59,#ffb703);
-color:#fff;
+ background:linear-gradient(135deg,#ff7156,#ffb703);
+ color:white;
 }
 
 .backBtn{
-background:#ffffff22;
-color:#fff;
-border:1px solid #ffffff55;
+ background:#ffffff22;
+ color:white;
+ border:1px solid #ffffff55;
 }
 
-.homeBtn{
-background:#ffffff;
-color:#33465e;
+.topBtn{
+ margin-top:8px;
+ background:#ffffff20;
+ color:white;
+ border:1px solid #ffffff55;
+ padding:9px 18px;
 }
 
 </style>
@@ -332,16 +305,13 @@ color:#33465e;
 
 <div id="titleScreen">
 
-<div class="badge">
-SHOE FLYING DISTANCE GAME
-</div>
+<div class="badge">SHOE FLYING DISTANCE GAME</div>
 
 <h1>👟 靴飛ばし大飛行！</h1>
 
 <div class="sub">
-ブランコのタイミングを見極めてジャンプ！<br>
-坂で加速、ジャンプ台で大ジャンプ、穴に注意！<br>
-ポンポン跳ねて、風に乗って飛距離を伸ばそう！
+ブランコの動きを見てタイミングよく「とぶ！」<br>
+ポンポン跳ねて、風に乗って、どこまで飛べる？
 </div>
 
 <div class="flavorBox" id="flavorBox">
@@ -355,19 +325,13 @@ SHOE FLYING DISTANCE GAME
 </button>
 
 <div class="rankBox">
-
 <h2>🏆 自己ベスト TOP5</h2>
-
 <div id="ranking"></div>
-
 </div>
 
-<div class="rankBox" id="statsBox">
-
+<div class="rankBox">
 <h2>📊 統計</h2>
-
 <div id="statsList"></div>
-
 </div>
 
 </div>
@@ -419,16 +383,14 @@ SHOE FLYING DISTANCE GAME
 
 <div class="resultBtnRow">
 
-<button class="retryBtn" onclick="retryAttempt()">
+<button class="retryBtn"
+onclick="retryAttempt()">
 もう一度
 </button>
 
-<button class="backBtn" onclick="backToTitle()">
-靴を選び直す
-</button>
-
-<button class="homeBtn" onclick="goHome()">
-🏠 トップページ
+<button class="backBtn"
+onclick="backToTitle()">
+トップへ
 </button>
 
 </div>
@@ -439,207 +401,200 @@ SHOE FLYING DISTANCE GAME
 
 <div class="fireBtnWrap">
 
-<button id="fireBtn" onclick="release()">
+<button id="fireBtn"
+onclick="release()">
 とぶ！
 </button>
 
 </div>
 
 <div class="tapHint">
-画面をタップ、またはボタンでジャンプのタイミングを決めよう
+ブランコの動きを見て「ここだ！」と思った瞬間にタップ！
 </div>
 
 </div>
 
 </div>
-
 
 <script>
 
-/* =========================================================
+/* =====================================================
    基本設定
-========================================================= */
+===================================================== */
 
-const GRAVITY = 300;
+const GRAVITY=260;
 
-/*
-   ★変更
-   風をかなりマイルドにした
-   以前 90 → 52
-*/
-const WIND_BASE = 52;
+/* 風を弱くして、追い風時だけ楽しく伸びる */
 
-const PPM = 18;
+const WIND_BASE=42;
 
-const LAUNCH_MULT = 3.6;
+const PPM=14;
 
-const SWING_ROPE = 120;
+/* 発射速度を大幅アップ */
 
-const SWING_MAX_ANGLE = 0.96;
+const LAUNCH_MULT=6.5;
 
-const SWING_PERIOD = 1.6;
+const SWING_ROPE=120;
 
-const SHOE_RADIUS = 15;
+const SWING_MAX_ANGLE=0.96;
 
-const BOUNCE_MIN_SPEED = 40;
+const SWING_PERIOD=1.55;
 
-const STOP_SPEED = 14;
+/* 跳ねやすくする */
 
+const BOUNCE_MIN_SPEED=24;
 
-/*
-   ★変更
-   転がり減速を強くした
+const STOP_SPEED=7;
 
-   以前 6.0
-   ↓
-   9.0
+const ROLL_DECAY_CONST=2.3;
 
-   「いつまでも転がる」を減らす
-*/
-const ROLL_DECAY_CONST = 9.0;
+const BOUNCE_SOFTEN=0.96;
 
-const BOUNCE_SOFTEN = 0.85;
+const SETTLE_TIME=1.8;
+
+const MAX_FLIGHT_TIME=45;
+
+const LAUNCH_HEIGHT=140;
+
+const SAVE_KEY="kutsutobashi_save_v3";
 
 
-/*
-   ★変更
-   停止判定を少し早める
-*/
-const SETTLE_TIME = 0.42;
-
-const MAX_FLIGHT_TIME = 20;
-
-const FRICTION_SCALE = 0.3;
-
-const LAUNCH_HEIGHT = 140;
-
-const SAVE_KEY = "kutsutobashi_save_v2";
-
-
-/* =========================================================
+/* =====================================================
    靴
-========================================================= */
+===================================================== */
 
-const SHOES = [
+const SHOES=[
 
 {
-id:"sneaker",
-name:"スニーカー",
-emoji:"👟",
-restitution:0.5,
-friction:0.38,
-drag:0.06,
-launchScale:1.0,
-wind:0.85,
-flavor:"クセがなくバランス型。まずはこれで練習しよう。"
+ id:"sneaker",
+ name:"スニーカー",
+ emoji:"👟",
+ restitution:.72,
+ friction:.17,
+ drag:.025,
+ launchScale:1.08,
+ wind:1.0,
+ bounce:"normal",
+ flavor:"バランス型。よく飛んで、よく跳ねる。"
 },
 
 {
-id:"sandal",
-name:"ビーチサンダル",
-emoji:"🩴",
-restitution:0.75,
-friction:0.52,
-drag:0.10,
-launchScale:0.95,
-wind:1.15,
-flavor:"よく弾む。追い風に乗ると大ジャンプ！"
+ id:"sandal",
+ name:"ビーチサンダル",
+ emoji:"🩴",
+ restitution:.88,
+ friction:.20,
+ drag:.015,
+ launchScale:1.04,
+ wind:2.8,
+ bounce:"wind",
+ flavor:"風に乗れば超強力！追い風で一気に加速。"
 },
 
 {
-id:"leather",
-name:"革靴",
-emoji:"👞",
-restitution:0.25,
-friction:0.16,
-drag:0.032,
-launchScale:0.9,
-wind:0.45,
-flavor:"あまり弾まず風にも強い。転がり性能は高め。"
+ id:"leather",
+ name:"革靴",
+ emoji:"👞",
+ restitution:.48,
+ friction:.045,
+ drag:.012,
+ launchScale:1.0,
+ wind:.45,
+ bounce:"roll",
+ flavor:"重い。でも一度転がれば止まらない。"
 },
 
 {
-id:"boots",
-name:"長靴",
-emoji:"👢",
-restitution:0.15,
-friction:0.40,
-drag:0.13,
-launchScale:0.85,
-wind:0.5,
-holeSurvive:0.5,
-flavor:"重くて飛びにくいが、穴に落ちても踏ん張ることがある。"
+ id:"boots",
+ name:"長靴",
+ emoji:"👢",
+ restitution:.42,
+ friction:.25,
+ drag:.035,
+ launchScale:.92,
+ wind:.5,
+ holeSurvive:.85,
+ bounce:"heavy",
+ flavor:"飛距離は控えめ。でも穴に異常に強い。"
 },
 
 {
-id:"heels",
-name:"ハイヒール",
-emoji:"👠",
-restitution:0.45,
-friction:0.10,
-drag:0.055,
-launchScale:1.0,
-wind:0.75,
-wild:true,
-flavor:"よく滑る。10%でヒールが折れて大暴走！"
+ id:"heels",
+ name:"ハイヒール",
+ emoji:"👠",
+ restitution:.65,
+ friction:.025,
+ drag:.02,
+ launchScale:1.16,
+ wind:1.1,
+ wild:true,
+ bounce:"wild",
+ flavor:"暴れる！うまくハマると爆発的に飛ぶ。"
 },
 
 {
-id:"uwabaki",
-name:"上履き",
-emoji:"🥿",
-restitution:0.55,
-friction:0.32,
-drag:0.05,
-launchScale:1.15,
-wind:0.9,
-flavor:"靴飛ばしの定番。飛距離ボーナスつき！"
+ id:"uwabaki",
+ name:"上履き",
+ emoji:"🥿",
+ restitution:.78,
+ friction:.13,
+ drag:.018,
+ launchScale:1.22,
+ wind:1.15,
+ bounce:"super",
+ flavor:"靴飛ばし最強候補。飛距離重視の上履き。"
 },
 
 {
-id:"geta",
-name:"下駄",
-emoji:"👡",
-restitution:0.18,
-friction:0.11,
-drag:0.03,
-launchScale:0.85,
-wind:0.35,
-flavor:"風に強い。弾まない代わりに地面を滑る。"
+ id:"geta",
+ name:"下駄",
+ emoji:"👡",
+ restitution:.30,
+ friction:.025,
+ drag:.008,
+ launchScale:.91,
+ wind:.25,
+ bounce:"slide",
+ flavor:"ほぼ跳ねない。でも地面を猛烈に滑る。"
 },
 
 {
-id:"crocs",
-name:"クロックス",
-emoji:"🥾",
-restitution:0.4,
-friction:0.42,
-drag:0.11,
-launchScale:1.0,
-wind:1.25,
-flavor:"追い風に乗ると一気に伸びる！"
+ id:"crocs",
+ name:"クロックス",
+ emoji:"🥾",
+ restitution:.76,
+ friction:.18,
+ drag:.025,
+ launchScale:1.06,
+ wind:3.2,
+ bounce:"wind",
+ flavor:"穴だらけで風の影響MAX。追い風なら化ける。"
 },
 
 {
-id:"rollerskate",
-name:"ローラースケート",
-emoji:"🛼",
-restitution:0.08,
-friction:0.055,
-drag:0.07,
-launchScale:0.95,
-wind:0.7,
-flavor:"ほとんど弾まないが、坂を利用すると強い。"
+ id:"rollerskate",
+ name:"ローラースケート",
+ emoji:"🛼",
+ restitution:.25,
+ friction:.008,
+ drag:.01,
+ launchScale:1.02,
+ wind:.75,
+ bounce:"roll",
+ flavor:"跳ねない。その代わり転がり始めたら止まらない。"
+
 }
 
 ];
 
 
-/* =========================================================
+/* =====================================================
    状態
-========================================================= */
+===================================================== */
 
-let canvas,ctx,W=480,H=380;
+let canvas,ctx;
+
+let W=480,H=380;
 
 let state="title";
 
@@ -652,15 +607,14 @@ let swingT=0;
 let selectedShoeId="sneaker";
 
 let shoe={
-x:0,
-y:0,
-vx:0,
-vy:0,
-rotation:0,
-rolling:false,
-overHole:false,
-holeEnterY:0,
-bounceCount:0
+ x:0,y:0,vx:0,vy:0,
+ rotation:0,
+ rolling:false,
+ overHole:false,
+ holeEnterY:0,
+ bounceCount:0,
+ heelBroken:false,
+ heelBrokenTriggered:false
 };
 
 let particles=[];
@@ -676,9 +630,9 @@ let messageTimer=0;
 let audio=null;
 
 let stats={
-best:0,
-plays:0,
-top:[]
+ best:0,
+ plays:0,
+ top:[]
 };
 
 let windValue=0;
@@ -690,2581 +644,2304 @@ let settleTimer=0;
 let flightTime=0;
 
 
-/* =========================================================
-   風
-========================================================= */
+/* =====================================================
+   ユーティリティ
+===================================================== */
+
+function clamp(v,a,b){
+ return Math.max(a,Math.min(b,v));
+}
+
+function currentShoe(){
+ return SHOES.find(s=>s.id===selectedShoeId);
+}
 
 function rollWind(){
 
-/*
-   ★変更
+ /*
+  -1～1
+  追い風を少し多めに
+ */
 
-   以前より弱め。
+ let r=Math.random()*2-1;
 
-   無風寄りの風も多くして、
-   毎回理不尽な向かい風にならないようにする。
-*/
+ if(r>0){
+   r*=1.05;
+ }
 
-let r=Math.random();
-
-if(r<0.25){
-
-windValue=0;
-
-}else{
-
-windValue=(Math.random()*2-1)*(0.35+Math.random()*0.65);
-
+ windValue=r;
 }
-
-}
-
 
 function windLabel(){
 
-let a=Math.abs(windValue);
+ let a=Math.abs(windValue);
 
-if(a<0.12){
-return "🌤 無風";
-}
+ if(a<.12)
+  return "🌤 無風";
 
-let strength =
-a<0.40 ? "弱" :
-(a<0.70 ? "中" : "強");
+ let strength=
+   a<.4?"弱":
+   a<.7?"中":"強";
 
-return windValue>0
-? "➡️ 追い風("+strength+")"
-: "⬅️ 向かい風("+strength+")";
-
-}
-
-
-function currentShoe(){
-
-return SHOES.find(
-s=>s.id===selectedShoeId
-);
-
+ return windValue>0
+   ?"➡️ 追い風 "+strength
+   :"⬅️ 向かい風 "+strength;
 }
 
 
-function clamp(v,a,b){
-
-return Math.max(a,Math.min(b,v));
-
-}
-
-
-/* =========================================================
-   セーブ
-========================================================= */
+/* =====================================================
+   保存
+===================================================== */
 
 function loadSave(){
 
-try{
+ try{
 
-let raw=localStorage.getItem(SAVE_KEY);
+  let raw=localStorage.getItem(SAVE_KEY);
 
-if(raw){
+  if(raw){
 
-let d=JSON.parse(raw);
+   let d=JSON.parse(raw);
 
-if(d.stats){
+   if(d.stats)
+    Object.assign(stats,d.stats);
 
-Object.assign(stats,d.stats);
+  }
 
-}
-
-}
-
-}catch(e){}
+ }catch(e){}
 
 }
-
 
 function writeSave(){
 
-try{
+ try{
 
-localStorage.setItem(
-SAVE_KEY,
-JSON.stringify({stats})
-);
+  localStorage.setItem(
+   SAVE_KEY,
+   JSON.stringify({stats})
+  );
 
-}catch(e){}
+ }catch(e){}
 
 }
 
 
-/* =========================================================
+/* =====================================================
    コース生成
-========================================================= */
+===================================================== */
 
 function generateCourse(){
 
-const TARGET=16000;
+ /*
+  以前よりかなり長くする
+ */
 
-let segments=[];
+ const TARGET=30000;
 
-let holes=[];
+ let current=[{x:0,y:260}];
 
-let current=[{x:0,y:260}];
+ let curX=0;
 
-let curX=0;
+ let curY=260;
 
-let curY=260;
+ while(curX<TARGET){
 
+  let type;
 
-while(curX<TARGET){
+  if(curX<500){
 
-let type;
+   type="flat";
 
+  }else{
 
-if(curX<450){
+   let r=Math.random();
 
-type="flat";
+   if(r<.15)
+     type="ramp";
 
-}
+   else if(r<.48)
+     type="down";
 
-else if(curY>310){
+   else if(r<.72)
+     type="up";
 
-type=Math.random()<0.75
-?"up"
-:"flat";
+   else
+     type="flat";
 
-}
-
-else if(curY<110){
-
-type=Math.random()<0.75
-?"down"
-:"flat";
-
-}
-
-else{
-
-let rampP=0.14;
-
-let roll=Math.random();
-
-if(roll<rampP){
-
-type="ramp";
-
-}else{
-
-let r2=Math.random();
-
-type =
-r2<0.4
-?"down"
-:
-r2<0.7
-?"flat"
-:"up";
-
-}
-
-}
+  }
 
 
-if(type==="flat"){
+  if(type==="flat"){
 
-let len=150+Math.random()*220;
+   let len=180+Math.random()*320;
 
-curX+=len;
+   curX+=len;
 
-current.push({
-x:curX,
-y:curY
-});
+   current.push({
+    x:curX,
+    y:curY
+   });
 
-}
-
-
-else if(type==="down"){
-
-let len=250+Math.random()*300;
-
-curY+=15+Math.random()*45;
-
-curX+=len;
-
-current.push({
-x:curX,
-y:curY
-});
-
-}
+  }
 
 
-else if(type==="up"){
+  if(type==="down"){
 
-let len=150+Math.random()*200;
+   let len=260+Math.random()*450;
 
-curY-=15+Math.random()*40;
+   curY+=15+Math.random()*45;
 
-curX+=len;
+   curX+=len;
 
-current.push({
-x:curX,
-y:curY
-});
+   current.push({
+    x:curX,
+    y:curY
+   });
 
-}
+  }
 
 
-else if(type==="ramp"){
+  if(type==="up"){
 
-let riseLen=55+Math.random()*35;
+   let len=220+Math.random()*300;
 
-curY-=50+Math.random()*45;
+   curY-=15+Math.random()*45;
 
-curX+=riseLen;
+   curX+=len;
 
-current.push({
-x:curX,
-y:curY
-});
+   current.push({
+    x:curX,
+    y:curY
+   });
 
-let topLen=30+Math.random()*20;
+  }
 
-curX+=topLen;
 
-current.push({
-x:curX,
-y:curY
-});
+  if(type==="ramp"){
+
+   let rise=70+Math.random()*70;
+
+   curY-=rise;
+
+   curX+=70+Math.random()*50;
+
+   current.push({
+    x:curX,
+    y:curY
+   });
+
+   curX+=30+Math.random()*30;
+
+   current.push({
+    x:curX,
+    y:curY
+   });
+
+  }
+
+
+  curY=clamp(curY,80,330);
+
+ }
+
+
+ curX+=500;
+
+ current.push({
+  x:curX,
+  y:curY
+ });
+
+ return{
+  segments:[current],
+  holes:[],
+  length:curX
+ };
 
 }
 
-
-curY=clamp(curY,90,330);
-
-}
-
-
-curX+=350;
-
-current.push({
-x:curX,
-y:curY
-});
-
-
-segments.push(current);
-
-return {
-segments,
-holes,
-length:curX
-};
-
-}
-
-
-/* =========================================================
-   地面
-========================================================= */
 
 function groundInfoAt(x){
 
-for(const seg of course.segments){
+ for(const seg of course.segments){
 
-const first=seg[0];
+  let first=seg[0];
+  let last=seg[seg.length-1];
 
-const last=seg[seg.length-1];
+  if(
+   x>=first.x-1 &&
+   x<=last.x+1
+  ){
 
+   for(
+    let i=0;
+    i<seg.length-1;
+    i++
+   ){
 
-if(
-x>=first.x-1 &&
-x<=last.x+1
-){
+    if(
+     x>=seg[i].x &&
+     x<=seg[i+1].x
+    ){
 
-for(let i=0;i<seg.length-1;i++){
+     let dx=
+       (seg[i+1].x-seg[i].x)||1;
 
-if(
-x>=seg[i].x &&
-x<=seg[i+1].x
-){
+     let t=
+       (x-seg[i].x)/dx;
 
-let dx=
-(seg[i+1].x-seg[i].x)||1;
+     let y=
+       seg[i].y+
+       (seg[i+1].y-seg[i].y)*t;
 
-let t=
-(x-seg[i].x)/dx;
+     let slope=
+       (seg[i+1].y-seg[i].y)/dx;
 
-let y=
-seg[i].y+
-(seg[i+1].y-seg[i].y)*t;
+     return{
+      y,
+      slope
+     };
 
-let slope=
-(seg[i+1].y-seg[i].y)/dx;
+    }
 
-return {
-y,
-slope
-};
+   }
 
-}
+  }
 
-}
+ }
 
-return {
-y:last.y,
-slope:0
-};
-
-}
-
-}
-
-return null;
+ return null;
 
 }
 
 
-/* =========================================================
-   バウンド
-========================================================= */
+/* =====================================================
+   跳ね返り
+===================================================== */
 
 function bounceVelocity(
-vx,
-vy,
-slope,
-restitution
+ vx,vy,slope,restitution
 ){
 
-let len=
-Math.sqrt(slope*slope+1);
+ let len=Math.sqrt(
+  slope*slope+1
+ );
 
-let nx=slope/len;
+ let nx=slope/len;
 
-let ny=-1/len;
+ let ny=-1/len;
 
-let dot=
-vx*nx+vy*ny;
+ let dot=
+  vx*nx+
+  vy*ny;
 
-let rx=
-vx-2*dot*nx;
+ let rx=
+  vx-2*dot*nx;
 
-let ry=
-vy-2*dot*ny;
+ let ry=
+  vy-2*dot*ny;
 
-return {
-vx:rx*restitution,
-vy:ry*restitution
-};
+ return{
+  vx:rx*restitution,
+  vy:ry*restitution
+ };
 
 }
 
 
-/* =========================================================
+/* =====================================================
    物理
-========================================================= */
+===================================================== */
 
 function physicsStep(dt){
 
-const variant=currentShoe();
+ const variant=currentShoe();
 
 
-/*
-   重力
-*/
+ /* 空気抵抗 */
 
-shoe.vy+=GRAVITY*dt;
+ shoe.vx*=
+  (1-variant.drag*dt);
 
-
-/*
-   空気抵抗
-
-   風で戻される感じを抑えるため
-   速度を削りすぎない
-*/
-
-shoe.vx*=
-(1-variant.drag*dt);
-
-shoe.vy*=
-(1-variant.drag*0.6*dt);
+ shoe.vy+=
+  GRAVITY*dt;
 
 
-/*
-   ★風
+ /* 風 */
 
-   以前より大幅に弱くした。
-
-   空中ではしっかり影響。
-
-   地面ではさらに弱くする。
-
-   つまり
-   「風に乗った！」は残す。
-   「風で逆走」は減らす。
-*/
-
-let windPower =
-shoe.rolling
-? 0.16
-: 0.65;
-
-shoe.vx +=
-windValue*
-WIND_BASE*
-variant.wind*
-windPower*
-dt;
+ let windPower=
+  windValue*
+  WIND_BASE*
+  variant.wind;
 
 
-/*
-   ★追加
+ /*
+  空中は風の影響を弱める。
+  追い風はしっかり感じる。
+ */
 
-   極端な逆走を防ぐ。
+ shoe.vx+=
+  windPower*dt;
 
-   ある程度前進している状態では
-   風だけで完全に後ろへ戻りにくくする。
-*/
 
-if(shoe.x>120 && shoe.vx< -35){
+ /* 特殊：ローラー系は転がり中に強い */
 
-shoe.vx += 35*dt;
+ if(
+  shoe.rolling &&
+  variant.bounce==="roll"
+ ){
+
+  shoe.vx+=
+   windValue*WIND_BASE*.4*dt;
+
+ }
+
+
+ shoe.x+=
+  shoe.vx*dt;
+
+ shoe.y+=
+  shoe.vy*dt;
+
+
+ shoe.rotation+=
+  shoe.vx*dt*.065;
+
+
+ currentDistanceM=
+  Math.max(
+   0,
+   shoe.x/PPM
+  );
+
+
+ updateHud();
+
+
+ /* 追い風演出 */
+
+ if(
+  windValue>.65 &&
+  Math.random()<.035
+ ){
+
+  flashMessage("🌬️ 風に乗った！！");
+
+  spawnWindBurst(
+   shoe.x,
+   shoe.y,
+   12
+  );
+
+ }
+
+
+ /* コース制覇 */
+
+ if(
+  shoe.x>=course.length
+ ){
+
+  finishRun(true,false);
+
+  return;
+
+ }
+
+
+ let g=
+  groundInfoAt(shoe.x);
+
+
+ if(!g)
+  return;
+
+
+ let groundY=g.y;
+
+
+ /* =================================================
+    転がり
+ ================================================= */
+
+ if(shoe.rolling){
+
+  let slopeAngle=
+   Math.atan(g.slope);
+
+
+  /*
+   坂を下ると加速
+  */
+
+  shoe.vx+=
+   GRAVITY*
+   Math.sin(slopeAngle)*
+   dt;
+
+
+  let fric=
+   variant.friction;
+
+
+  /*
+   停止しにくくする
+  */
+
+  let k=
+   fric*
+   ROLL_DECAY_CONST*
+   Math.max(
+    .25,
+    Math.cos(slopeAngle)
+   );
+
+
+  shoe.vx*=
+   Math.exp(-k*dt);
+
+
+  shoe.y=
+   groundY-SHOE_RADIUS;
+
+
+  shoe.vy=0;
+
+
+  /*
+   スピードが十分ある限り、
+   基本的には走り続ける
+  */
+
+  if(
+   Math.abs(shoe.vx)<STOP_SPEED
+  ){
+
+   settleTimer+=dt;
+
+  }else{
+
+   settleTimer=0;
+
+  }
+
+
+  /*
+   下駄・革靴・ローラーは
+   特に転がる
+  */
+
+  if(
+   variant.bounce==="roll" ||
+   variant.bounce==="slide"
+  ){
+
+   if(
+    Math.abs(shoe.vx)>20
+   ){
+
+    settleTimer=0;
+
+   }
+
+  }
+
+
+  if(
+   settleTimer>SETTLE_TIME
+  ){
+
+   finishRun(false,false);
+
+   return;
+
+  }
+
+
+ }else{
+
+
+ /* =================================================
+    空中から着地
+ ================================================= */
+
+ if(
+  shoe.y+SHOE_RADIUS>=groundY
+ ){
+
+  shoe.y=
+   groundY-SHOE_RADIUS;
+
+
+  let speed=
+   Math.hypot(
+    shoe.vx,
+    shoe.vy
+   );
+
+
+  /*
+   速度が残っていれば跳ねる
+  */
+
+  if(
+   speed>BOUNCE_MIN_SPEED
+  ){
+
+   let rest=
+    variant.restitution;
+
+
+   /*
+    ハイヒールはランダム性
+   */
+
+   if(variant.wild){
+
+    rest+=
+     Math.random()*.35-.1;
+
+    rest=
+     clamp(rest,.35,1.15);
+
+   }
+
+
+   /*
+    跳ねるたびに少しずつ弱くするが
+    以前よりかなり緩やか
+   */
+
+   let decay=
+    Math.pow(
+     .94,
+     Math.min(
+      shoe.bounceCount,
+      8
+     )
+    );
+
+
+   rest*=
+    BOUNCE_SOFTEN*
+    decay;
+
+
+   /*
+    特殊補正
+   */
+
+   if(
+    variant.bounce==="super"
+   ){
+
+    rest*=1.12;
+
+   }
+
+   if(
+    variant.bounce==="heavy"
+   ){
+
+    rest*=.85;
+
+   }
+
+   if(
+    variant.bounce==="slide"
+   ){
+
+    rest*=.55;
+
+   }
+
+
+   let res=
+    bounceVelocity(
+     shoe.vx,
+     shoe.vy,
+     g.slope,
+     rest
+    );
+
+
+   shoe.vx=
+    res.vx;
+
+   shoe.vy=
+    res.vy;
+
+
+   shoe.bounceCount++;
+
+
+   spawnBurst(
+    shoe.x,
+    shoe.y,
+    8
+   );
+
+
+   /*
+    ポンッ！演出
+   */
+
+   if(
+    shoe.bounceCount%2===0
+   ){
+
+    flashMessage(
+     "ポンッ！ 跳ねた！"
+    );
+
+   }
+
+
+   playBounceSound(speed);
+
+
+  }else{
+
+   /*
+    低速になったら転がりへ
+   */
+
+   shoe.rolling=true;
+
+   shoe.vy=0;
+
+  }
+
+ }
+
+ }
 
 }
 
 
-shoe.x+=shoe.vx*dt;
-
-shoe.y+=shoe.vy*dt;
-
-shoe.rotation+=
-shoe.vx*dt*0.06;
-
-
-currentDistanceM=
-Math.max(
-0,
-shoe.x/PPM
-);
-
-updateHud();
-
-
-if(shoe.x>=course.length){
-
-finishRun(true,false);
-
-return;
-
-}
-
-
-let g=
-groundInfoAt(shoe.x);
-
-
-/* ================= 穴 ================= */
-
-if(g===null){
-
-if(!shoe.overHole){
-
-shoe.overHole=true;
-
-shoe.holeEnterY=shoe.y;
-
-shoe.rolling=false;
-
-}
-
-if(
-shoe.vy>0 &&
-(shoe.y-shoe.holeEnterY)>260
-){
-
-handleHoleFall();
-
-return;
-
-}
-
-return;
-
-}
-
-
-if(shoe.overHole){
-
-shoe.overHole=false;
-
-}
-
-
-let groundY=g.y;
-
-
-/* =========================================================
-   転がり
-========================================================= */
-
-if(shoe.rolling){
-
-let gAhead=
-groundInfoAt(shoe.x+12);
-
-
-/*
-   ジャンプ台
-
-   ★ポンポン跳ねる楽しさを維持
-*/
-
-if(
-gAhead &&
-g.slope<-0.32 &&
-(gAhead.slope-g.slope)>0.25
-){
-
-shoe.vy=
--Math.abs(shoe.vx)*0.55-70;
-
-shoe.rolling=false;
-
-spawnBurst(
-shoe.x,
-shoe.y,
-10
-);
-
-playJumpSound();
-
-settleTimer=0;
-
-return;
-
-}
-
-
-/*
-   坂
-*/
-
-let slopeAngle=
-Math.atan(g.slope);
-
-shoe.vx +=
-GRAVITY*
-Math.sin(slopeAngle)*
-dt;
-
-
-/*
-   ★停止しやすくした
-
-   平地ではかなり減速。
-
-   下り坂ではちゃんと走る。
-*/
-
-let fric =
-shoe.frictionOverride!=null
-? shoe.frictionOverride
-: variant.friction;
-
-
-let flatBonus =
-Math.abs(g.slope)<0.10
-? 1.55
-: 1.0;
-
-
-let k=
-fric*
-ROLL_DECAY_CONST*
-flatBonus*
-Math.max(
-0.4,
-Math.cos(slopeAngle)
-);
-
-
-shoe.vx*=
-Math.exp(-k*dt);
-
-
-shoe.y=
-groundY-SHOE_RADIUS;
-
-shoe.vy=0;
-
-
-/*
-   転がっている演出
-*/
-
-if(
-Math.random()<0.35 &&
-Math.abs(shoe.vx)>40
-){
-
-spawnDust(
-shoe.x,
-shoe.y+SHOE_RADIUS,
-1
-);
-
-}
-
-
-/*
-   ★停止判定
-*/
-
-if(Math.abs(shoe.vx)<STOP_SPEED){
-
-if(settleTimer<=0){
-
-flashMessage("止まるかな…？");
-
-}
-
-settleTimer+=dt;
-
-if(
-settleTimer>SETTLE_TIME ||
-flightTime>MAX_FLIGHT_TIME
-){
-
-finishRun(false,false);
-
-return;
-
-}
-
-}else{
-
-settleTimer=0;
-
-}
-
-}
-
-
-/* =========================================================
-   空中
-========================================================= */
-
-else{
-
-if(
-shoe.y+SHOE_RADIUS>=groundY
-){
-
-let speed=
-Math.hypot(
-shoe.vx,
-shoe.vy
-);
-
-shoe.y=
-groundY-SHOE_RADIUS;
-
-
-/*
-   ハイヒール破壊
-*/
-
-if(
-shoe.heelBroken &&
-!shoe.heelBrokenTriggered
-){
-
-shoe.heelBrokenTriggered=true;
-
-let boost=
-1.9+Math.random()*0.4;
-
-shoe.vx*=boost;
-
-shoe.vy*=1.15;
-
-shoe.frictionOverride=
-variant.friction*0.15;
-
-flashMessage(
-"パキッ！ヒールが折れて大暴走…！"
-);
-
-spawnBurst(
-shoe.x,
-shoe.y,
-18
-);
-
-playHeelBreakSound();
-
-speed=
-Math.hypot(
-shoe.vx,
-shoe.vy
-);
-
-}
-
-
-/*
-   ★バウンド
-
-   ここはゲームの気持ちいい部分なので
-   しっかり残す。
-*/
-
-if(speed>BOUNCE_MIN_SPEED){
-
-let decayFactor=
-Math.pow(
-0.85,
-shoe.bounceCount
-);
-
-
-let rest=
-variant.wild
-?
-clamp(
-variant.restitution+
-(Math.random()*0.5-0.25),
-0.08,
-0.95
-)
-:
-variant.restitution;
-
-
-rest=
-rest*
-BOUNCE_SOFTEN*
-decayFactor;
-
-
-let res=
-bounceVelocity(
-shoe.vx,
-shoe.vy,
-g.slope,
-rest
-);
-
-
-shoe.vx=res.vx;
-
-shoe.vy=res.vy;
-
-shoe.bounceCount++;
-
-
-spawnBurst(
-shoe.x,
-shoe.y,
-6
-);
-
-playBounceSound(speed);
-
-
-/*
-   ★バウンド中に風を感じる演出
-*/
-
-if(
-windValue>0.55 &&
-shoe.vx>100
-){
-
-flashMessage(
-"🌬️ 風に乗った！！"
-);
-
-}
-
-}else{
-
-shoe.rolling=true;
-
-shoe.vy=0;
-
-}
-
-}
-
-}
-
-}
-
-
-/* =========================================================
-   穴
-========================================================= */
-
-function handleHoleFall(){
-
-const variant=currentShoe();
-
-
-if(
-variant.holeSurvive &&
-Math.random()<variant.holeSurvive
-){
-
-let h=
-course.holes.find(
-hh=>
-shoe.x>=hh.start-5 &&
-shoe.x<=hh.end+90
-);
-
-
-let edgeX=
-h
-?
-h.end+4
-:
-shoe.x+40;
-
-
-shoe.x=edgeX;
-
-shoe.vx*=0.3;
-
-shoe.vy=0;
-
-shoe.overHole=false;
-
-
-let g=
-groundInfoAt(shoe.x);
-
-
-shoe.y=
-(g?g.y:shoe.y)-SHOE_RADIUS;
-
-shoe.rolling=true;
-
-
-flashMessage(
-"ギリギリ踏ん張った！"
-);
-
-playSurviveSound();
-
-}else{
-
-flashMessage(
-"穴に落ちた…"
-);
-
-playHoleFallSound();
-
-finishRun(false,true);
-
-}
-
-}
-
-
-/* =========================================================
-   終了
-========================================================= */
-
-function finishRun(
-reachedEnd,
-holeFall
-){
-
-if(state==="result") return;
-
-state="result";
-
-
-let dist=
-reachedEnd
-?
-currentDistanceM*1.15
-:
-currentDistanceM;
-
-
-finalDistanceM=
-Math.round(dist*10)/10;
-
-
-let isRecord=
-finalDistanceM>stats.best;
-
-
-stats.plays++;
-
-
-if(isRecord){
-
-stats.best=finalDistanceM;
-
-}
-
-
-stats.top.push(finalDistanceM);
-
-stats.top.sort(
-(a,b)=>b-a
-);
-
-stats.top=
-stats.top.slice(0,5);
-
-
-writeSave();
-
-
-showResult(
-reachedEnd,
-holeFall,
-isRecord
-);
-
-
-if(!holeFall){
-
-playFinishSound(
-reachedEnd
-);
-
-}
-
-}
-
-
-/* =========================================================
+/* =====================================================
    発射
-========================================================= */
+===================================================== */
 
 function release(){
 
-if(state!=="aiming") return;
+ if(state!=="aiming")
+  return;
 
 
-const A=
-SWING_MAX_ANGLE;
+ const A=
+  SWING_MAX_ANGLE;
 
-const w=
-2*Math.PI/SWING_PERIOD;
-
-
-const theta=
-A*Math.sin(w*swingT);
+ const w=
+  2*Math.PI/SWING_PERIOD;
 
 
-const thetaSpeed=
-A*w*Math.cos(w*swingT);
+ const theta=
+  A*Math.sin(
+   w*swingT
+  );
 
 
-const variant=
-currentShoe();
+ const thetaSpeed=
+  A*w*Math.cos(
+   w*swingT
+  );
 
 
-const vxBase=
-thetaSpeed*
-SWING_ROPE*
-Math.cos(theta);
+ const variant=
+  currentShoe();
 
 
-const vyBase=
--thetaSpeed*
-SWING_ROPE*
-Math.sin(theta);
+ /*
+  ブランコの実際の速度のみで判定。
+  ゲージなし。
+ */
+
+ let vxBase=
+  thetaSpeed*
+  SWING_ROPE*
+  Math.cos(theta);
 
 
-const scale=
-LAUNCH_MULT*
-variant.launchScale;
+ let vyBase=
+  -thetaSpeed*
+  SWING_ROPE*
+  Math.sin(theta);
 
 
-const g0=
-groundInfoAt(0);
+ /*
+  発射倍率大幅アップ
+ */
+
+ let scale=
+  LAUNCH_MULT*
+  variant.launchScale;
 
 
-shoe.x=0;
+ shoe.x=0;
 
 
-shoe.y=
-(g0?g0.y:300)-LAUNCH_HEIGHT;
+ let g0=
+  groundInfoAt(0);
 
 
-shoe.vx=
-vxBase*scale;
+ shoe.y=
+  (g0?g0.y:300)-
+  LAUNCH_HEIGHT;
 
 
-shoe.vy=
-vyBase*scale;
+ shoe.vx=
+  vxBase*scale;
 
 
-shoe.rotation=0;
-
-shoe.rolling=false;
-
-shoe.overHole=false;
-
-shoe.bounceCount=0;
+ shoe.vy=
+  vyBase*scale;
 
 
-/*
-   ハイヒール
-*/
+ /*
+  失敗してもある程度は飛ぶ
+ */
 
-shoe.heelBroken=
-(
-variant.id==="heels" &&
-Math.random()<0.10
-);
+ if(shoe.vx<40){
 
+  shoe.vx+=
+   100+
+   Math.random()*80;
 
-shoe.heelBrokenTriggered=false;
-
-shoe.frictionOverride=null;
-
-currentDistanceM=0;
-
-state="flight";
+ }
 
 
-flashMessage(
-shoe.vx<40
-?
-"うわっ、変な方向に飛んだ！？"
-:
-"とんだ！"
-);
+ shoe.rotation=0;
+
+ shoe.rolling=false;
+
+ shoe.overHole=false;
+
+ shoe.bounceCount=0;
+
+ shoe.heelBroken=
+  (
+   variant.id==="heels" &&
+   Math.random()<.16
+  );
+
+ shoe.heelBrokenTriggered=false;
+
+ currentDistanceM=0;
+
+ state="flight";
 
 
-playLaunchSound();
+ if(
+  windValue>.55
+ ){
+
+  flashMessage(
+   "🌬️ 追い風だ！！"
+  );
+
+ }else{
+
+  flashMessage(
+   "とんだーー！！"
+  );
+
+ }
+
+
+ playLaunchSound();
 
 }
 
 
-/* =========================================================
+/* =====================================================
    パーティクル
-========================================================= */
-
-function spawnDust(x,y,n){
-
-for(let i=0;i<n;i++){
-
-particles.push({
-
-x,
-y,
-
-vx:
-(Math.random()*60-30),
-
-vy:
--Math.random()*40,
-
-life:0.4,
-
-maxLife:0.4,
-
-color:"201,160,106",
-
-r:
-2.5+Math.random()*2.5
-
-});
-
-}
-
-}
-
+===================================================== */
 
 function spawnBurst(x,y,n){
 
-for(let i=0;i<n;i++){
+ for(let i=0;i<n;i++){
 
-let a=
-Math.random()*Math.PI*2;
+  let a=
+   Math.random()*
+   Math.PI*2;
 
-let sp=
-60+Math.random()*140;
+  let sp=
+   70+
+   Math.random()*180;
 
+  particles.push({
 
-particles.push({
+   x,
+   y,
 
-x,
-y,
+   vx:
+    Math.cos(a)*sp,
 
-vx:
-Math.cos(a)*sp,
+   vy:
+    Math.sin(a)*sp-60,
 
-vy:
-Math.sin(a)*sp-60,
+   life:.55,
 
-life:0.5,
+   maxLife:.55,
 
-maxLife:0.5,
+   color:"255,220,150",
 
-color:"255,220,150",
+   r:
+    2+
+    Math.random()*3
 
-r:
-2+Math.random()*3
+  });
 
-});
+ }
 
 }
+
+
+function spawnWindBurst(x,y,n){
+
+ for(let i=0;i<n;i++){
+
+  particles.push({
+
+   x:x-Math.random()*100,
+
+   y:y+(Math.random()*80-40),
+
+   vx:
+    80+
+    Math.random()*160,
+
+   vy:
+    Math.random()*30-15,
+
+   life:.4,
+
+   maxLife:.4,
+
+   color:"255,255,255",
+
+   r:1+Math.random()*2
+
+  });
+
+ }
 
 }
 
 
 function updateParticles(dt){
 
-for(
-let i=particles.length-1;
-i>=0;
-i--
-){
+ for(
+  let i=particles.length-1;
+  i>=0;
+  i--
+ ){
 
-let p=particles[i];
+  let p=particles[i];
 
-p.x+=p.vx*dt;
+  p.x+=p.vx*dt;
 
-p.y+=p.vy*dt;
+  p.y+=p.vy*dt;
 
-p.vy+=500*dt;
+  p.vy+=300*dt;
 
-p.life-=dt;
+  p.life-=dt;
 
+  if(p.life<=0)
+   particles.splice(i,1);
 
-if(p.life<=0){
-
-particles.splice(i,1);
-
-}
-
-}
+ }
 
 }
 
 
-/* =========================================================
+/* =====================================================
    サウンド
-========================================================= */
+===================================================== */
 
 function getAudio(){
 
-if(!audio){
+ if(!audio){
 
-audio=
-new (
-window.AudioContext||
-window.webkitAudioContext
-)();
+  audio=
+   new(
+    window.AudioContext||
+    window.webkitAudioContext
+   )();
 
-}
+ }
 
-if(audio.state==="suspended"){
+ if(audio.state==="suspended")
+  audio.resume();
 
-audio.resume();
-
-}
-
-return audio;
+ return audio;
 
 }
 
 
 function tone(
-freqStart,
-freqEnd,
-dur,
-type,
-vol
+ freqStart,
+ freqEnd,
+ dur,
+ type,
+ vol
 ){
 
-let a=getAudio();
+ let a=getAudio();
 
-let osc=
-a.createOscillator();
+ let osc=
+  a.createOscillator();
 
-let gain=
-a.createGain();
+ let gain=
+  a.createGain();
 
+ osc.type=
+  type||"sine";
 
-osc.type=
-type||"sine";
+ osc.frequency.setValueAtTime(
+  freqStart,
+  a.currentTime
+ );
 
+ osc.frequency.exponentialRampToValueAtTime(
+  Math.max(30,freqEnd),
+  a.currentTime+dur
+ );
 
-osc.frequency.setValueAtTime(
-freqStart,
-a.currentTime
-);
+ gain.gain.setValueAtTime(
+  vol||.25,
+  a.currentTime
+ );
 
+ gain.gain.exponentialRampToValueAtTime(
+  .001,
+  a.currentTime+dur
+ );
 
-osc.frequency.exponentialRampToValueAtTime(
-Math.max(30,freqEnd),
-a.currentTime+dur
-);
+ osc.connect(gain);
 
+ gain.connect(a.destination);
 
-gain.gain.setValueAtTime(
-(vol||0.25),
-a.currentTime
-);
+ osc.start();
 
-
-gain.gain.exponentialRampToValueAtTime(
-0.001,
-a.currentTime+dur
-);
-
-
-osc.connect(gain);
-
-gain.connect(a.destination);
-
-
-osc.start();
-
-osc.stop(
-a.currentTime+dur
-);
+ osc.stop(
+  a.currentTime+dur
+ );
 
 }
 
 
 function playLaunchSound(){
-
-tone(
-300,
-900,
-0.25,
-"sawtooth",
-0.2
-);
-
+ tone(250,1000,.3,"sawtooth",.18);
 }
-
 
 function playBounceSound(speed){
 
-let p=
-clamp(
-speed/900,
-0.2,
-1
-);
+ let p=
+  clamp(
+   speed/800,
+   .2,
+   1
+  );
 
-tone(
-200+p*500,
-120,
-0.12,
-"sine",
-0.2
-);
-
-}
-
-
-function playJumpSound(){
-
-tone(
-500,
-1100,
-0.15,
-"triangle",
-0.2
-);
+ tone(
+  220+p*450,
+  90,
+  .13,
+  "sine",
+  .18
+ );
 
 }
 
 
-function playHoleFallSound(){
-
-tone(
-400,
-60,
-0.5,
-"sawtooth",
-0.25
-);
-
-}
-
-
-function playSurviveSound(){
-
-tone(
-700,
-900,
-0.2,
-"square",
-0.15
-);
-
-}
-
-
-function playHeelBreakSound(){
-
-tone(
-900,
-80,
-0.35,
-"sawtooth",
-0.28
-);
-
-}
-
-
-function playFinishSound(good){
-
-tone(
-good?700:500,
-good?1400:700,
-0.4,
-"triangle",
-0.25
-);
-
-}
-
-
-/* =========================================================
+/* =====================================================
    UI
-========================================================= */
+===================================================== */
 
 function flashMessage(text){
 
-let el=
-document.getElementById("eventMsg");
+ let el=
+  document.getElementById(
+   "eventMsg"
+  );
 
+ el.textContent=text;
 
-el.textContent=text;
+ el.classList.add("show");
 
-el.classList.add("show");
+ clearTimeout(
+  flashMessage._t
+ );
 
-
-clearTimeout(
-flashMessage._t
-);
-
-
-flashMessage._t=
-setTimeout(
-()=>
-el.classList.remove("show"),
-1400
-);
+ flashMessage._t=
+  setTimeout(
+   ()=>{
+    el.classList.remove("show");
+   },
+   1200
+  );
 
 }
 
 
 function updateHud(){
 
-document.getElementById(
-"distHud"
-).textContent=
-Math.round(currentDistanceM)+" m";
+ document.getElementById(
+  "distHud"
+ ).textContent=
+  Math.round(
+   currentDistanceM
+  )+" m";
 
 }
 
 
-/* =========================================================
+/* =====================================================
    靴選択
-========================================================= */
+===================================================== */
 
 function buildShoeGrid(){
 
-let grid=
-document.getElementById(
-"shoeGrid"
-);
+ let grid=
+  document.getElementById(
+   "shoeGrid"
+  );
+
+ grid.innerHTML="";
 
 
-grid.innerHTML="";
+ SHOES.forEach(s=>{
+
+  let card=
+   document.createElement(
+    "div"
+   );
+
+  card.className=
+   "shoeCard"+
+   (
+    s.id===selectedShoeId
+     ?" active"
+     :""
+   );
 
 
-SHOES.forEach(s=>{
-
-let card=
-document.createElement("div");
-
-
-card.className=
-"shoeCard"+
-(
-s.id===selectedShoeId
-?
-" active"
-:
-""
-);
+  card.innerHTML=
+   "<div class='emo'>"+
+   s.emoji+
+   "</div>"+
+   "<div class='nm'>"+
+   s.name+
+   "</div>";
 
 
-card.innerHTML=
-"<div class='emo'>"+
-s.emoji+
-"</div>"+
-"<div class='nm'>"+
-s.name+
-"</div>";
+  card.onclick=()=>{
+
+   selectedShoeId=
+    s.id;
+
+   buildShoeGrid();
+
+   document.getElementById(
+    "flavorBox"
+   ).textContent=
+    s.flavor;
+
+  };
 
 
-card.onclick=()=>{
+  grid.appendChild(card);
 
-selectedShoeId=s.id;
+ });
 
-buildShoeGrid();
-
-document.getElementById(
-"flavorBox"
-).textContent=s.flavor;
-
-};
-
-
-grid.appendChild(card);
-
-});
-
-
-document.getElementById(
-"flavorBox"
-).textContent=
-currentShoe().flavor;
+ document.getElementById(
+  "flavorBox"
+ ).textContent=
+  currentShoe().flavor;
 
 }
 
 
-/* =========================================================
-   ランキング
-========================================================= */
+/* =====================================================
+   統計
+===================================================== */
 
 function renderTitleStats(){
 
-document.getElementById(
-"statsList"
-).innerHTML=
+ document.getElementById(
+  "statsList"
+ ).innerHTML=
 
-"<div class='statRow'>"+
-"<span>ベスト距離</span>"+
-"<span>"+stats.best+" m</span>"+
-"</div>"+
+ "<div class='statRow'>"+
+ "<span>ベスト距離</span>"+
+ "<span>"+
+ stats.best+
+ " m</span>"+
+ "</div>"+
 
-"<div class='statRow'>"+
-"<span>プレイ回数</span>"+
-"<span>"+stats.plays+"</span>"+
-"</div>";
-
-
-let html="";
-
-
-if(stats.top.length===0){
-
-html=
-"<div class='rankRow'>"+
-"<span>まだ記録なし</span>"+
-"</div>";
-
-}else{
-
-stats.top.forEach(
-(v,i)=>{
-
-let medal=
-i===0
-?
-"🥇"
-:
-i===1
-?
-"🥈"
-:
-i===2
-?
-"🥉"
-:
-(i+1)+"位";
+ "<div class='statRow'>"+
+ "<span>プレイ回数</span>"+
+ "<span>"+
+ stats.plays+
+ "</span>"+
+ "</div>";
 
 
-html+=
-"<div class='rankRow'>"+
-"<span>"+medal+"</span>"+
-"<span>"+v+" m</span>"+
-"</div>";
+ let html="";
 
-});
+
+ if(stats.top.length===0){
+
+  html=
+   "<div class='rankRow'>"+
+   "<span>まだ記録なし</span>"+
+   "</div>";
+
+ }else{
+
+  stats.top.forEach(
+   (v,i)=>{
+
+    let medal=
+     i===0?"🥇":
+     i===1?"🥈":
+     i===2?"🥉":
+     (i+1)+"位";
+
+
+    html+=
+     "<div class='rankRow'>"+
+     "<span>"+
+     medal+
+     "</span>"+
+     "<span>"+
+     v+
+     " m</span>"+
+     "</div>";
+
+   }
+  );
+
+ }
+
+
+ document.getElementById(
+  "ranking"
+ ).innerHTML=html;
 
 }
 
 
-document.getElementById(
-"ranking"
-).innerHTML=html;
-
-}
-
-
-/* =========================================================
+/* =====================================================
    画面遷移
-========================================================= */
+===================================================== */
 
 function beginAttempt(){
 
-document.getElementById(
-"titleScreen"
-).style.display="none";
+ document.getElementById(
+  "titleScreen"
+ ).style.display="none";
 
+ document.getElementById(
+  "gameScreen"
+ ).style.display="block";
 
-document.getElementById(
-"gameScreen"
-).style.display="block";
+ fitCanvas();
 
+ document.getElementById(
+  "shoeHud"
+ ).textContent=
+  currentShoe().emoji;
 
-document.getElementById(
-"shoeHud"
-).textContent=
-currentShoe().emoji;
-
-
-fitCanvas();
-
-startAttemptCommon();
+ startAttemptCommon();
 
 }
 
 
 function retryAttempt(){
 
-document.getElementById(
-"resultOverlay"
-).classList.remove("show");
+ document.getElementById(
+  "resultOverlay"
+ ).classList.remove("show");
 
-
-startAttemptCommon();
+ startAttemptCommon();
 
 }
 
-
-/*
-   靴選択画面へ
-*/
 
 function backToTitle(){
 
-goHome();
+ document.getElementById(
+  "resultOverlay"
+ ).classList.remove("show");
+
+ document.getElementById(
+  "gameScreen"
+ ).style.display="none";
+
+ document.getElementById(
+  "titleScreen"
+ ).style.display="block";
+
+ state="title";
+
+ renderTitleStats();
+
+ buildShoeGrid();
 
 }
 
-
-/*
-   ★新規
-
-   トップページへ戻る
-
-   ゲーム画面を完全に閉じて
-   タイトル画面へ戻す
-*/
-
-function goHome(){
-
-document.getElementById(
-"resultOverlay"
-).classList.remove("show");
-
-
-document.getElementById(
-"gameScreen"
-).style.display="none";
-
-
-document.getElementById(
-"titleScreen"
-).style.display="block";
-
-
-state="title";
-
-
-cameraX=0;
-
-particles=[];
-
-renderTitleStats();
-
-buildShoeGrid();
-
-}
-
-
-/* =========================================================
-   ゲーム開始
-========================================================= */
 
 function startAttemptCommon(){
 
-course=
-generateCourse();
+ course=
+  generateCourse();
 
+ rollWind();
 
-rollWind();
+ document.getElementById(
+  "windHud"
+ ).textContent=
+  windLabel();
 
+ cameraX=0;
 
-document.getElementById(
-"windHud"
-).textContent=
-windLabel();
+ swingT=0;
 
+ particles=[];
 
-cameraX=0;
+ settleTimer=0;
 
-swingT=0;
+ flightTime=0;
 
-particles=[];
+ shoe={
+  x:0,
+  y:0,
+  vx:0,
+  vy:0,
+  rotation:0,
+  rolling:false,
+  overHole:false,
+  holeEnterY:0,
+  bounceCount:0,
+  heelBroken:false,
+  heelBrokenTriggered:false
+ };
 
-settleTimer=0;
+ currentDistanceM=0;
 
-flightTime=0;
+ state="aiming";
 
-
-shoe={
-x:0,
-y:0,
-vx:0,
-vy:0,
-rotation:0,
-rolling:false,
-overHole:false,
-holeEnterY:0,
-bounceCount:0
-};
-
-
-currentDistanceM=0;
-
-
-state="aiming";
-
-
-updateHud();
+ updateHud();
 
 }
 
 
-/* =========================================================
+/* =====================================================
    結果
-========================================================= */
+===================================================== */
 
-function showResult(
-reachedEnd,
-holeFall,
-isRecord
+function finishRun(
+ reachedEnd,
+ holeFall
 ){
 
-document.getElementById(
-"resultDist"
-).textContent=
-finalDistanceM+"m";
+ if(state==="result")
+  return;
 
 
-let msg=
-holeFall
-?
-"😵 穴に落ちてしまった…"
-:
-reachedEnd
-?
-"🎉 コース制覇ボーナス！"
-:
-"🏁 着地！";
+ state="result";
 
 
-document.getElementById(
-"resultMsg"
-).textContent=
-msg;
+ /*
+  飛距離表示を少し盛る
+  「見た目で気持ちいい距離」
+ */
+
+ let dist=
+  currentDistanceM;
 
 
-document.getElementById(
-"resultRecord"
-).textContent=
-isRecord
-?
-"🏆 自己ベスト更新！"
-:
-"";
+ if(reachedEnd)
+  dist+=80;
 
 
-document.getElementById(
-"resultOverlay"
-).classList.add("show");
+ finalDistanceM=
+  Math.round(
+   dist*10
+  )/10;
+
+
+ let isRecord=
+  finalDistanceM>
+  stats.best;
+
+
+ stats.plays++;
+
+
+ if(isRecord)
+  stats.best=
+   finalDistanceM;
+
+
+ stats.top.push(
+  finalDistanceM
+ );
+
+
+ stats.top.sort(
+  (a,b)=>b-a
+ );
+
+
+ stats.top=
+  stats.top.slice(0,5);
+
+
+ writeSave();
+
+
+ showResult(
+  reachedEnd,
+  holeFall,
+  isRecord
+ );
 
 }
 
 
-/* =========================================================
+function showResult(
+ reachedEnd,
+ holeFall,
+ isRecord
+){
+
+ document.getElementById(
+  "resultDist"
+ ).textContent=
+  finalDistanceM+
+  "m";
+
+
+ let msg;
+
+
+ if(reachedEnd){
+
+  msg=
+   "🏔️ 富士山を越えて大飛行！！";
+
+ }else{
+
+  msg=
+   "🏁 着地！";
+
+ }
+
+
+ document.getElementById(
+  "resultMsg"
+ ).textContent=
+  msg;
+
+
+ document.getElementById(
+  "resultRecord"
+ ).textContent=
+  isRecord
+   ?"🏆 自己ベスト更新！"
+   :"";
+
+
+ document.getElementById(
+  "resultOverlay"
+ ).classList.add("show");
+
+}
+
+
+/* =====================================================
    Canvas
-========================================================= */
+===================================================== */
 
 function fitCanvas(){
 
-canvas=
-document.getElementById("cv");
+ canvas=
+  document.getElementById("cv");
+
+ let wrapW=
+  Math.min(
+   document.querySelector(
+    ".gameWrap"
+   ).clientWidth||480,
+   480
+  );
 
 
-let wrapW=
-Math.min(
-document.querySelector(
-".gameWrap"
-).clientWidth||480,
-480
-);
+ canvas.width=
+  wrapW;
+
+ canvas.height=
+  380;
+
+ W=canvas.width;
+
+ H=canvas.height;
+
+ ctx=
+  canvas.getContext("2d");
+
+ ctx.textAlign="center";
+
+ ctx.textBaseline="middle";
 
 
-canvas.width=wrapW;
+ canvas.onclick=()=>{
 
-canvas.height=380;
+  if(state==="aiming")
+   release();
 
-
-W=canvas.width;
-
-H=canvas.height;
-
-
-ctx=
-canvas.getContext("2d");
-
-
-ctx.textAlign="center";
-
-ctx.textBaseline="middle";
-
-
-canvas.onclick=()=>{
-
-if(state==="aiming"){
-
-release();
-
-}
-
-};
+ };
 
 }
 
 
 window.addEventListener(
-"resize",
-()=>{
-
-if(canvas){
-
-fitCanvas();
-
-}
-
-});
+ "resize",
+ ()=>{
+  if(canvas)
+   fitCanvas();
+ }
+);
 
 
-/* =========================================================
+/* =====================================================
    背景
-========================================================= */
+===================================================== */
 
 function drawSky(){
 
-let grad=
-ctx.createLinearGradient(
-0,
-0,
-0,
-H
-);
+ let grad=
+  ctx.createLinearGradient(
+   0,0,0,H
+  );
+
+ grad.addColorStop(
+  0,
+  "#65bce9"
+ );
+
+ grad.addColorStop(
+  .55,
+  "#c8edff"
+ );
+
+ grad.addColorStop(
+  1,
+  "#fff5df"
+ );
+
+ ctx.fillStyle=grad;
+
+ ctx.fillRect(
+  0,0,W,H
+ );
 
 
-grad.addColorStop(
-0,
-"#7ec8f0"
-);
+ /* 太陽 */
 
-grad.addColorStop(
-0.55,
-"#cdeeff"
-);
+ ctx.beginPath();
 
-grad.addColorStop(
-1,
-"#fff8ec"
-);
+ ctx.fillStyle=
+  "#ffe77b";
 
+ ctx.arc(
+  W-55,
+  48,
+  28,
+  0,
+  Math.PI*2
+ );
 
-ctx.fillStyle=grad;
-
-ctx.fillRect(
-0,
-0,
-W,
-H
-);
-
-
-ctx.beginPath();
-
-ctx.fillStyle="#ffe27a";
-
-ctx.arc(
-W-50,
-50,
-26,
-0,
-7
-);
-
-ctx.fill();
+ ctx.fill();
 
 }
 
 
-/* =========================================================
-   風
-========================================================= */
+/* =====================================================
+   富士山風景
+===================================================== */
 
-function drawWind(camX){
+function drawMountains(camX){
 
-let a=
-Math.abs(windValue);
+ /*
+  遠景の山
+ */
 
+ function mountain(
+  offset,
+  baseY,
+  peak,
+  width,
+  color
+ ){
 
-if(a<0.15) return;
+  let x=
+   -((camX*offset)%width);
 
+  while(x<W+width){
 
-ctx.strokeStyle=
-"rgba(255,255,255,"+
-clamp(
-0.25+a*0.35,
-0,
-0.6
-)+")";
+   ctx.fillStyle=color;
 
+   ctx.beginPath();
 
-ctx.lineWidth=2;
+   ctx.moveTo(
+    x,
+    baseY
+   );
 
+   ctx.lineTo(
+    x+width*.5,
+    peak
+   );
 
-let dir=
-windValue>0
-?
-1
-:
--1;
+   ctx.lineTo(
+    x+width,
+    baseY
+   );
 
+   ctx.closePath();
 
-let n=
-3+Math.round(a*3);
+   ctx.fill();
 
+   x+=width;
 
-for(
-let i=0;
-i<n;
-i++
-){
+  }
 
-let baseY=
-60+i*24+
-((i*17)%20);
-
-
-let scroll=
-(
-windAnimT*
-260*
-dir
-)%60;
+ }
 
 
-let sx=
-dir>0
-?
--40+
-((i*130+scroll)%(W+80))-40
-:
-W+40-
-((i*130-scroll)%(W+80))-40;
+ mountain(
+  .08,
+  235,
+  110,
+  320,
+  "#9cc3cf"
+ );
+
+ mountain(
+  .14,
+  255,
+  145,
+  250,
+  "#79aab7"
+ );
 
 
-ctx.beginPath();
+ /*
+  富士山っぽい大きな山
+ */
 
-ctx.moveTo(
-sx,
-baseY
-);
+ let fx=
+  320-
+  ((camX*.22)%720);
 
-ctx.lineTo(
-sx+dir*26,
-baseY
-);
+ while(fx<W+300){
 
-ctx.stroke();
+  ctx.fillStyle=
+   "#668c9a";
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+   fx-170,
+   265
+  );
+
+  ctx.lineTo(
+   fx,
+   85
+  );
+
+  ctx.lineTo(
+   fx+175,
+   265
+  );
+
+  ctx.closePath();
+
+  ctx.fill();
+
+
+  /*
+   雪
+  */
+
+  ctx.fillStyle=
+   "#ffffffdd";
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+   fx-55,
+   140
+  );
+
+  ctx.lineTo(
+   fx,
+   85
+  );
+
+  ctx.lineTo(
+   fx+58,
+   140
+  );
+
+  ctx.lineTo(
+   fx+32,
+   130
+  );
+
+  ctx.lineTo(
+   fx+10,
+   153
+  );
+
+  ctx.lineTo(
+   fx-8,
+   132
+  );
+
+  ctx.lineTo(
+   fx-30,
+   153
+  );
+
+  ctx.closePath();
+
+  ctx.fill();
+
+
+  fx+=720;
+
+ }
 
 }
 
-}
 
-
-/* =========================================================
+/* =====================================================
    雲
-========================================================= */
+===================================================== */
 
 function drawClouds(camX){
 
-ctx.fillStyle="#ffffffcc";
+ ctx.fillStyle=
+  "#ffffffcc";
+
+ for(let i=0;i<6;i++){
+
+  let base=
+   i*260-
+   ((camX*.12)%260);
+
+  let cx=
+   ((base%(W+300))+
+   W+300)%(W+300)-100;
+
+  let cy=
+   35+
+   (i*31)%65;
 
 
-for(let i=0;i<5;i++){
+  ctx.beginPath();
 
-let baseX=
-(i*260)-
-((camX*0.15)%260);
+  ctx.ellipse(
+   cx,
+   cy,
+   32,
+   16,
+   0,
+   0,
+   Math.PI*2
+  );
 
+  ctx.ellipse(
+   cx+25,
+   cy+5,
+   22,
+   13,
+   0,
+   0,
+   Math.PI*2
+  );
 
-let cx=
-(
-(baseX%(W+200))
-+
-W+200
-)
-%(W+200)-100;
+  ctx.ellipse(
+   cx-25,
+   cy+6,
+   20,
+   12,
+   0,
+   0,
+   Math.PI*2
+  );
 
+  ctx.fill();
 
-let cy=
-40+((i*37)%50);
-
-
-ctx.beginPath();
-
-ctx.ellipse(
-cx,
-cy,
-26,
-14,
-0,
-0,
-7
-);
-
-
-ctx.ellipse(
-cx+20,
-cy+4,
-20,
-12,
-0,
-0,
-7
-);
-
-
-ctx.ellipse(
-cx-20,
-cy+5,
-18,
-11,
-0,
-0,
-7
-);
-
-
-ctx.fill();
-
-}
+ }
 
 }
 
 
-/* =========================================================
+/* =====================================================
+   風
+===================================================== */
+
+function drawWind(){
+
+ let a=
+  Math.abs(windValue);
+
+ if(a<.12)
+  return;
+
+
+ ctx.strokeStyle=
+  "rgba(255,255,255,.5)";
+
+ ctx.lineWidth=2;
+
+
+ let dir=
+  windValue>0?1:-1;
+
+
+ for(let i=0;i<5;i++){
+
+  let y=
+   60+i*25;
+
+  let x=
+   ((windAnimT*260*dir+i*140)
+    %(W+120));
+
+  if(x<0)
+   x+=W+120;
+
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+   x,
+   y
+  );
+
+  ctx.lineTo(
+   x+dir*30,
+   y
+  );
+
+  ctx.stroke();
+
+ }
+
+}
+
+
+/* =====================================================
    地面
-========================================================= */
+===================================================== */
 
 function drawGround(camX){
 
-for(const seg of course.segments){
+ for(const seg of course.segments){
 
-let first=seg[0];
+  let first=seg[0];
 
-let last=
-seg[seg.length-1];
-
-
-if(
-last.x-camX<-60 ||
-first.x-camX>W+60
-){
-
-continue;
-
-}
+  let last=
+   seg[seg.length-1];
 
 
-ctx.beginPath();
+  if(
+   last.x-camX<-60 ||
+   first.x-camX>W+60
+  )
+   continue;
 
 
-ctx.moveTo(
-seg[0].x-camX,
-seg[0].y
-);
+  ctx.beginPath();
+
+  ctx.moveTo(
+   seg[0].x-camX,
+   seg[0].y
+  );
 
 
-for(
-let i=1;
-i<seg.length;
-i++
-){
+  for(
+   let i=1;
+   i<seg.length;
+   i++
+  ){
 
-ctx.lineTo(
-seg[i].x-camX,
-seg[i].y
-);
+   ctx.lineTo(
+    seg[i].x-camX,
+    seg[i].y
+   );
 
-}
-
-
-ctx.lineTo(
-last.x-camX,
-H
-);
+  }
 
 
-ctx.lineTo(
-first.x-camX,
-H
-);
+  ctx.lineTo(
+   last.x-camX,
+   H
+  );
+
+  ctx.lineTo(
+   first.x-camX,
+   H
+  );
+
+  ctx.closePath();
 
 
-ctx.closePath();
+  let grad=
+   ctx.createLinearGradient(
+    0,
+    first.y,
+    0,
+    H
+   );
+
+  grad.addColorStop(
+   0,
+   "#8bd15b"
+  );
+
+  grad.addColorStop(
+   .1,
+   "#5da83c"
+  );
+
+  grad.addColorStop(
+   .1,
+   "#c98b4d"
+  );
+
+  grad.addColorStop(
+   1,
+   "#81552e"
+  );
 
 
-let grad=
-ctx.createLinearGradient(
-0,
-first.y,
-0,
-H
-);
+  ctx.fillStyle=grad;
+
+  ctx.fill();
 
 
-grad.addColorStop(
-0,
-"#8fd35f"
-);
+  ctx.strokeStyle=
+   "#4f903b";
 
-grad.addColorStop(
-0.12,
-"#5fa73c"
-);
+  ctx.lineWidth=3;
 
-grad.addColorStop(
-0.12,
-"#c98a4b"
-);
+  ctx.beginPath();
 
-grad.addColorStop(
-1,
-"#8a5a30"
-);
+  ctx.moveTo(
+   seg[0].x-camX,
+   seg[0].y
+  );
 
 
-ctx.fillStyle=grad;
+  for(
+   let i=1;
+   i<seg.length;
+   i++
+  ){
 
-ctx.fill();
+   ctx.lineTo(
+    seg[i].x-camX,
+    seg[i].y
+   );
 
+  }
 
-ctx.strokeStyle="#4f8f3b";
+  ctx.stroke();
 
-ctx.lineWidth=3;
-
-
-ctx.beginPath();
-
-
-ctx.moveTo(
-seg[0].x-camX,
-seg[0].y
-);
-
-
-for(
-let i=1;
-i<seg.length;
-i++
-){
-
-ctx.lineTo(
-seg[i].x-camX,
-seg[i].y
-);
+ }
 
 }
 
 
-ctx.stroke();
-
-}
-
-
-for(const h of course.holes){
-
-if(
-h.end-camX<-60 ||
-h.start-camX>W+60
-){
-
-continue;
-
-}
-
-
-ctx.beginPath();
-
-
-ctx.moveTo(
-h.start-camX,
-h.yStart
-);
-
-
-ctx.lineTo(
-h.start-camX,
-H
-);
-
-
-ctx.lineTo(
-h.end-camX,
-H
-);
-
-
-ctx.lineTo(
-h.end-camX,
-h.yEnd
-);
-
-
-ctx.closePath();
-
-
-let g=
-ctx.createLinearGradient(
-0,
-Math.min(
-h.yStart,
-h.yEnd
-),
-0,
-H
-);
-
-
-g.addColorStop(
-0,
-"#3a2a1a"
-);
-
-
-g.addColorStop(
-1,
-"#150d08"
-);
-
-
-ctx.fillStyle=g;
-
-ctx.fill();
-
-}
-
-}
-
-
-/* =========================================================
+/* =====================================================
    ブランコ
-========================================================= */
+===================================================== */
 
 function drawSwing(){
 
-const pivotX=90;
+ const pivotX=90;
 
-const pivotY=110;
-
-
-const A=
-SWING_MAX_ANGLE;
+ const pivotY=110;
 
 
-const w=
-2*Math.PI/SWING_PERIOD;
+ const A=
+  SWING_MAX_ANGLE;
+
+ const w=
+  2*Math.PI/SWING_PERIOD;
 
 
-const theta=
-A*Math.sin(w*swingT);
+ const theta=
+  A*Math.sin(
+   w*swingT
+  );
 
 
-const thetaSpeed=
-A*w*Math.cos(w*swingT);
+ const thetaSpeed=
+  A*w*Math.cos(
+   w*swingT
+  );
 
 
-const seatX=
-pivotX+
-Math.sin(theta)*
-SWING_ROPE;
+ const seatX=
+  pivotX+
+  Math.sin(theta)*
+  SWING_ROPE;
 
 
-const seatY=
-pivotY+
-Math.cos(theta)*
-SWING_ROPE;
+ const seatY=
+  pivotY+
+  Math.cos(theta)*
+  SWING_ROPE;
 
 
-ctx.strokeStyle="#8a6a4a";
+ /*
+  ブランコ本体
+ */
 
-ctx.lineWidth=8;
+ ctx.strokeStyle=
+  "#806044";
 
-ctx.lineCap="round";
+ ctx.lineWidth=8;
 
-
-ctx.beginPath();
-
-ctx.moveTo(
-pivotX-46,
-H-2
-);
-
-ctx.lineTo(
-pivotX,
-pivotY-8
-);
-
-ctx.lineTo(
-pivotX+46,
-H-2
-);
-
-ctx.stroke();
+ ctx.lineCap="round";
 
 
-ctx.beginPath();
+ ctx.beginPath();
 
-ctx.moveTo(
-pivotX-46,
-pivotY-4
-);
+ ctx.moveTo(
+  pivotX-46,
+  H-2
+ );
 
-ctx.lineTo(
-pivotX+46,
-pivotY-4
-);
+ ctx.lineTo(
+  pivotX,
+  pivotY-8
+ );
 
-ctx.stroke();
+ ctx.lineTo(
+  pivotX+46,
+  H-2
+ );
 
-
-let sweetZone=
-theta>-0.15 &&
-theta<0.5 &&
-thetaSpeed>0;
-
-
-ctx.strokeStyle=
-sweetZone
-?
-"#ffce54"
-:
-"#c9b8a0";
+ ctx.stroke();
 
 
-ctx.lineWidth=3;
+ ctx.beginPath();
+
+ ctx.moveTo(
+  pivotX-46,
+  pivotY-4
+ );
+
+ ctx.lineTo(
+  pivotX+46,
+  pivotY-4
+ );
+
+ ctx.stroke();
 
 
-ctx.beginPath();
+ /*
+  タイミングが良い方向に
+  近づいたら光る
+ */
 
-ctx.moveTo(
-pivotX,
-pivotY
-);
-
-ctx.lineTo(
-seatX,
-seatY
-);
-
-ctx.stroke();
+ let sweet=
+  thetaSpeed>1.2;
 
 
-if(sweetZone){
+ ctx.strokeStyle=
+  sweet
+   ?"rgba(255,207,80,.9)"
+   :"#c5b49f";
 
-ctx.beginPath();
+ ctx.lineWidth=3;
 
-ctx.fillStyle="#ffce5455";
 
-ctx.arc(
-seatX,
-seatY,
-26,
-0,
-7
-);
+ ctx.beginPath();
 
-ctx.fill();
+ ctx.moveTo(
+  pivotX,
+  pivotY
+ );
+
+ ctx.lineTo(
+  seatX,
+  seatY
+ );
+
+ ctx.stroke();
+
+
+ if(sweet){
+
+  ctx.beginPath();
+
+  ctx.fillStyle=
+   "rgba(255,205,70,.25)";
+
+  ctx.arc(
+   seatX,
+   seatY,
+   27,
+   0,
+   Math.PI*2
+  );
+
+  ctx.fill();
+
+ }
+
+
+ ctx.font=
+  "30px sans-serif";
+
+ ctx.fillText(
+  "🧒",
+  seatX,
+  seatY-6
+ );
+
+
+ ctx.font=
+  "18px sans-serif";
+
+ ctx.fillText(
+  currentShoe().emoji,
+  seatX+10,
+  seatY+16
+ );
+
+
+ ctx.fillStyle=
+  "#806044";
+
+ ctx.fillRect(
+  seatX-14,
+  seatY+2,
+  28,
+  6
+ );
 
 }
 
 
-ctx.font="30px sans-serif";
-
-ctx.fillText(
-"🧒",
-seatX,
-seatY-6
-);
-
-
-ctx.font="18px sans-serif";
-
-ctx.fillText(
-currentShoe().emoji,
-seatX+10,
-seatY+16
-);
-
-
-ctx.fillStyle="#8a6a4a";
-
-ctx.fillRect(
-seatX-14,
-seatY+2,
-28,
-6
-);
-
-}
-
-
-/* =========================================================
+/* =====================================================
    パーティクル
-========================================================= */
+===================================================== */
 
 function drawParticles(camX){
 
-for(const p of particles){
+ for(const p of particles){
 
-ctx.beginPath();
+  ctx.beginPath();
 
-ctx.fillStyle=
-"rgba("+
-p.color+
-","+
-clamp(
-p.life/p.maxLife,
-0,
-1
-)+")";
+  ctx.fillStyle=
+   "rgba("+
+   p.color+
+   ","+
+   clamp(
+    p.life/p.maxLife,
+    0,
+    1
+   )+
+   ")";
 
+  ctx.arc(
+   p.x-camX,
+   p.y,
+   p.r,
+   0,
+   Math.PI*2
+  );
 
-ctx.arc(
-p.x-camX,
-p.y,
-p.r,
-0,
-7
-);
+  ctx.fill();
 
-
-ctx.fill();
+ }
 
 }
 
-}
 
-
-/* =========================================================
+/* =====================================================
    靴
-========================================================= */
+===================================================== */
 
 function drawShoe(camX){
 
-ctx.save();
+ ctx.save();
+
+ ctx.translate(
+  shoe.x-camX,
+  shoe.y
+ );
+
+ ctx.rotate(
+  shoe.rotation
+ );
+
+ ctx.font=
+  "30px sans-serif";
 
 
-ctx.translate(
-shoe.x-camX,
-shoe.y
-);
+ ctx.fillText(
+  currentShoe().emoji,
+  0,
+  0
+ );
 
-
-ctx.rotate(
-shoe.rotation
-);
-
-
-ctx.font="30px sans-serif";
-
-
-let emo=
-shoe.heelBrokenTriggered
-?
-"🥿"
-:
-currentShoe().emoji;
-
-
-ctx.fillText(
-emo,
-0,
-0
-);
-
-
-ctx.restore();
+ ctx.restore();
 
 }
 
 
-/* =========================================================
+/* =====================================================
    描画
-========================================================= */
+===================================================== */
 
 function draw(){
 
-if(!ctx) return;
+ if(!ctx)
+  return;
 
 
-ctx.clearRect(
-0,
-0,
-W,
-H
-);
+ ctx.clearRect(
+  0,0,W,H
+ );
 
 
-drawSky();
+ drawSky();
 
 
-let camX=
-state==="aiming"
-?
-0
-:
-cameraX;
+ let camX=
+  state==="aiming"
+   ?0
+   :cameraX;
 
 
-drawClouds(camX);
+ drawMountains(camX);
 
-drawWind(camX);
+ drawClouds(camX);
 
-drawGround(camX);
+ drawWind();
 
-
-if(state==="aiming"){
-
-drawSwing();
-
-}
+ drawGround(camX);
 
 
-drawParticles(camX);
+ if(state==="aiming")
+  drawSwing();
 
 
-if(
-state==="flight" ||
-state==="result"
-){
+ drawParticles(camX);
 
-drawShoe(camX);
 
-}
+ if(
+  state==="flight" ||
+  state==="result"
+ ){
+
+  drawShoe(camX);
+
+ }
 
 }
 
 
-/* =========================================================
+/* =====================================================
    メインループ
-========================================================= */
+===================================================== */
 
 function update(dt){
 
-windAnimT+=dt;
+ windAnimT+=dt;
 
 
-if(state==="aiming"){
+ if(state==="aiming"){
 
-swingT+=dt;
+  swingT+=dt;
 
-}
-
-else if(state==="flight"){
-
-flightTime+=dt;
-
-physicsStep(dt);
+ }
 
 
-if(state==="flight"){
+ else if(state==="flight"){
 
-cameraX=
-Math.max(
-0,
-shoe.x-W*0.34
-);
+  flightTime+=dt;
 
-}
-
-}
+  physicsStep(dt);
 
 
-updateParticles(dt);
+  if(state==="flight"){
+
+   /*
+    カメラを少し後ろに置いて
+    飛んでいる靴を長く眺められる
+   */
+
+   cameraX=
+    Math.max(
+     0,
+     shoe.x-W*.38
+    );
+
+  }
+
+ }
+
+
+ updateParticles(dt);
 
 }
 
 
 function frame(ts){
 
-if(!lastTime){
-
-lastTime=ts;
-
-}
+ if(!lastTime)
+  lastTime=ts;
 
 
-let dt=
-Math.min(
-(ts-lastTime)/1000,
-0.033
-);
+ let dt=
+  Math.min(
+   (ts-lastTime)/1000,
+   .033
+  );
 
 
-lastTime=ts;
+ lastTime=ts;
 
 
-update(dt);
+ update(dt);
 
-draw();
+ draw();
 
 
-requestAnimationFrame(frame);
+ requestAnimationFrame(frame);
 
 }
 
 
-/* =========================================================
+/* =====================================================
    初期化
-========================================================= */
+===================================================== */
 
 loadSave();
 
